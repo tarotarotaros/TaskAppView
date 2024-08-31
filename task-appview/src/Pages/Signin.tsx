@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import styled from '@emotion/styled';
 import API from '../Constants';
 import { Button, Modal, Paper, TextField, Typography } from '@mui/material';
+import SignIn from '../Forms/Signin/SignIn';
 
 const Login = () => {
 
@@ -75,37 +76,41 @@ const Login = () => {
     };
 
 
-    return (
-        <>
-            <Button onClick={handleOpen}>ログイン画面へ</Button>
-            <Modal open={open} onClose={handleOpen}>
-                <StyledPaper>
-                    <form className='form'>
-                        <Typography variant={'h5'}>ログイン</Typography>
-                        <TextField
-                            label="メールアドレス"
-                            variant="standard"
-                            className="text"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                        />
-                        <TextField
-                            label="パスワード"
-                            variant="standard"
-                            className="text"
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                        />
-                        <center><Button className="login btn" onClick={handleLogin}>ログイン</Button></center>
-                        <center><Button className="signup btn" onClick={handleSignup}>新規会員登録はこちら</Button></center>
-                        <center><Button variant="outlined" onClick={handleOpen}>閉じる</Button></center>
-
-                    </form>
-                </StyledPaper>
-            </Modal>
-        </>
+    return(
+        <SignIn/>
     );
+
+    // return (
+    //     <>
+    //         <Button onClick={handleOpen}>ログイン画面へ</Button>
+    //         <Modal open={open} onClose={handleOpen}>
+    //             <StyledPaper>
+    //                 <form className='form'>
+    //                     <Typography variant={'h5'}>ログイン</Typography>
+    //                     <TextField
+    //                         label="メールアドレス"
+    //                         variant="standard"
+    //                         className="text"
+    //                         value={email}
+    //                         onChange={(e) => setEmail(e.target.value)}
+    //                     />
+    //                     <TextField
+    //                         label="パスワード"
+    //                         variant="standard"
+    //                         className="text"
+    //                         type="password"
+    //                         value={password}
+    //                         onChange={(e) => setPassword(e.target.value)}
+    //                     />
+    //                     <center><Button className="login btn" onClick={handleLogin}>ログイン</Button></center>
+    //                     <center><Button className="signup btn" onClick={handleSignup}>新規会員登録はこちら</Button></center>
+    //                     <center><Button variant="outlined" onClick={handleOpen}>閉じる</Button></center>
+
+    //                 </form>
+    //             </StyledPaper>
+    //         </Modal>
+    //     </>
+    // );
 };
 
 const StyledPaper = styled(Paper)`
