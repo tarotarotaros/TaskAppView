@@ -1,5 +1,6 @@
-import { Button, Container, Typography } from '@mui/material'; // Material-UIを使用する例
+import { Button, Typography } from '@mui/material'; // Material-UIを使用する例
 import { Link, useNavigate } from 'react-router-dom';
+import SideMenuWithHeader from '../Forms/SideMenuWithHeader';
 import SigninStatus from '../Forms/Signin/SigninStatus';
 
 const Home = () => {
@@ -13,7 +14,11 @@ const Home = () => {
   }
 
   return (
-    <Container>
+    // <Container>
+    <div>
+      {/* // <Header />
+ */}
+      <SideMenuWithHeader />
       <Typography variant="h4" gutterBottom>
         ホームページ
       </Typography>
@@ -26,7 +31,7 @@ const Home = () => {
         component={Link}
         to="/signup"
       >
-        新規登録はこちら
+        新規登録
       </Button>
       <Button
         variant="contained"
@@ -34,7 +39,7 @@ const Home = () => {
         component={Link}
         to="/signin"
       >
-        ログインはこちら
+        ログイン
       </Button>
 
       <Button
@@ -42,10 +47,11 @@ const Home = () => {
         color="primary"
         onClick={signout}
       >
-        ログアウトはこちら
+        ログアウト
       </Button>
-      <SigninStatus />
-    </Container>
+      <SigninStatus /> </div>
+    // </Container>
+
   );
 };
 
