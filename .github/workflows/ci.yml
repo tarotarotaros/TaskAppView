@@ -23,7 +23,18 @@ jobs:
         cd ./task-appview
         npm install
 
-    - name: Run ESLint
+    - name: Run ESLint # コード解析
       run: |
         cd ./task-appview
         npx eslint .
+        
+    - name: Run Test Coverage # テストカバレッジ
+      run: |
+        cd ./task-appview
+        npm test -- --coverage
+
+    - name: Run Build # ビルド実行
+      run: |
+        cd ./task-appview
+        npm run build
+        
