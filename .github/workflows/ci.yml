@@ -14,6 +14,7 @@ jobs:
         uses: actions/setup-node@v1 #特定バージョンのnodeを設定するアクション
         with:
           node-version: "12.x"
+      - run: cd ./task-appview
       - run: npm ci #dependencyのインストール
       - run: npx eslint . #コードフォーマットチェック
         env:
