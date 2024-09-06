@@ -1,45 +1,68 @@
-import AddCardIcon from "@mui/icons-material/AddCard";
-import AssessmentIcon from "@mui/icons-material/Assessment";
-import AttachEmailIcon from "@mui/icons-material/AttachEmail";
-import BackupIcon from "@mui/icons-material/Backup";
+import BackupTable from "@mui/icons-material/BackupTable";
+import CalendarMonth from "@mui/icons-material/CalendarMonth";
+import Dashboard from "@mui/icons-material/Dashboard";
+import Flag from "@mui/icons-material/Flag";
+import GroupAdd from "@mui/icons-material/GroupAdd";
 import HomeIcon from "@mui/icons-material/Home";
-import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import Person from "@mui/icons-material/Person";
 import SettingsIcon from "@mui/icons-material/Settings";
+import SignIn from "./Signin/SignIn";
 
 export const SidebarData = [
     {
         title: "ホーム",
+        condition: "",
         icon: <HomeIcon />,
-        link: "/home",
+        link: "/",
+        component: <></>,
     },
     {
-        title: "メール",
-        icon: <AttachEmailIcon />,
-        link: "/mail",
+        title: "新規登録",
+        condition: "signout",
+        icon: <GroupAdd />,
+        link: "/signup",
+        component: <GroupAdd />,
     },
     {
-        title: "アナリティクス",
-        icon: <AssessmentIcon />,
-        link: "/analitics",
+        title: "ログイン",
+        condition: "signout",
+        icon: <Person />,
+        link: "/signin",
+        component: <SignIn />,
     },
     {
-        title: "友達追加",
-        icon: <PersonAddIcon />,
+        title: "タスク",
+        condition: "signin",
+        icon: <BackupTable />,
         link: "/friends",
+        component: <></>,
     },
     {
-        title: "お支払い設定",
-        icon: <AddCardIcon />,
-        link: "/payment",
-    },
-    {
-        title: "アップロード",
-        icon: <BackupIcon />,
+        title: "カンバン",
+        condition: "signin",
+        icon: <CalendarMonth />,
         link: "/upload",
+        component: <></>,
     },
     {
-        title: "詳細設定",
+        title: "マイルストーン",
+        condition: "signin",
+        icon: <Flag />,
+        link: "/upload",
+        component: <></>,
+    },
+    {
+        title: "分析",
+        condition: "signin",
+        icon: <Dashboard />,
+        link: "/payment",
+        component: <></>,
+    },
+    {
+        title: "サインアウト",
+        condition: "signin",
         icon: <SettingsIcon />,
-        link: "/rocket",
+        link: "/signout",
+        component: <></>,
     },
 ];
