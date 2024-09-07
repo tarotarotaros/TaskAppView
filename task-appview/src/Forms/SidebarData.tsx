@@ -6,7 +6,9 @@ import GroupAdd from "@mui/icons-material/GroupAdd";
 import HomeIcon from "@mui/icons-material/Home";
 import Person from "@mui/icons-material/Person";
 import SettingsIcon from "@mui/icons-material/Settings";
+import TaskList from "../Pages/TaskList";
 import SignIn from "./Signin/SignIn";
+import SignUp from "./Signup/Signup";
 
 export const SidebarData = [
     {
@@ -21,7 +23,7 @@ export const SidebarData = [
         condition: "signout",
         icon: <GroupAdd />,
         link: "/signup",
-        component: <GroupAdd />,
+        component: <SignUp />,
     },
     {
         title: "ログイン",
@@ -35,7 +37,7 @@ export const SidebarData = [
         condition: "signin",
         icon: <BackupTable />,
         link: "/friends",
-        component: <></>,
+        component: <TaskList />,
     },
     {
         title: "カンバン",
