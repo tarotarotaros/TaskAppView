@@ -1,6 +1,7 @@
 
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
+import PersonIcon from "@mui/icons-material/Person";
 import { Box, Button, TextField } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { useState } from 'react';
@@ -69,6 +70,7 @@ export default function TaskEditModal({ handleCloseModal }: TaskEditModalProps) 
                 <Grid size={4}>
                     <Grid>
                         <DatePickerWithText
+                            icon={<PersonIcon />}
                             label="期限"
                             defaultValue="2024/01/01"
                             onChange={handleDateChange}
@@ -77,6 +79,7 @@ export default function TaskEditModal({ handleCloseModal }: TaskEditModalProps) 
                 </Grid>
                 <Grid size={4}>
                     <SelectBoxWithText
+                        icon={<PersonIcon />}
                         label="担当"
                         defaultValue="20"
                         options={testdata}
@@ -85,6 +88,7 @@ export default function TaskEditModal({ handleCloseModal }: TaskEditModalProps) 
                 </Grid>
                 <Grid size={4}>
                     <SelectBoxWithText
+                        icon={<PersonIcon />}
                         label="ステータス"
                         defaultValue=""
                         options={testdata}

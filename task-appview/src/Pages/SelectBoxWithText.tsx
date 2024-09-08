@@ -4,13 +4,14 @@ import Grid from '@mui/material/Grid2';
 import React from 'react';
 
 interface SelectBoxWithTextProps {
+    icon: React.ReactNode;
     label: string;
     options: { value: string | number, label: string }[];
     defaultValue: string | number;
     onChange: (value: string | number) => void; // 選択された値を親に渡すコールバック
 }
 
-export default function SelectBoxWithText({ label, options, defaultValue, onChange }: SelectBoxWithTextProps) {
+export default function SelectBoxWithText({ icon, label, options, defaultValue, onChange }: SelectBoxWithTextProps) {
     const [selectedValue, setSelectedValue] = React.useState<string | number>(defaultValue);
 
     const handleChange = (event: SelectChangeEvent<string | number>) => {
@@ -21,6 +22,9 @@ export default function SelectBoxWithText({ label, options, defaultValue, onChan
 
     return (
         <Grid container alignItems="center" spacing={2}>
+            <Grid sx={{ display: 'flex', alignItems: 'center' }}>
+                {icon}
+            </Grid>
             {/* テキストラベル */}
             <Grid>
                 <InputLabel>{label}{"："}</InputLabel>

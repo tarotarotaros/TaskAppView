@@ -6,12 +6,13 @@ import dayjs, { Dayjs } from 'dayjs'; // dayjsをインポート
 import React from 'react';
 
 interface DatePickerWithTextProps {
+    icon: React.ReactNode;
     label: string;
     defaultValue: string | Date;
     onChange: (value: string | Date) => void; // 選択された値を親に渡すコールバック
 }
 
-export default function DatePickerWithText({ label, defaultValue, onChange }: DatePickerWithTextProps) {
+export default function DatePickerWithText({ icon, label, defaultValue, onChange }: DatePickerWithTextProps) {
     const [selectedValue, setSelectedValue] = React.useState<Dayjs | null>(dayjs('2022-04-17'));
 
     const handleChange = (newValue: Dayjs | null) => {
@@ -21,6 +22,9 @@ export default function DatePickerWithText({ label, defaultValue, onChange }: Da
 
     return (
         <Grid container alignItems="center" spacing={2}>
+            <Grid sx={{ display: 'flex', alignItems: 'center' }}>
+                {icon}
+            </Grid>
             {/* テキストラベル */}
             <Grid>
                 <InputLabel>{label}{"："}</InputLabel>
