@@ -1,41 +1,43 @@
-import { Dayjs } from 'dayjs';
+import { FormControl, InputLabel } from "@mui/material";
+import Grid from '@mui/material/Grid2';
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import dayjs, { Dayjs } from 'dayjs'; // dayjsをインポート
+import React from 'react';
 
 interface DatePickerWithTextProps {
     label: string;
-    defaultValue: Dayjs | null;
-    onChange: (value: Dayjs | null) => void; // 選択された値を親に渡すコールバック
+    defaultValue: string | Date;
+    onChange: (value: string | Date) => void; // 選択された値を親に渡すコールバック
 }
 
-export default function SelectBoxWithText({ label, defaultValue, onChange }: DatePickerWithTextProps) {
-    //const [selectedValue, setSelectedValue] = React.useState<string | Date>(defaultValue);
-    // const [value, setSelectedValue] = React.useState<Dayjs | null>(dayjs('2022-04-17'));
+export default function DatePickerWithText({ label, defaultValue, onChange }: DatePickerWithTextProps) {
+    const [selectedValue, setSelectedValue] = React.useState<Dayjs | null>(dayjs('2022-04-17'));
 
-    // const handleChange = (event: SelectChangeEvent<Dayjs | null>) => {
-    //     const value = event.target.value;
-    //     setSelectedValue(value);
-    //     onChange(value); // 親に選択された値を渡す
-    // };
+    const handleChange = (newValue: Dayjs | null) => {
+        setSelectedValue(newValue); // 選択された値を状態に設定
+        onChange(newValue ? newValue.toString() : ''); // 親に値を渡す
+    };
 
     return (
-        <></>
-        // <Grid container alignItems="center" spacing={2}>
-        //     {/* テキストラベル */}
-        //     <Grid>
-        //         <InputLabel>{label}{"："}</InputLabel>
-        //     </Grid>
-        //     {/* セレクトボックス */}
-        //     <Grid>
-        //         <FormControl fullWidth>
-        //             <LocalizationProvider dateAdapter={AdapterDayjs} >
-        //                 <DatePicker sx={{ width: '300px' }}
-        //                     fullWidth
-        //                     value={value}
-        //                     onChange={handleChange}
-        //                     id="demo-select-small" format="YYYY/MM/DD"
-        //                 />
-        //             </LocalizationProvider>
-        //         </FormControl>
-        //     </Grid>
-        // </Grid>
+        <Grid container alignItems="center" spacing={2}>
+            {/* テキストラベル */}
+            <Grid>
+                <InputLabel>{label}{"："}</InputLabel>
+            </Grid>
+            {/* セレクトボックス */}
+            <Grid>
+                <FormControl fullWidth>
+                    <LocalizationProvider dateAdapter={AdapterDayjs} >
+                        <DatePicker
+                            sx={{ width: '200px' }}
+                            value={selectedValue}
+                            onChange={handleChange}
+                            format="YYYY/MM/DD"
+                        />
+                    </LocalizationProvider>
+                </FormControl>
+            </Grid>
+        </Grid>
     );
 }

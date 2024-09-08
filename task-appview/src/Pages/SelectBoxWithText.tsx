@@ -28,7 +28,7 @@ export default function SelectBoxWithText({ label, options, defaultValue, onChan
             {/* セレクトボックス */}
             <Grid>
                 <FormControl fullWidth>
-                    <Select sx={{ width: '300px' }}
+                    <Select sx={{ width: '200px' }}
                         fullWidth
                         value={selectedValue}
                         onChange={handleChange}

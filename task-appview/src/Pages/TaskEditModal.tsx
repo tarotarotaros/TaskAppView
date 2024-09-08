@@ -1,25 +1,36 @@
 
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { Box, Button, InputLabel, TextField } from '@mui/material';
+import { Box, Button, TextField } from '@mui/material';
 import Grid from '@mui/material/Grid2';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { useState } from 'react';
+import DatePickerWithText from "./DatePickerWithText";
 import SelectBoxWithText from "./SelectBoxWithText";
 
 type TaskEditModalProps = {
     handleCloseModal: React.MouseEventHandler<HTMLButtonElement>;
 };
 
+const testdata = [
+    { value: '', label: 'None' },
+    { value: '10', label: 'Ten' },
+    { value: '20', label: 'Twenty' },
+    { value: '30', label: 'Thirty' }
+];
+
 export default function TaskEditModal({ handleCloseModal }: TaskEditModalProps) {
 
     const [selectedAge, setSelectedAge] = useState<string | number>('');
+    const [selectedDate, setSelectedDate] = useState<string | Date>('');
 
     const handleAgeChange = (value: string | number) => {
         setSelectedAge(value);
     };
+
+    const handleDateChange = (value: string | Date) => {
+        setSelectedDate(value);
+    };
+
 
     return (
         <Box
@@ -54,41 +65,30 @@ export default function TaskEditModal({ handleCloseModal }: TaskEditModalProps) 
                         fullWidth
                     />
                 </Grid>
+
                 <Grid size={4}>
                     <Grid>
-                        <InputLabel>テキスト</InputLabel>
-                    </Grid>
-                    <Grid>
-                        <LocalizationProvider dateAdapter={AdapterDayjs} >
-                            <DatePicker format="YYYY/MM/DD" sx={{ width: '300px' }} />
-                        </LocalizationProvider>
+                        <DatePickerWithText
+                            label="期限"
+                            defaultValue="2024/01/01"
+                            onChange={handleDateChange}
+                        />
                     </Grid>
                 </Grid>
                 <Grid size={4}>
-
                     <SelectBoxWithText
-                        label="Age"
+                        label="担当"
                         defaultValue="20"
-                        options={[
-                            { value: '', label: 'None' },
-                            { value: '10', label: 'Ten' },
-                            { value: '20', label: 'Twenty' },
-                            { value: '30', label: 'Thirty' }
-                        ]}
-                        onChange={handleAgeChange} // 選択された値を取得するためのコールバック
+                        options={testdata}
+                        onChange={handleAgeChange}
                     />
                 </Grid>
                 <Grid size={4}>
                     <SelectBoxWithText
-                        label="状態"
+                        label="ステータス"
                         defaultValue=""
-                        options={[
-                            { value: '0', label: '未対応' },
-                            { value: '1', label: '対応中' },
-                            { value: '2', label: '確認中' },
-                            { value: '3', label: '対応済' }
-                        ]}
-                        onChange={handleAgeChange} // 選択された値を取得するためのコールバック
+                        options={testdata}
+                        onChange={handleAgeChange}
                     />
                 </Grid>
 
