@@ -26,7 +26,7 @@ export default function DatePickerWithText({ icon, label, defaultValue, onChange
                 {icon}
             </Grid>
             {/* テキストラベル */}
-            <Grid>
+            <Grid sx={{ width: '100px' }}>
                 <InputLabel>{label}{"："}</InputLabel>
             </Grid>
             {/* セレクトボックス */}

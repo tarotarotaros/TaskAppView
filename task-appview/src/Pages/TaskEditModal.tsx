@@ -1,7 +1,12 @@
 
+import AlarmIcon from "@mui/icons-material/Alarm";
+import AssignmentLateIcon from "@mui/icons-material/AssignmentLate";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
 import PersonIcon from "@mui/icons-material/Person";
+import SaveIcon from "@mui/icons-material/Save";
+import ThermostatIcon from "@mui/icons-material/Thermostat";
 import { Box, Button, TextField } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { useState } from 'react';
@@ -62,15 +67,25 @@ export default function TaskEditModal({ handleCloseModal }: TaskEditModalProps) 
                         multiline
                         id="contents"
                         label="内容"
-                        minRows={7}
+                        minRows={11}
+                        maxRows={11}
                         fullWidth
                     />
                 </Grid>
 
                 <Grid size={4}>
+                    <SelectBoxWithText
+                        icon={<ThermostatIcon />}
+                        label="優先度"
+                        defaultValue="20"
+                        options={testdata}
+                        onChange={handleAgeChange}
+                    />
+                </Grid>
+                <Grid size={4}>
                     <Grid>
                         <DatePickerWithText
-                            icon={<PersonIcon />}
+                            icon={<AlarmIcon />}
                             label="期限"
                             defaultValue="2024/01/01"
                             onChange={handleDateChange}
@@ -79,17 +94,39 @@ export default function TaskEditModal({ handleCloseModal }: TaskEditModalProps) 
                 </Grid>
                 <Grid size={4}>
                     <SelectBoxWithText
-                        icon={<PersonIcon />}
-                        label="担当"
-                        defaultValue="20"
+                        icon={<AssignmentLateIcon />}
+                        label="ステータス"
+                        defaultValue=""
                         options={testdata}
                         onChange={handleAgeChange}
                     />
                 </Grid>
+
+
+                <Grid size={4}>
+                    <Grid>
+                        <DatePickerWithText
+                            icon={<CalendarMonthIcon />}
+                            label="開始"
+                            defaultValue="2024/01/01"
+                            onChange={handleDateChange}
+                        />
+                    </Grid>
+                </Grid>
+                <Grid size={4}>
+                    <Grid>
+                        <DatePickerWithText
+                            icon={<CalendarMonthIcon />}
+                            label="終了"
+                            defaultValue="2024/01/01"
+                            onChange={handleDateChange}
+                        />
+                    </Grid>
+                </Grid>
                 <Grid size={4}>
                     <SelectBoxWithText
                         icon={<PersonIcon />}
-                        label="ステータス"
+                        label="担当者"
                         defaultValue=""
                         options={testdata}
                         onChange={handleAgeChange}
@@ -98,13 +135,12 @@ export default function TaskEditModal({ handleCloseModal }: TaskEditModalProps) 
 
                 <Grid my={2} size={12} justifyContent="end" spacing={1} container>
                     <Grid >
-                        <Button sx={{ width: '100px' }} size="medium" variant="contained" color="error">
-                            <DeleteIcon />
-                            {/* 削除 */}
+                        <Button startIcon={<DeleteIcon />} sx={{ width: '100px' }} size="medium" variant="contained" color="error">
+                            削除
                         </Button>
                     </Grid>
                     <Grid >
-                        <Button sx={{ width: '100px' }} size="medium" variant="contained" color="success">
+                        <Button startIcon={<SaveIcon />} sx={{ width: '100px' }} size="medium" variant="contained" color="success">
                             保存
                         </Button>
                     </Grid>
