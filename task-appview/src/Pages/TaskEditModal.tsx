@@ -15,28 +15,54 @@ import SelectBoxWithText from "./SelectBoxWithText";
 
 type TaskEditModalProps = {
     handleCloseModal: React.MouseEventHandler<HTMLButtonElement>;
+    onSave: (data: any) => void; // 保存時にデータを親に渡す関数
 };
 
-const testdata = [
-    { value: '', label: 'None' },
-    { value: '10', label: 'Ten' },
-    { value: '20', label: 'Twenty' },
-    { value: '30', label: 'Thirty' }
+const statusdata = [
+    { value: '0', label: '未着手' },
+    { value: '1', label: '対応中' },
+    { value: '2', label: '対応済' },
+    { value: '3', label: '完了' },
+    { value: '10', label: '保留' },
 ];
 
-export default function TaskEditModal({ handleCloseModal }: TaskEditModalProps) {
+const managerdata = [
+    { value: '0', label: '未定' },
+    { value: '1', label: '赤星' },
+    { value: '2', label: '藤川' }
+];
 
-    const [selectedAge, setSelectedAge] = useState<string | number>('');
-    const [selectedDate, setSelectedDate] = useState<string | Date>('');
 
-    const handleAgeChange = (value: string | number) => {
-        setSelectedAge(value);
+const priprity = [
+    { value: '0', label: '低' },
+    { value: '1', label: '中' },
+    { value: '2', label: '高' }
+];
+
+export default function TaskEditModal({ handleCloseModal, onSave }: TaskEditModalProps) {
+
+    const [task_name, setTitle] = useState('');
+    const [content, setContent] = useState('');
+    const [priority, setPriority] = useState('0');
+    const [status, setStatus] = useState('0');
+    const [manager, setManager] = useState('0');
+    const [deadline, setDeadline] = useState<string | Date>('2024/01/01');
+    const [startDate, setStartDate] = useState<string | Date>('2024/01/01');
+    const [endDate, setEndDate] = useState<string | Date>('2024/01/01');
+
+    const handleSave = () => {
+        const formData = {
+            task_name,
+            content,
+            priority,
+            status,
+            manager,
+            deadline,
+            startDate,
+            endDate,
+        };
+        onSave(formData); // 親コンポーネントにデータを渡す
     };
-
-    const handleDateChange = (value: string | Date) => {
-        setSelectedDate(value);
-    };
-
 
     return (
         <Box
@@ -60,7 +86,11 @@ export default function TaskEditModal({ handleCloseModal }: TaskEditModalProps) 
                     </Button>
                 </Grid>
                 <Grid size={12}>
-                    <TextField id="outlined-basic" fullWidth label="タイトル" />
+                    <TextField
+                        id="outlined-basic"
+                        fullWidth
+                        value={task_name}
+                        onChange={(e) => setTitle(e.target.value)} />
                 </Grid>
                 <Grid size={12}>
                     <TextField
@@ -70,6 +100,8 @@ export default function TaskEditModal({ handleCloseModal }: TaskEditModalProps) 
                         minRows={11}
                         maxRows={11}
                         fullWidth
+                        value={content}
+                        onChange={(e) => setContent(e.target.value)}
                     />
                 </Grid>
 
@@ -77,9 +109,9 @@ export default function TaskEditModal({ handleCloseModal }: TaskEditModalProps) 
                     <SelectBoxWithText
                         icon={<ThermostatIcon />}
                         label="優先度"
-                        defaultValue="20"
-                        options={testdata}
-                        onChange={handleAgeChange}
+                        defaultValue={priority}
+                        options={priprity}
+                        onChange={setPriority}
                     />
                 </Grid>
                 <Grid size={4}>
@@ -87,8 +119,8 @@ export default function TaskEditModal({ handleCloseModal }: TaskEditModalProps) 
                         <DatePickerWithText
                             icon={<AlarmIcon />}
                             label="期限"
-                            defaultValue="2024/01/01"
-                            onChange={handleDateChange}
+                            defaultValue={deadline}
+                            onChange={setDeadline}
                         />
                     </Grid>
                 </Grid>
@@ -96,9 +128,9 @@ export default function TaskEditModal({ handleCloseModal }: TaskEditModalProps) 
                     <SelectBoxWithText
                         icon={<AssignmentLateIcon />}
                         label="ステータス"
-                        defaultValue=""
-                        options={testdata}
-                        onChange={handleAgeChange}
+                        defaultValue={status}
+                        options={statusdata}
+                        onChange={setStatus}
                     />
                 </Grid>
 
@@ -108,8 +140,8 @@ export default function TaskEditModal({ handleCloseModal }: TaskEditModalProps) 
                         <DatePickerWithText
                             icon={<CalendarMonthIcon />}
                             label="開始"
-                            defaultValue="2024/01/01"
-                            onChange={handleDateChange}
+                            defaultValue={startDate}
+                            onChange={setStartDate}
                         />
                     </Grid>
                 </Grid>
@@ -118,8 +150,8 @@ export default function TaskEditModal({ handleCloseModal }: TaskEditModalProps) 
                         <DatePickerWithText
                             icon={<CalendarMonthIcon />}
                             label="終了"
-                            defaultValue="2024/01/01"
-                            onChange={handleDateChange}
+                            defaultValue={endDate}
+                            onChange={setEndDate}
                         />
                     </Grid>
                 </Grid>
@@ -127,9 +159,9 @@ export default function TaskEditModal({ handleCloseModal }: TaskEditModalProps) 
                     <SelectBoxWithText
                         icon={<PersonIcon />}
                         label="担当者"
-                        defaultValue=""
-                        options={testdata}
-                        onChange={handleAgeChange}
+                        defaultValue={manager}
+                        options={managerdata}
+                        onChange={setManager}
                     />
                 </Grid>
 
@@ -140,7 +172,8 @@ export default function TaskEditModal({ handleCloseModal }: TaskEditModalProps) 
                         </Button>
                     </Grid>
                     <Grid >
-                        <Button startIcon={<SaveIcon />} sx={{ width: '100px' }} size="medium" variant="contained" color="success">
+                        <Button startIcon={<SaveIcon />} sx={{ width: '100px' }} size="medium" variant="contained"
+                            onClick={handleSave} color="success">
                             保存
                         </Button>
                     </Grid>

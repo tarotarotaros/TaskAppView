@@ -5,10 +5,11 @@ import { IconButton, Modal } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import Paper from '@mui/material/Paper';
 import { DataGrid, GridActionsCellItem, GridColDef } from '@mui/x-data-grid';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { createTask, deleteTask, fetchTasks, updateTask } from "../infrastructures/tasks";
+import { CreateTask, Task } from "../types/Task";
 import RemoveConfirmModal from "./RemoveConfirmModal";
 import TaskEditModal from './TaskEditModal';
-
 
 const rows = [
     { id: 1, title: 'title', priority: 0, status: 0, deadline: '2024/01/01', start: '2024/01/01', finish: '2024/01/01', manager: '0' },
@@ -25,6 +26,56 @@ const rows = [
 const paginationModel = { page: 0, pageSize: 20 };
 
 export default function DataTable() {
+
+    const [tasks, setTasks] = useState<Task[]>([]);
+    const [newTask, setNewTask] = useState<CreateTask>({
+        task_name: '',
+        created_by: 'システム',
+        updated_by: 'システム',
+    });
+
+    // タスクの一覧を取得
+    useEffect(() => {
+        const loadTasks = async () => {
+            const fetchedTasks = await fetchTasks();
+            setTasks(fetchedTasks);
+        };
+
+        loadTasks();
+    }, []);
+
+    // 新しいタスクを追加
+    const handleCreateTask = async () => {
+        try {
+            //エラーチェック
+            console.log(newTask)
+            const createdTask = await createTask(newTask);
+            setTasks([...tasks, createdTask]);
+            setNewTask({ task_name: '', created_by: 'システム', updated_by: 'システム' });
+        } catch (error) {
+            console.error('タスクの作成に失敗しました', error);
+        }
+    };
+
+    // タスクを更新
+    const handleUpdateTask = async (taskId: number) => {
+        try {
+            const updatedTask = await updateTask(taskId, { task_name: '更新されたタスク', updated_by: 'システム' });
+            setTasks(tasks.map(task => (task.task_id === taskId ? updatedTask : task)));
+        } catch (error) {
+            console.error('タスクの更新に失敗しました', error);
+        }
+    };
+
+    // タスクを削除
+    const handleDeleteTask = async (taskId: number) => {
+        try {
+            await deleteTask(taskId);
+            setTasks(tasks.filter(task => task.task_id !== taskId));
+        } catch (error) {
+            console.error('タスクの削除に失敗しました', error);
+        }
+    };
 
     const columns: GridColDef[] = [
         { field: 'id', headerName: 'ID', width: 70 },
@@ -67,13 +118,28 @@ export default function DataTable() {
 
     }
 
+    const handleSaveTask = (data: any) => {
+        const newTaskData = {
+            ...data,
+            created_by: 'システム', // 必須フィールド
+            updated_by: 'システム', // 必須フィールド
+        };
+        setNewTask(newTaskData);
+        handleCreateTask();
+        setEditModalIsOpen(false)
+        console.log("Task Data Saved:", newTaskData);
+    };
+
+
     return (
         <div>
             <Grid container spacing={2} justifyContent="center" alignItems="center">
                 <Grid size={12}>
                     <div>
                         <Modal open={isEditModalOpen}>
-                            <TaskEditModal handleCloseModal={handleCloseEditModal} />
+                            <TaskEditModal
+                                handleCloseModal={handleCloseEditModal}
+                                onSave={handleSaveTask} />
                         </Modal>
                         <Modal open={isDeleteConfirmModalOpen}>
                             <RemoveConfirmModal
@@ -94,7 +160,8 @@ export default function DataTable() {
                 <Grid size={12}>
                     <Paper sx={{ height: '90%', width: 'auto' }}>
                         <DataGrid
-                            rows={rows}
+                            rows={tasks}
+                            getRowId={(row) => row.task_id}
                             checkboxSelection
                             columns={columns}
                             initialState={{ pagination: { paginationModel } }}
