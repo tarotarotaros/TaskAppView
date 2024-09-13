@@ -6,6 +6,8 @@ export interface Task {
     content?: string;
     priority?: number;
     deadline?: Date;
+    start?: Date;
+    end?: Date;
     project?: number;
     status?: number;
     miled?: number;
@@ -23,6 +25,8 @@ export interface CreateTask {
     content?: string;
     priority?: number;
     deadline?: Date;
+    start?: Date;
+    end?: Date;
     project?: number;
     status?: number;
     miled?: number;

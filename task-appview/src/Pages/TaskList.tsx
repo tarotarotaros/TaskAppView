@@ -34,8 +34,22 @@ export default function DataTable() {
             headerAlign: 'center',
             align: 'center'
         },
-        { field: 'start', headerName: '開始日', width: 130, headerAlign: 'center', align: 'center' },
-        { field: 'finish', headerName: '終了日', width: 130, headerAlign: 'center', align: 'center' },
+        {
+            field: 'start', headerName: '開始日',
+            type: 'date',
+            valueFormatter: (params) => {
+                return dayjs(params).format('YYYY/MM/DD');;
+            },
+            width: 130, headerAlign: 'center', align: 'center'
+        },
+        {
+            field: 'end', headerName: '終了日',
+            type: 'date',
+            valueFormatter: (params) => {
+                return dayjs(params).format('YYYY/MM/DD');;
+            },
+            width: 130, headerAlign: 'center', align: 'center'
+        },
         { field: 'manager', headerName: '担当者', width: 130, headerAlign: 'center', align: 'center' },
         {
             field: 'actions',

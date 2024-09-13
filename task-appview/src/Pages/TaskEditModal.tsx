@@ -1,6 +1,7 @@
 
 import AlarmIcon from "@mui/icons-material/Alarm";
 import AssignmentLateIcon from "@mui/icons-material/AssignmentLate";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
 import PersonIcon from "@mui/icons-material/Person";
@@ -48,11 +49,11 @@ export default function TaskEditModal({ handleCloseModal, onSave, taskData }: Ta
     const [status, setStatus] = useState(0);
     const [manager, setManager] = useState(0);
     const [deadlineDate, setDeadline] = useState<Date | null>(taskData?.deadline ? new Date(taskData.deadline) : new Date());
-    const [startDate, setStartDate] = useState<string | Date>('2024/01/01');
-    const [endDate, setEndDate] = useState<string | Date>('2024/01/01');
+    const [startDate, setStartDate] = useState<Date | null>(taskData?.start ? new Date(taskData.start) : new Date());
+    const [endDate, setEndDate] = useState<Date | null>(taskData?.end ? new Date(taskData.end) : new Date());
 
     useEffect(() => {
-        let defaultDate = new Date(2024, 1, 1);
+        const defaultDate = new Date();
         if (taskData) {
             setTitle(taskData.task_name || '');
             setContent(taskData.content || '');
@@ -60,17 +61,17 @@ export default function TaskEditModal({ handleCloseModal, onSave, taskData }: Ta
             setStatus(taskData.status || 0);
             setManager(taskData.manager || 0);
             setDeadline(taskData.deadline || defaultDate);
-            //setStartDate(taskData.startDate?.toString() || '2024/01/01');
-            //setEndDate(taskData.endDate?.toString() || '2024/01/01');
+            setStartDate(taskData.start || defaultDate);
+            setEndDate(taskData.end || defaultDate);
         }
-        console.log(taskData?.deadline);
     }, [taskData]);
 
 
     const handleSave = () => {
 
-        //let deadline = dayjs(deadlineDate).format('YYYY-MM-DD HH:mm:ss');
         let deadline = deadlineDate;
+        let start = startDate;
+        let end = endDate;
 
         if (taskData !== null) {
 
@@ -84,8 +85,8 @@ export default function TaskEditModal({ handleCloseModal, onSave, taskData }: Ta
                 deadline,
                 status,
                 manager,
-                //startDate,
-                //endDate,
+                start,
+                end,
             };
             onSave(formData); // 親コンポーネントにデータを渡す
         }
@@ -98,8 +99,8 @@ export default function TaskEditModal({ handleCloseModal, onSave, taskData }: Ta
                 deadline,
                 status,
                 manager,
-                //startDate,
-                //endDate,
+                start,
+                end,
             };
             onSave(formData); // 親コンポーネントにデータを渡す
 
@@ -178,7 +179,7 @@ export default function TaskEditModal({ handleCloseModal, onSave, taskData }: Ta
                 </Grid>
 
 
-                {/* <Grid size={4}>
+                <Grid size={4}>
                     <Grid>
                         <DatePickerWithText
                             icon={<CalendarMonthIcon />}
@@ -197,7 +198,7 @@ export default function TaskEditModal({ handleCloseModal, onSave, taskData }: Ta
                             onChange={setEndDate}
                         />
                     </Grid>
-                </Grid> */}
+                </Grid>
                 <Grid size={4}>
                     <SelectBoxWithText
                         icon={<PersonIcon />}
