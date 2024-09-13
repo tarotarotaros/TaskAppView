@@ -17,52 +17,6 @@ const paginationModel = { page: 0, pageSize: 20 };
 
 export default function DataTable() {
 
-    const [tasks, setTasks] = useState<Task[]>([]);
-
-    // タスクの一覧を取得
-    useEffect(() => {
-        const loadTasks = async () => {
-            const fetchedTasks = await fetchTasks();
-            console.log(fetchedTasks);
-            setTasks(fetchedTasks);
-        };
-
-        loadTasks();
-    }, []);
-
-    // 新しいタスクを追加
-    const handleCreateTask = async (task: any) => {
-        try {
-            //エラーチェック
-            console.log("handleCreateTask:" + task);
-            const createdTask = await createTask(task);
-            setTasks([...tasks, createdTask]);
-        } catch (error) {
-            console.error('タスクの作成に失敗しました', error);
-        }
-    };
-
-    // タスクを更新
-    const handleUpdateTask = async (taskId: number, task: any) => {
-        try {
-            console.log("id:" + taskId + "task:" + task);
-            const updatedTask = await updateTask(taskId, task);
-            setTasks(tasks.map(task => (task.task_id === taskId ? updatedTask : task)));
-        } catch (error) {
-            console.error('タスクの更新に失敗しました', error);
-        }
-    };
-
-    // タスクを削除
-    const handleDeleteTask = async (taskId: number) => {
-        try {
-            await deleteTask(taskId);
-            setTasks(tasks.filter(task => task.task_id !== taskId));
-        } catch (error) {
-            console.error('タスクの削除に失敗しました', error);
-        }
-    };
-
     // 列定義
     const columns: GridColDef[] = [
         { field: 'task_id', headerName: 'ID', width: 100, headerAlign: 'center', align: 'center' },
@@ -102,37 +56,96 @@ export default function DataTable() {
         },
     ];
 
+    const [tasks, setTasks] = useState<Task[]>([]);
     const [isEditModalOpen, setEditModalIsOpen] = useState(false);
-    const [selectedTask, setSelectedTask] = useState<any | null>(null);  // 選択されたタスクを保持する
+    const [isDeleteConfirmModalOpen, setRemoveConfirmModalIsOpen] = useState(false);
+    const [selectedTask, setSelectedTask] = useState<any | null>(null);
+    const [checkedRowTaskIds, SetCheckedRowTaskIds] = useState<number[]>([]);
     const [lastModalStatus, SetLastEditModalStatus] = useState<TaskEditModalStatus>(TaskEditModalStatus.Add);
 
-    const handleCloseEditModal = () => setEditModalIsOpen(false);
+    // タスクの一覧を取得
+    useEffect(() => {
+        const loadTasks = async () => {
+            const fetchedTasks = await fetchTasks();
+            console.log(fetchedTasks);
+            setTasks(fetchedTasks);
+        };
 
-    const [isDeleteConfirmModalOpen, setRemoveConfirmModalIsOpen] = useState(false);
+        loadTasks();
+    }, []);
+
+    // 新しいタスクを追加
+    const handleCreateTask = async (task: any) => {
+        try {
+            //エラーチェック
+            console.log("handleCreateTask:" + task);
+            const createdTask = await createTask(task);
+            setTasks([...tasks, createdTask]);
+        } catch (error) {
+            console.error('タスクの作成に失敗しました', error);
+        }
+    };
+
+    // タスクを更新
+    const handleUpdateTask = async (taskId: number, task: any) => {
+        try {
+            console.log("id:" + taskId + "task:" + task);
+            const updatedTask = await updateTask(taskId, task);
+            setTasks(tasks.map(task => (task.task_id === taskId ? updatedTask : task)));
+        } catch (error) {
+            console.error('タスクの更新に失敗しました', error);
+        }
+    };
+
+    // 複数のタスクを削除
+    const handleDeleteTasks = async (taskIds: number[]) => {
+        try {
+            // すべての taskId に対して削除処理を実行
+            await Promise.all(taskIds.map(taskId => deleteTask(taskId)));
+
+            // tasks 配列から削除された taskIds に一致しないタスクのみを残す
+            setTasks(tasks.filter(task => !taskIds.includes(task.task_id)));
+        } catch (error) {
+            console.error('タスクの削除に失敗しました', error);
+        }
+    };
+
+    // 削除確認画面オープン
     const handleOpenDeleteConfirmModal = () => setRemoveConfirmModalIsOpen(true);
+
+    // 削除確認画面クローズ    
     const handleCloseDeleteConfirmModal = () => setRemoveConfirmModalIsOpen(false);
 
+    // 削除ボタンクリック処理
     const handleDeleteModal = () => {
-
+        handleDeleteTasks(checkedRowTaskIds);
+        setRemoveConfirmModalIsOpen(false);
     }
 
-
+    // 編集モーダル開く処理
     const handleOpenEditModal = (row: any) => {
-        //setSelectedTask(task);  // クリックされた行のタスクを設定
         setSelectedTask(row);
-        if (row == null) {
-            SetLastEditModalStatus(TaskEditModalStatus.Add);
-        } else {
+        if ('task_id' in row) {
+            console.log("編集モード");
             SetLastEditModalStatus(TaskEditModalStatus.Edit);
+        } else {
+            console.log("追加モード");
+            SetLastEditModalStatus(TaskEditModalStatus.Add);
         }
 
         setEditModalIsOpen(true);
     };
 
+    // 編集モーダルクローズ
+    const handleCloseEditModal = () => setEditModalIsOpen(false);
 
+    // 行のチェック変更
+    const handleSelectionChange = (selectionModel: any) => {
+        SetCheckedRowTaskIds(selectionModel); // 選択された行のIDを保存
+    };
+
+    // モーダルよりデータ保存イベント
     const handleSaveTask = (data: any) => {
-
-
         if (lastModalStatus === TaskEditModalStatus.Add) {
             const newTaskData = {
                 ...data,
@@ -144,7 +157,6 @@ export default function DataTable() {
         else if (lastModalStatus === TaskEditModalStatus.Edit) {
             const updateTaskData = {
                 ...data,
-                // created_by: 'システム', // 必須フィールド
                 updated_by: 'システム', // 必須フィールド
             };
             handleUpdateTask(data.task_id, updateTaskData);
@@ -152,6 +164,7 @@ export default function DataTable() {
 
         setEditModalIsOpen(false)
     };
+
 
 
     return (
@@ -174,9 +187,9 @@ export default function DataTable() {
                 </Grid>
                 <Grid my={2} size={12} justifyContent="end" spacing={1} container>
                     <Grid >
-                        <IconButton aria-label="add" onClick={handleOpenEditModal}
-                        //taskData={selectedTask}  // 選択されたタスクデータを渡す
-                        ><AddIcon /></IconButton>
+                        <IconButton aria-label="add" onClick={handleOpenEditModal}>
+                            <AddIcon />
+                        </IconButton>
                     </Grid>
                     <Grid >
                         <IconButton aria-label="delete" onClick={handleOpenDeleteConfirmModal} ><DeleteIcon /></IconButton>
@@ -186,6 +199,7 @@ export default function DataTable() {
                 <Grid size={12}>
                     <Paper sx={{ height: '90%', width: 'auto' }}>
                         <DataGrid
+                            onRowSelectionModelChange={handleSelectionChange} // 選択モデルが変わったら呼ばれる
                             rows={tasks}
                             getRowId={(row) => row.task_id}
                             checkboxSelection
