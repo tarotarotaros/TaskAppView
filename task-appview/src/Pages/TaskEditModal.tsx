@@ -1,7 +1,6 @@
 
 import AlarmIcon from "@mui/icons-material/Alarm";
 import AssignmentLateIcon from "@mui/icons-material/AssignmentLate";
-import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
 import PersonIcon from "@mui/icons-material/Person";
@@ -9,13 +8,15 @@ import SaveIcon from "@mui/icons-material/Save";
 import ThermostatIcon from "@mui/icons-material/Thermostat";
 import { Box, Button, TextField } from '@mui/material';
 import Grid from '@mui/material/Grid2';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { Task } from "../types/Task";
 import DatePickerWithText from "./DatePickerWithText";
 import SelectBoxWithText from "./SelectBoxWithText";
 
 type TaskEditModalProps = {
     handleCloseModal: React.MouseEventHandler<HTMLButtonElement>;
     onSave: (data: any) => void; // 保存時にデータを親に渡す関数
+    taskData?: Task; // 編集する既存のタスクデータ
 };
 
 const statusdata = [
@@ -39,29 +40,71 @@ const priprity = [
     { value: '2', label: '高' }
 ];
 
-export default function TaskEditModal({ handleCloseModal, onSave }: TaskEditModalProps) {
+export default function TaskEditModal({ handleCloseModal, onSave, taskData }: TaskEditModalProps) {
 
     const [task_name, setTitle] = useState('');
     const [content, setContent] = useState('');
-    const [priority, setPriority] = useState('0');
-    const [status, setStatus] = useState('0');
-    const [manager, setManager] = useState('0');
-    const [deadline, setDeadline] = useState<string | Date>('2024/01/01');
+    const [priority, setPriority] = useState(0);
+    const [status, setStatus] = useState(0);
+    const [manager, setManager] = useState(0);
+    const [deadlineDate, setDeadline] = useState<Date | null>(taskData?.deadline ? new Date(taskData.deadline) : new Date());
     const [startDate, setStartDate] = useState<string | Date>('2024/01/01');
     const [endDate, setEndDate] = useState<string | Date>('2024/01/01');
 
+    useEffect(() => {
+        let defaultDate = new Date(2024, 1, 1);
+        if (taskData) {
+            setTitle(taskData.task_name || '');
+            setContent(taskData.content || '');
+            setPriority(taskData.priority || 0);
+            setStatus(taskData.status || 0);
+            setManager(taskData.manager || 0);
+            setDeadline(taskData.deadline || defaultDate);
+            //setStartDate(taskData.startDate?.toString() || '2024/01/01');
+            //setEndDate(taskData.endDate?.toString() || '2024/01/01');
+        }
+        console.log(taskData?.deadline);
+    }, [taskData]);
+
+
     const handleSave = () => {
-        const formData = {
-            task_name,
-            content,
-            priority,
-            status,
-            manager,
-            deadline,
-            startDate,
-            endDate,
-        };
-        onSave(formData); // 親コンポーネントにデータを渡す
+
+        //let deadline = dayjs(deadlineDate).format('YYYY-MM-DD HH:mm:ss');
+        let deadline = deadlineDate;
+
+        if (taskData !== null) {
+
+            let task_id = taskData?.task_id;
+
+            let formData = {
+                task_id,
+                task_name,
+                content,
+                priority,
+                deadline,
+                status,
+                manager,
+                //startDate,
+                //endDate,
+            };
+            onSave(formData); // 親コンポーネントにデータを渡す
+        }
+        else {
+
+            let formData = {
+                task_name,
+                content,
+                priority,
+                deadline,
+                status,
+                manager,
+                //startDate,
+                //endDate,
+            };
+            onSave(formData); // 親コンポーネントにデータを渡す
+
+        }
+
     };
 
     return (
@@ -119,7 +162,7 @@ export default function TaskEditModal({ handleCloseModal, onSave }: TaskEditModa
                         <DatePickerWithText
                             icon={<AlarmIcon />}
                             label="期限"
-                            defaultValue={deadline}
+                            defaultValue={deadlineDate}
                             onChange={setDeadline}
                         />
                     </Grid>
@@ -135,7 +178,7 @@ export default function TaskEditModal({ handleCloseModal, onSave }: TaskEditModa
                 </Grid>
 
 
-                <Grid size={4}>
+                {/* <Grid size={4}>
                     <Grid>
                         <DatePickerWithText
                             icon={<CalendarMonthIcon />}
@@ -154,7 +197,7 @@ export default function TaskEditModal({ handleCloseModal, onSave }: TaskEditModa
                             onChange={setEndDate}
                         />
                     </Grid>
-                </Grid>
+                </Grid> */}
                 <Grid size={4}>
                     <SelectBoxWithText
                         icon={<PersonIcon />}

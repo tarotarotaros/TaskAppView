@@ -5,12 +5,12 @@ export interface Task {
     task_name: string;
     content?: string;
     priority?: number;
-    deadline?: string;
+    deadline?: Date;
     project?: number;
     status?: number;
     miled?: number;
     milestone?: string;
-    manager?: string;
+    manager?: number;
     created_by: string;
     updated_by: string;
     created_at: string;
@@ -22,12 +22,12 @@ export interface CreateTask {
     task_name: string;
     content?: string;
     priority?: number;
-    deadline?: string;
+    deadline?: Date;
     project?: number;
     status?: number;
     miled?: number;
     milestone?: string;
-    manager?: string;
+    manager?: number;
     created_by: string;
     updated_by: string;
 }

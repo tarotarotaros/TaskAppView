@@ -7,15 +7,15 @@ interface SelectBoxWithTextProps {
     icon: React.ReactNode;
     label: string;
     options: { value: string | number, label: string }[];
-    defaultValue: string;
-    onChange: (value: string) => void; // 選択された値を親に渡すコールバック
+    defaultValue: number;
+    onChange: (value: number) => void; // 選択された値を親に渡すコールバック
 }
 
 export default function SelectBoxWithText({ icon, label, options, defaultValue, onChange }: SelectBoxWithTextProps) {
-    const [selectedValue, setSelectedValue] = React.useState<string>(defaultValue);
+    const [selectedValue, setSelectedValue] = React.useState<number>(defaultValue);
 
-    const handleChange = (event: SelectChangeEvent<string>) => {
-        const value = event.target.value;
+    const handleChange = (event: SelectChangeEvent<number>) => {
+        const value: number = (event.target.value as number);
         setSelectedValue(value);
         onChange(value); // 親に選択された値を渡す
     };

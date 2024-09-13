@@ -5,39 +5,25 @@ import { IconButton, Modal } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import Paper from '@mui/material/Paper';
 import { DataGrid, GridActionsCellItem, GridColDef } from '@mui/x-data-grid';
+import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import { createTask, deleteTask, fetchTasks, updateTask } from "../infrastructures/tasks";
-import { CreateTask, Task } from "../types/Task";
+import { Task } from "../types/Task";
 import RemoveConfirmModal from "./RemoveConfirmModal";
 import TaskEditModal from './TaskEditModal';
-
-const rows = [
-    { id: 1, title: 'title', priority: 0, status: 0, deadline: '2024/01/01', start: '2024/01/01', finish: '2024/01/01', manager: '0' },
-    { id: 2, title: 'title', priority: 1, status: 1, deadline: '2024/01/01', start: '2024/01/01', finish: '2024/01/01', manager: '0' },
-    { id: 3, title: 'title', priority: 2, status: 2, deadline: '2024/01/01', start: '2024/01/01', finish: '2024/01/01', manager: '0' },
-    { id: 4, title: 'title', priority: 0, status: 0, deadline: '2024/01/01', start: '2024/01/01', finish: '2024/01/01', manager: '0' },
-    { id: 5, title: 'title', priority: 1, status: 1, deadline: '2024/01/01', start: '2024/01/01', finish: '2024/01/01', manager: '0' },
-    { id: 6, title: 'title', priority: 2, status: 2, deadline: '2024/01/01', start: '2024/01/01', finish: '2024/01/01', manager: '0' },
-    { id: 7, title: 'title', priority: 0, status: 0, deadline: '2024/01/01', start: '2024/01/01', finish: '2024/01/01', manager: '0' },
-    { id: 8, title: 'title', priority: 1, status: 1, deadline: '2024/01/01', start: '2024/01/01', finish: '2024/01/01', manager: '0' },
-    { id: 9, title: 'title', priority: 2, status: 2, deadline: '2024/01/01', start: '2024/01/01', finish: '2024/01/01', manager: '0' },
-];
+import TaskEditModalStatus from './TaskEditModalStatus';
 
 const paginationModel = { page: 0, pageSize: 20 };
 
 export default function DataTable() {
 
     const [tasks, setTasks] = useState<Task[]>([]);
-    const [newTask, setNewTask] = useState<CreateTask>({
-        task_name: '',
-        created_by: 'システム',
-        updated_by: 'システム',
-    });
 
     // タスクの一覧を取得
     useEffect(() => {
         const loadTasks = async () => {
             const fetchedTasks = await fetchTasks();
+            console.log(fetchedTasks);
             setTasks(fetchedTasks);
         };
 
@@ -45,22 +31,22 @@ export default function DataTable() {
     }, []);
 
     // 新しいタスクを追加
-    const handleCreateTask = async () => {
+    const handleCreateTask = async (task: any) => {
         try {
             //エラーチェック
-            console.log(newTask)
-            const createdTask = await createTask(newTask);
+            console.log("handleCreateTask:" + task);
+            const createdTask = await createTask(task);
             setTasks([...tasks, createdTask]);
-            setNewTask({ task_name: '', created_by: 'システム', updated_by: 'システム' });
         } catch (error) {
             console.error('タスクの作成に失敗しました', error);
         }
     };
 
     // タスクを更新
-    const handleUpdateTask = async (taskId: number) => {
+    const handleUpdateTask = async (taskId: number, task: any) => {
         try {
-            const updatedTask = await updateTask(taskId, { task_name: '更新されたタスク', updated_by: 'システム' });
+            console.log("id:" + taskId + "task:" + task);
+            const updatedTask = await updateTask(taskId, task);
             setTasks(tasks.map(task => (task.task_id === taskId ? updatedTask : task)));
         } catch (error) {
             console.error('タスクの更新に失敗しました', error);
@@ -77,37 +63,49 @@ export default function DataTable() {
         }
     };
 
+    // 列定義
     const columns: GridColDef[] = [
-        { field: 'id', headerName: 'ID', width: 70 },
-        { field: 'title', headerName: 'タイトル', width: 130 },
-        { field: 'priority', headerName: '優先度', width: 130 },
-        { field: 'status', headerName: 'ステータス', width: 130 },
-        { field: 'deadline', headerName: '期限', width: 130 },
-        { field: 'start', headerName: '開始日', width: 130 },
-        { field: 'finish', headerName: '終了日', width: 130 },
-        { field: 'manager', headerName: '担当者', width: 130 },
+        { field: 'task_id', headerName: 'ID', width: 100, headerAlign: 'center', align: 'center' },
+        { field: 'task_name', headerName: 'タイトル', width: 250, headerAlign: 'center', align: 'center' },
+        { field: 'priority', headerName: '優先度', width: 130, headerAlign: 'center', align: 'center' },
+        { field: 'status', headerName: 'ステータス', width: 130, headerAlign: 'center', align: 'center' },
+        {
+            field: 'deadline',
+            type: 'date',
+            valueFormatter: (params) => {
+                return dayjs(params).format('YYYY/MM/DD');;
+            },
+            headerName: '期限',
+            width: 130,
+            headerAlign: 'center',
+            align: 'center'
+        },
+        { field: 'start', headerName: '開始日', width: 130, headerAlign: 'center', align: 'center' },
+        { field: 'finish', headerName: '終了日', width: 130, headerAlign: 'center', align: 'center' },
+        { field: 'manager', headerName: '担当者', width: 130, headerAlign: 'center', align: 'center' },
         {
             field: 'actions',
             type: 'actions',
             headerName: '編集',
             width: 100,
             cellClassName: 'actions',
-            getActions: () => {
-                return [
-                    <GridActionsCellItem
-                        icon={<EditIcon />}
-                        label="Edit"
-                        className="textPrimary"
-                        onClick={handleOpenEditModal}
-                        color="inherit"
-                    />
-                ];
-            },
+            renderCell: (params) => (
+                <GridActionsCellItem
+                    icon={<EditIcon />}
+                    label="Edit"
+                    className="textPrimary"
+                    onClick={() => handleOpenEditModal(params.row)}
+                    color="inherit"
+                />),
+            headerAlign: 'center',
+            align: 'center'
         },
     ];
 
     const [isEditModalOpen, setEditModalIsOpen] = useState(false);
-    const handleOpenEditModal = () => setEditModalIsOpen(true);
+    const [selectedTask, setSelectedTask] = useState<any | null>(null);  // 選択されたタスクを保持する
+    const [lastModalStatus, SetLastEditModalStatus] = useState<TaskEditModalStatus>(TaskEditModalStatus.Add);
+
     const handleCloseEditModal = () => setEditModalIsOpen(false);
 
     const [isDeleteConfirmModalOpen, setRemoveConfirmModalIsOpen] = useState(false);
@@ -118,16 +116,41 @@ export default function DataTable() {
 
     }
 
+
+    const handleOpenEditModal = (row: any) => {
+        //setSelectedTask(task);  // クリックされた行のタスクを設定
+        setSelectedTask(row);
+        if (row == null) {
+            SetLastEditModalStatus(TaskEditModalStatus.Add);
+        } else {
+            SetLastEditModalStatus(TaskEditModalStatus.Edit);
+        }
+
+        setEditModalIsOpen(true);
+    };
+
+
     const handleSaveTask = (data: any) => {
-        const newTaskData = {
-            ...data,
-            created_by: 'システム', // 必須フィールド
-            updated_by: 'システム', // 必須フィールド
-        };
-        setNewTask(newTaskData);
-        handleCreateTask();
+
+
+        if (lastModalStatus === TaskEditModalStatus.Add) {
+            const newTaskData = {
+                ...data,
+                created_by: 'システム', // 必須フィールド
+                updated_by: 'システム', // 必須フィールド
+            };
+            handleCreateTask(newTaskData);
+        }
+        else if (lastModalStatus === TaskEditModalStatus.Edit) {
+            const updateTaskData = {
+                ...data,
+                // created_by: 'システム', // 必須フィールド
+                updated_by: 'システム', // 必須フィールド
+            };
+            handleUpdateTask(data.task_id, updateTaskData);
+        }
+
         setEditModalIsOpen(false)
-        console.log("Task Data Saved:", newTaskData);
     };
 
 
@@ -139,7 +162,8 @@ export default function DataTable() {
                         <Modal open={isEditModalOpen}>
                             <TaskEditModal
                                 handleCloseModal={handleCloseEditModal}
-                                onSave={handleSaveTask} />
+                                onSave={handleSaveTask}
+                                taskData={selectedTask} />
                         </Modal>
                         <Modal open={isDeleteConfirmModalOpen}>
                             <RemoveConfirmModal
@@ -150,7 +174,9 @@ export default function DataTable() {
                 </Grid>
                 <Grid my={2} size={12} justifyContent="end" spacing={1} container>
                     <Grid >
-                        <IconButton aria-label="add" onClick={handleOpenEditModal}><AddIcon /></IconButton>
+                        <IconButton aria-label="add" onClick={handleOpenEditModal}
+                        //taskData={selectedTask}  // 選択されたタスクデータを渡す
+                        ><AddIcon /></IconButton>
                     </Grid>
                     <Grid >
                         <IconButton aria-label="delete" onClick={handleOpenDeleteConfirmModal} ><DeleteIcon /></IconButton>
@@ -170,6 +196,6 @@ export default function DataTable() {
                         />
                     </Paper>
                 </Grid></Grid>
-        </div>
+        </div >
     );
 }
