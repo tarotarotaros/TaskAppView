@@ -7,7 +7,10 @@ import Paper from '@mui/material/Paper';
 import { DataGrid, GridActionsCellItem, GridColDef } from '@mui/x-data-grid';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
+import { fetchAssignees } from "../infrastructures/assignees";
 import { createTask, deleteTask, fetchTasks, updateTask } from "../infrastructures/tasks";
+import { Assignee } from "../types/Assignee";
+import { SelectDataItem } from "../types/SelectDataItem";
 import { Task } from "../types/Task";
 import RemoveConfirmModal from "./RemoveConfirmModal";
 import TaskEditModal from './TaskEditModal';
@@ -50,7 +53,16 @@ export default function DataTable() {
             },
             width: 130, headerAlign: 'center', align: 'center'
         },
-        { field: 'manager', headerName: '担当者', width: 130, headerAlign: 'center', align: 'center' },
+        {
+            field: 'assignee', headerName: '担当者', width: 130, headerAlign: 'center', align: 'center',
+
+            valueGetter: (params) => {
+                console.log("test:" + "params:" + params + "assignee:" + assigneeselectdatas);
+                const result = assigneeselectdatas.find(item => item.value === params);
+                return result ? result.label : "";
+            },
+
+        },
         {
             field: 'actions',
             type: 'actions',
@@ -71,18 +83,25 @@ export default function DataTable() {
     ];
 
     const [tasks, setTasks] = useState<Task[]>([]);
+    const [assigneeselectdatas, setAssigneeSelectDatas] = useState<SelectDataItem[]>([]);
     const [isEditModalOpen, setEditModalIsOpen] = useState(false);
     const [isDeleteConfirmModalOpen, setRemoveConfirmModalIsOpen] = useState(false);
     const [selectedTask, setSelectedTask] = useState<any | null>(null);
     const [checkedRowTaskIds, SetCheckedRowTaskIds] = useState<number[]>([]);
     const [lastModalStatus, SetLastEditModalStatus] = useState<TaskEditModalStatus>(TaskEditModalStatus.Add);
 
-    // タスクの一覧を取得
+    // タスクの一覧/担当者一覧を取得
     useEffect(() => {
         const loadTasks = async () => {
             const fetchedTasks = await fetchTasks();
-            console.log(fetchedTasks);
             setTasks(fetchedTasks);
+
+            const fetchedAssignees: Assignee[] = await fetchAssignees();
+            let assigneedata = fetchedAssignees.map(assignee => ({
+                value: assignee.id.toString(), // 数値を文字列に変換
+                label: assignee.name
+            }));
+            setAssigneeSelectDatas(assigneedata);
         };
 
         loadTasks();
@@ -190,7 +209,8 @@ export default function DataTable() {
                             <TaskEditModal
                                 handleCloseModal={handleCloseEditModal}
                                 onSave={handleSaveTask}
-                                taskData={selectedTask} />
+                                taskData={selectedTask}
+                                assigneeSelectDataItem={assigneeselectdatas} />
                         </Modal>
                         <Modal open={isDeleteConfirmModalOpen}>
                             <RemoveConfirmModal

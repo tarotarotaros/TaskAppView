@@ -10,6 +10,7 @@ import ThermostatIcon from "@mui/icons-material/Thermostat";
 import { Box, Button, TextField } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { useEffect, useState } from 'react';
+import { SelectDataItem } from "../types/SelectDataItem";
 import { Task } from "../types/Task";
 import DatePickerWithText from "./DatePickerWithText";
 import SelectBoxWithText from "./SelectBoxWithText";
@@ -18,6 +19,7 @@ type TaskEditModalProps = {
     handleCloseModal: React.MouseEventHandler<HTMLButtonElement>;
     onSave: (data: any) => void; // 保存時にデータを親に渡す関数
     taskData?: Task; // 編集する既存のタスクデータ
+    assigneeSelectDataItem: SelectDataItem[];
 };
 
 const statusdata = [
@@ -41,13 +43,13 @@ const priprity = [
     { value: '2', label: '高' }
 ];
 
-export default function TaskEditModal({ handleCloseModal, onSave, taskData }: TaskEditModalProps) {
+export default function TaskEditModal({ handleCloseModal, onSave, taskData, assigneeSelectDataItem }: TaskEditModalProps) {
 
     const [task_name, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [priority, setPriority] = useState(0);
     const [status, setStatus] = useState(0);
-    const [manager, setManager] = useState(0);
+    const [assignee, setAssignee] = useState(0);
     const [deadlineDate, setDeadline] = useState<Date | null>(taskData?.deadline ? new Date(taskData.deadline) : new Date());
     const [startDate, setStartDate] = useState<Date | null>(taskData?.start ? new Date(taskData.start) : new Date());
     const [endDate, setEndDate] = useState<Date | null>(taskData?.end ? new Date(taskData.end) : new Date());
@@ -59,7 +61,7 @@ export default function TaskEditModal({ handleCloseModal, onSave, taskData }: Ta
             setContent(taskData.content || '');
             setPriority(taskData.priority || 0);
             setStatus(taskData.status || 0);
-            setManager(taskData.manager || 0);
+            setAssignee(taskData.assignee || 0);
             setDeadline(taskData.deadline || defaultDate);
             setStartDate(taskData.start || defaultDate);
             setEndDate(taskData.end || defaultDate);
@@ -84,7 +86,7 @@ export default function TaskEditModal({ handleCloseModal, onSave, taskData }: Ta
                 priority,
                 deadline,
                 status,
-                manager,
+                assignee,
                 start,
                 end,
             };
@@ -98,7 +100,7 @@ export default function TaskEditModal({ handleCloseModal, onSave, taskData }: Ta
                 priority,
                 deadline,
                 status,
-                manager,
+                assignee,
                 start,
                 end,
             };
@@ -203,9 +205,9 @@ export default function TaskEditModal({ handleCloseModal, onSave, taskData }: Ta
                     <SelectBoxWithText
                         icon={<PersonIcon />}
                         label="担当者"
-                        defaultValue={manager}
-                        options={managerdata}
-                        onChange={setManager}
+                        defaultValue={assignee}
+                        options={assigneeSelectDataItem}
+                        onChange={setAssignee}
                     />
                 </Grid>
 

@@ -1,11 +1,10 @@
 import axios from 'axios';
-import { CreateTask } from '../types/Task';
+import { CreateAssignee } from '../types/Assignee';
 import { BASE_URL, getAuthToken } from './API';
 
-const TASK_API_URL = BASE_URL + "tasks";
+const ASSIGNEE_API_URL = BASE_URL + "assignees";
 
-// タスク一覧を取得
-export const fetchTasks = async () => {
+export const fetchAssignees = async () => {
     const token = getAuthToken();
 
     if (!token) {
@@ -13,7 +12,7 @@ export const fetchTasks = async () => {
     }
 
     try {
-        const response = await axios.get(TASK_API_URL, {
+        const response = await axios.get(ASSIGNEE_API_URL, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
@@ -26,8 +25,8 @@ export const fetchTasks = async () => {
     }
 };
 
-// タスクを新規作成
-export const createTask = async (taskData: CreateTask) => {
+// 担当者を新規作成
+export const createAssignee = async (assigneeData: CreateAssignee) => {
     const token = getAuthToken();
 
     if (!token) {
@@ -35,7 +34,7 @@ export const createTask = async (taskData: CreateTask) => {
     }
 
     try {
-        const response = await axios.post(TASK_API_URL, taskData, {
+        const response = await axios.post(ASSIGNEE_API_URL, assigneeData, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
@@ -48,8 +47,8 @@ export const createTask = async (taskData: CreateTask) => {
 };
 
 
-// タスクを更新
-export const updateTask = async (taskId: number, taskData: Partial<CreateTask>) => {
+// 担当者を更新
+export const updateAssignee = async (assigneeId: number, assigneeData: Partial<CreateAssignee>) => {
     const token = getAuthToken();
 
     if (!token) {
@@ -57,7 +56,7 @@ export const updateTask = async (taskId: number, taskData: Partial<CreateTask>) 
     }
 
     try {
-        const response = await axios.put(`${TASK_API_URL}/${taskId}`, taskData, {
+        const response = await axios.put(`${ASSIGNEE_API_URL}/${assigneeId}`, assigneeData, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
@@ -70,8 +69,8 @@ export const updateTask = async (taskId: number, taskData: Partial<CreateTask>) 
 };
 
 
-// タスクを削除
-export const deleteTask = async (taskId: number) => {
+// 担当者を削除
+export const deleteAssignee = async (assigneeId: number) => {
     const token = getAuthToken();
 
     if (!token) {
@@ -79,7 +78,7 @@ export const deleteTask = async (taskId: number) => {
     }
 
     try {
-        await axios.delete(`${TASK_API_URL}/${taskId}`, {
+        await axios.delete(`${ASSIGNEE_API_URL}/${assigneeId}`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
