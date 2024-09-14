@@ -3,13 +3,12 @@ import AlarmIcon from "@mui/icons-material/Alarm";
 import AssignmentLateIcon from "@mui/icons-material/AssignmentLate";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import CloseIcon from "@mui/icons-material/Close";
-import DeleteIcon from "@mui/icons-material/Delete";
 import PersonIcon from "@mui/icons-material/Person";
 import SaveIcon from "@mui/icons-material/Save";
 import ThermostatIcon from "@mui/icons-material/Thermostat";
 import { Box, Button, TextField } from '@mui/material';
 import Grid from '@mui/material/Grid2';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { SelectDataItem } from "../types/SelectDataItem";
 import { Task } from "../types/Task";
 import DatePickerWithText from "./DatePickerWithText";
@@ -20,54 +19,20 @@ type TaskEditModalProps = {
     onSave: (data: any) => void; // 保存時にデータを親に渡す関数
     taskData?: Task; // 編集する既存のタスクデータ
     assigneeSelectDataItem: SelectDataItem[];
+    priorirySelectDataItem: SelectDataItem[];
+    statusSelectDataItem: SelectDataItem[];
 };
 
-const statusdata = [
-    { value: '0', label: '未着手' },
-    { value: '1', label: '対応中' },
-    { value: '2', label: '対応済' },
-    { value: '3', label: '完了' },
-    { value: '10', label: '保留' },
-];
+export default function TaskEditModal({ handleCloseModal, onSave, taskData, assigneeSelectDataItem, priorirySelectDataItem, statusSelectDataItem }: TaskEditModalProps) {
 
-const managerdata = [
-    { value: '0', label: '未定' },
-    { value: '1', label: '赤星' },
-    { value: '2', label: '藤川' }
-];
-
-
-const priprity = [
-    { value: '0', label: '低' },
-    { value: '1', label: '中' },
-    { value: '2', label: '高' }
-];
-
-export default function TaskEditModal({ handleCloseModal, onSave, taskData, assigneeSelectDataItem }: TaskEditModalProps) {
-
-    const [task_name, setTitle] = useState('');
-    const [content, setContent] = useState('');
-    const [priority, setPriority] = useState(0);
-    const [status, setStatus] = useState(0);
-    const [assignee, setAssignee] = useState(0);
+    const [task_name, setTitle] = useState(taskData?.task_name ? taskData.task_name : '');
+    const [content, setContent] = useState(taskData?.content ? taskData.content : '');
+    const [priority, setPriority] = useState(taskData?.priority ? taskData?.priority : 1);
+    const [status, setStatus] = useState(taskData?.status ? taskData?.status : 1);
+    const [assignee, setAssignee] = useState(taskData?.assignee ? taskData?.assignee : 1);
     const [deadlineDate, setDeadline] = useState<Date | null>(taskData?.deadline ? new Date(taskData.deadline) : new Date());
     const [startDate, setStartDate] = useState<Date | null>(taskData?.start ? new Date(taskData.start) : new Date());
     const [endDate, setEndDate] = useState<Date | null>(taskData?.end ? new Date(taskData.end) : new Date());
-
-    useEffect(() => {
-        const defaultDate = new Date();
-        if (taskData) {
-            setTitle(taskData.task_name || '');
-            setContent(taskData.content || '');
-            setPriority(taskData.priority || 0);
-            setStatus(taskData.status || 0);
-            setAssignee(taskData.assignee || 0);
-            setDeadline(taskData.deadline || defaultDate);
-            setStartDate(taskData.start || defaultDate);
-            setEndDate(taskData.end || defaultDate);
-        }
-    }, [taskData]);
-
 
     const handleSave = () => {
 
@@ -105,9 +70,7 @@ export default function TaskEditModal({ handleCloseModal, onSave, taskData, assi
                 end,
             };
             onSave(formData); // 親コンポーネントにデータを渡す
-
         }
-
     };
 
     return (
@@ -156,7 +119,7 @@ export default function TaskEditModal({ handleCloseModal, onSave, taskData, assi
                         icon={<ThermostatIcon />}
                         label="優先度"
                         defaultValue={priority}
-                        options={priprity}
+                        options={priorirySelectDataItem}
                         onChange={setPriority}
                     />
                 </Grid>
@@ -175,7 +138,7 @@ export default function TaskEditModal({ handleCloseModal, onSave, taskData, assi
                         icon={<AssignmentLateIcon />}
                         label="ステータス"
                         defaultValue={status}
-                        options={statusdata}
+                        options={statusSelectDataItem}
                         onChange={setStatus}
                     />
                 </Grid>
@@ -212,11 +175,6 @@ export default function TaskEditModal({ handleCloseModal, onSave, taskData, assi
                 </Grid>
 
                 <Grid my={2} size={12} justifyContent="end" spacing={1} container>
-                    <Grid >
-                        <Button startIcon={<DeleteIcon />} sx={{ width: '100px' }} size="medium" variant="contained" color="error">
-                            削除
-                        </Button>
-                    </Grid>
                     <Grid >
                         <Button startIcon={<SaveIcon />} sx={{ width: '100px' }} size="medium" variant="contained"
                             onClick={handleSave} color="success">

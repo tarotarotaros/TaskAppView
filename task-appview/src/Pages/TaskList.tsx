@@ -8,9 +8,13 @@ import { DataGrid, GridActionsCellItem, GridColDef } from '@mui/x-data-grid';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import { fetchAssignees } from "../infrastructures/assignees";
+import { fetchPriorities } from "../infrastructures/priorities";
+import { fetchStatuses } from "../infrastructures/statuses";
 import { createTask, deleteTask, fetchTasks, updateTask } from "../infrastructures/tasks";
 import { Assignee } from "../types/Assignee";
+import { Priority } from "../types/Priority";
 import { SelectDataItem } from "../types/SelectDataItem";
+import { Status } from "../types/Status";
 import { Task } from "../types/Task";
 import RemoveConfirmModal from "./RemoveConfirmModal";
 import TaskEditModal from './TaskEditModal';
@@ -24,8 +28,20 @@ export default function DataTable() {
     const columns: GridColDef[] = [
         { field: 'task_id', headerName: 'ID', width: 100, headerAlign: 'center', align: 'center' },
         { field: 'task_name', headerName: 'タイトル', width: 250, headerAlign: 'center', align: 'center' },
-        { field: 'priority', headerName: '優先度', width: 130, headerAlign: 'center', align: 'center' },
-        { field: 'status', headerName: 'ステータス', width: 130, headerAlign: 'center', align: 'center' },
+        {
+            field: 'priority', headerName: '優先度', width: 130, headerAlign: 'center', align: 'center',
+            valueFormatter: (params) => {
+                const result = priprotyselectdatas.find(item => Number(item.value) === Number(params));
+                return result ? result.label : "";
+            },
+        },
+        {
+            field: 'status', headerName: 'ステータス', width: 130, headerAlign: 'center', align: 'center',
+            valueFormatter: (params) => {
+                const result = statusselectdatas.find(item => Number(item.value) === Number(params));
+                return result ? result.label : "";
+            },
+        },
         {
             field: 'deadline',
             type: 'date',
@@ -56,9 +72,8 @@ export default function DataTable() {
         {
             field: 'assignee', headerName: '担当者', width: 130, headerAlign: 'center', align: 'center',
 
-            valueGetter: (params) => {
-                console.log("test:" + "params:" + params + "assignee:" + assigneeselectdatas);
-                const result = assigneeselectdatas.find(item => item.value === params);
+            valueFormatter: (params) => {
+                const result = assigneeselectdatas.find(item => Number(item.value) === Number(params));
                 return result ? result.label : "";
             },
 
@@ -84,6 +99,8 @@ export default function DataTable() {
 
     const [tasks, setTasks] = useState<Task[]>([]);
     const [assigneeselectdatas, setAssigneeSelectDatas] = useState<SelectDataItem[]>([]);
+    const [statusselectdatas, setStatusSelectDatas] = useState<SelectDataItem[]>([]);
+    const [priprotyselectdatas, setPriprotySelectDatas] = useState<SelectDataItem[]>([]);
     const [isEditModalOpen, setEditModalIsOpen] = useState(false);
     const [isDeleteConfirmModalOpen, setRemoveConfirmModalIsOpen] = useState(false);
     const [selectedTask, setSelectedTask] = useState<any | null>(null);
@@ -102,6 +119,20 @@ export default function DataTable() {
                 label: assignee.name
             }));
             setAssigneeSelectDatas(assigneedata);
+
+            const fetchedStatuses: Status[] = await fetchStatuses();
+            let statusdata = fetchedStatuses.map(status => ({
+                value: status.id.toString(), // 数値を文字列に変換
+                label: status.name
+            }));
+            setStatusSelectDatas(statusdata);
+
+            const fetchedPriorities: Priority[] = await fetchPriorities();
+            let prioritydata = fetchedPriorities.map(priority => ({
+                value: priority.id.toString(), // 数値を文字列に変換
+                label: priority.name
+            }));
+            setPriprotySelectDatas(prioritydata);
         };
 
         loadTasks();
@@ -122,7 +153,6 @@ export default function DataTable() {
     // タスクを更新
     const handleUpdateTask = async (taskId: number, task: any) => {
         try {
-            console.log("id:" + taskId + "task:" + task);
             const updatedTask = await updateTask(taskId, task);
             setTasks(tasks.map(task => (task.task_id === taskId ? updatedTask : task)));
         } catch (error) {
@@ -159,10 +189,8 @@ export default function DataTable() {
     const handleOpenEditModal = (row: any) => {
         setSelectedTask(row);
         if ('task_id' in row) {
-            console.log("編集モード");
             SetLastEditModalStatus(TaskEditModalStatus.Edit);
         } else {
-            console.log("追加モード");
             SetLastEditModalStatus(TaskEditModalStatus.Add);
         }
 
@@ -210,7 +238,9 @@ export default function DataTable() {
                                 handleCloseModal={handleCloseEditModal}
                                 onSave={handleSaveTask}
                                 taskData={selectedTask}
-                                assigneeSelectDataItem={assigneeselectdatas} />
+                                assigneeSelectDataItem={assigneeselectdatas}
+                                statusSelectDataItem={statusselectdatas}
+                                priorirySelectDataItem={priprotyselectdatas} />
                         </Modal>
                         <Modal open={isDeleteConfirmModalOpen}>
                             <RemoveConfirmModal

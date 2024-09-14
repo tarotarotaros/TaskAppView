@@ -12,7 +12,7 @@ export interface Task {
     status?: number;
     miled?: number;
     milestone?: string;
-    assignee?: number;
+    assignee: number;
     created_by: string;
     updated_by: string;
     created_at: string;
