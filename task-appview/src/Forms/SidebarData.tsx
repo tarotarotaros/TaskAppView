@@ -6,6 +6,7 @@ import GroupAdd from "@mui/icons-material/GroupAdd";
 import HomeIcon from "@mui/icons-material/Home";
 import Person from "@mui/icons-material/Person";
 import SettingsIcon from "@mui/icons-material/Settings";
+import Kanban from "../Pages/Kanban";
 import TaskList from "../Pages/TaskList";
 import SignIn from "./Signin/SignIn";
 import SignUp from "./Signup/Signup";
@@ -44,7 +45,7 @@ export const SidebarData = [
         condition: "signin",
         icon: <CalendarMonth />,
         link: "/upload",
-        component: <></>,
+        component: <Kanban />,
     },
     {
         title: "マイルストーン",
