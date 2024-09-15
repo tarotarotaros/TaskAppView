@@ -3,12 +3,12 @@ const SigninStatus = () => {
 
     let authToken = sessionStorage.getItem('authToken');
 
-    let statuText = "ログインしていません。"
+    let statuText = "サインインしていません。"
 
     if (authToken != null) {
-        statuText = "ログインしています。";
+        statuText = "サインイン中";
     }
-    return <div>{statuText}</div>;
+    return <div><p>{statuText}</p></div>;
 };
 
 export default SigninStatus;
