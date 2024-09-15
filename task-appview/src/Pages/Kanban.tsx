@@ -1,29 +1,37 @@
-import { Card, Column, KanbanBoard, UncontrolledBoard } from '@caldwell619/react-kanban';
+import { Card, Column, ControlledBoard, KanbanBoard, moveCard, OnDragEndNotification } from '@caldwell619/react-kanban';
 import '@caldwell619/react-kanban/dist/styles.css';
 import CircularProgress from '@mui/joy/CircularProgress';
 import { useEffect, useState } from 'react';
 import { fetchStatuses } from '../infrastructures/statuses';
-import { fetchTasks } from '../infrastructures/tasks';
+import { fetchTasks, updateTask } from '../infrastructures/tasks';
 import { Status } from '../types/Status';
 import { Task } from '../types/Task';
 import './Kanban.scss';
-
-
 
 export default function Kanban() {
 
     const [board, SetBoard] = useState<KanbanBoard<Card> | null>(null);
 
+    // データロード処理
+    useEffect(() => {
+        const loadTasks = async () => {
+            const fetchedTasks: Task[] = await fetchTasks();
+            const fetchedStatuses: Status[] = await fetchStatuses();
+            const createdBoard = createKanbanBoard(fetchedTasks, fetchedStatuses);
+            SetBoard(createdBoard);
+        };
+        loadTasks();
+    }, [])
+
     // カンバンボード用データを作成
     function createKanbanBoard(fetchedTasks: any[], fetchedStatuses: any[]): KanbanBoard<Card> {
-        // 1. ステータスをもとにカラムを初期化
+
         const columns: Column<Card>[] = fetchedStatuses.map(status => ({
             id: status.id,
             title: status.name,
             cards: []
         }));
 
-        // 2. タスクをループして適切なカラムにカードを追加
         fetchedTasks.forEach(task => {
             const column = columns.find(column => column.id === task.status);
             if (column) {
@@ -35,25 +43,25 @@ export default function Kanban() {
             }
         });
 
-        // KanbanBoardを作成して返す
         return {
             columns: columns
         };
     };
 
-    // データロード処理
-    useEffect(() => {
-        const loadTasks = async () => {
-            const fetchedTasks: Task[] = await fetchTasks();
-            const fetchedStatuses: Status[] = await fetchStatuses();
-            const createdBoard = createKanbanBoard(fetchedTasks, fetchedStatuses);
+    // カード移動時にデータ更新
+    const handleCardMove: OnDragEndNotification<Card> = async (_card, source, destination) => {
+        SetBoard(currentBoard => {
+            return moveCard(currentBoard, source, destination)
+        })
 
-            SetBoard(createdBoard);
-        };
-        loadTasks();
-    }, [])
+        const taskId: number = _card.id as number;
+        const status: number = destination?.toColumnId as number;
+        const updated_by = "システム";
+        const updateTaskData = { status, updated_by };
+        await updateTask(taskId, updateTaskData);
 
-
+        // TODO:エラーチェック処理
+    }
 
     if (!board) {
         return (
@@ -61,15 +69,16 @@ export default function Kanban() {
                 <CircularProgress size="sm" /></div>)
             ;
     } else {
+
         return (
-            <UncontrolledBoard
-                initialBoard={board}
+            <ControlledBoard
                 disableColumnDrag={true}
                 allowRemoveCard={false}
                 allowRemoveColumn={false}
                 allowRenameColumn={false}
                 allowAddColumn={false}
                 allowAddCard={false}
-            />);
+                onCardDragEnd={handleCardMove}
+            >{board}</ControlledBoard>);
     }
 }
