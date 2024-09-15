@@ -1,50 +1,14 @@
-//import * as React from 'react';
+import { Card, Stack } from '@mui/material';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import MuiCard from '@mui/material/Card';
 import CssBaseline from '@mui/material/CssBaseline';
-import FormControl from '@mui/material/FormControl';
-import FormLabel from '@mui/material/FormLabel';
-import Stack from '@mui/material/Stack';
-import {
-  styled
-} from '@mui/material/styles';
-import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import EMailForm from '../Signup/EMailForm';
+import PasswordForm from '../Signup/PasswordForm';
+import '../Signup/SignupStyle.css';
 import API from './../../Constants';
-
-const Card = styled(MuiCard)(({ theme }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  alignSelf: 'center',
-  width: '100%',
-  padding: theme.spacing(4),
-  gap: theme.spacing(2),
-  margin: 'auto',
-  [theme.breakpoints.up('sm')]: {
-    maxWidth: '450px',
-  },
-  boxShadow:
-    'hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px',
-  ...theme.applyStyles('dark', {
-    boxShadow:
-      'hsla(220, 30%, 5%, 0.5) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.08) 0px 15px 35px -5px',
-  }),
-}));
-
-const SignInContainer = styled(Stack)(({ theme }) => ({
-  height: '100%',
-  padding: 20,
-  backgroundImage:
-    'radial-gradient(ellipse at 50% 50%, hsl(210, 100%, 97%), hsl(0, 0%, 100%))',
-  backgroundRepeat: 'no-repeat',
-  ...theme.applyStyles('dark', {
-    backgroundImage:
-      'radial-gradient(at 50% 50%, hsla(210, 100%, 16%, 0.5), hsl(220, 30%, 5%))',
-  }),
-}));
 
 export default function SignIn() {
   const [emailError, setEmailError] = React.useState(false);
@@ -92,8 +56,6 @@ export default function SignIn() {
     return isValid;
   };
 
-
-
   const handleSiginin = async () => {
     try {
 
@@ -131,8 +93,8 @@ export default function SignIn() {
   return (
     <div>
       <CssBaseline enableColorScheme />
-      <SignInContainer direction="column" justifyContent="space-between">
-        <Card variant="outlined">
+      <Stack className="signup-container" direction="column" justifyContent="space-between">
+        <Card className="signup-card" variant="outlined">
           <Typography
             component="h1"
             variant="h4"
@@ -151,47 +113,18 @@ export default function SignIn() {
               gap: 2,
             }}
           >
-            <FormControl>
-              <FormLabel htmlFor="email">E-mail</FormLabel>
-              <TextField
-                error={emailError}
-                helperText={emailErrorMessage}
-                id="email"
-                type="email"
-                name="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="your@email.com"
-                autoComplete="email"
-                autoFocus
-                required
-                fullWidth
-                variant="outlined"
-                color={emailError ? 'error' : 'primary'}
-                sx={{ ariaLabel: 'email' }}
-              />
-            </FormControl>
-            <FormControl>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                <FormLabel htmlFor="password">パスワード</FormLabel>
-              </Box>
-              <TextField
-                error={passwordError}
-                helperText={passwordErrorMessage}
-                name="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-                autoFocus
-                required
-                fullWidth
-                variant="outlined"
-                color={passwordError ? 'error' : 'primary'}
-              />
-            </FormControl>
+            <EMailForm
+              email={email}
+              emailError={emailError}
+              errorMessage={emailErrorMessage}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <PasswordForm
+              password={password}
+              passwordError={passwordError}
+              errorMessage={passwordErrorMessage}
+              onChange={(e) => setPassword(e.target.value)}
+            />
             <Button
               type="submit"
               fullWidth
@@ -202,7 +135,7 @@ export default function SignIn() {
             </Button>
           </Box>
         </Card>
-      </SignInContainer>
+      </Stack>
     </div>
   );
 }
