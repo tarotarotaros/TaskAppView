@@ -33,8 +33,8 @@ export default function SignUp() {
 
     const validateInputs = () => {
         const name = document.getElementById('name') as HTMLInputElement;
-        const email = document.getElementById('registeremail') as HTMLInputElement;
-        const password = document.getElementById('registerpassword') as HTMLInputElement;
+        const email = document.getElementById(signupKey + "email") as HTMLInputElement;
+        const password = document.getElementById(signupKey + "password") as HTMLInputElement;
 
         let isValid = true;
 

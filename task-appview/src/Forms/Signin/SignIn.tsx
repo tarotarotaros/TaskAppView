@@ -9,7 +9,7 @@ import EMailForm from '../Signup/EMailForm';
 import PasswordForm from '../Signup/PasswordForm';
 import '../Signup/SignupStyle.css';
 
-export default function SignIn() {
+export default function Signin() {
   const [emailError, setEmailError] = React.useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
   const [passwordError, setPasswordError] = React.useState(false);

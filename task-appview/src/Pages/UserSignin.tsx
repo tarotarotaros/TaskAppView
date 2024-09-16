@@ -1,7 +1,7 @@
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
-import Signin from '../Forms/Signin/SignIn';
+import Signin from '../Forms/Signin/Signin';
 import Signup from '../Forms/Signup/Signup';
 
 export default function UserSignin() {
