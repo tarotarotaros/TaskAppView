@@ -4,7 +4,6 @@ import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import Typography from '@mui/material/Typography';
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { signin } from '../../infrastructures/signin';
 import EMailForm from '../Signup/EMailForm';
 import PasswordForm from '../Signup/PasswordForm';
@@ -17,13 +16,13 @@ export default function SignIn() {
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
   const [openSigninDialog, setOpenSigninDialog] = useState(false);
-  const navigate = useNavigate();
+
+  const signinKey: string = "signin";
 
   const validateInputs = () => {
-    const email = document.getElementById('email') as HTMLInputElement;
-    const password = document.getElementById('password') as HTMLInputElement;
+    const email = document.getElementById(signinKey + "email") as HTMLInputElement;
+    const password = document.getElementById(signinKey + "password") as HTMLInputElement;
 
     let isValid = true;
 
@@ -50,7 +49,6 @@ export default function SignIn() {
 
   const handleSiginin = async () => {
     try {
-
       let isOk = validateInputs();
       if (!isOk) return;
 
@@ -69,7 +67,7 @@ export default function SignIn() {
 
   function closeSigninDialog() {
     setOpenSigninDialog(false);
-    navigate('/'); // 成功した場合の遷移先
+    window.location.reload();
   }
 
   return (
@@ -95,12 +93,14 @@ export default function SignIn() {
             }}
           >
             <EMailForm
+              keyText={signinKey}
               email={email}
               emailError={emailError}
               errorMessage={emailErrorMessage}
               onChange={(e) => setEmail(e.target.value)}
             />
             <PasswordForm
+              keyText={signinKey}
               password={password}
               passwordError={passwordError}
               errorMessage={passwordErrorMessage}

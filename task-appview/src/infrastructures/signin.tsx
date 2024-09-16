@@ -17,7 +17,7 @@ export const signin = async (signinUser: SigninUser) => {
     }
 };
 
-// ユーザーサインイン
+// ユーザー登録
 export const signup = async (signupUser: SignupUser) => {
     try {
         await axios.post(API_URL + "register", signupUser);

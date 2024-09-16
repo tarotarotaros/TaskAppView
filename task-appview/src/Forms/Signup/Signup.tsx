@@ -8,7 +8,6 @@ import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { signup } from '../../infrastructures/signin';
 import EMailForm from './EMailForm';
 import PasswordForm from './PasswordForm';
@@ -29,12 +28,13 @@ export default function SignUp() {
     const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
 
     const [openSuccessDialog, setOpenSuccessDialog] = useState(false);
-    const navigate = useNavigate();
+
+    const signupKey: string = "signup";
 
     const validateInputs = () => {
         const name = document.getElementById('name') as HTMLInputElement;
-        const email = document.getElementById('email') as HTMLInputElement;
-        const password = document.getElementById('password') as HTMLInputElement;
+        const email = document.getElementById('registeremail') as HTMLInputElement;
+        const password = document.getElementById('registerpassword') as HTMLInputElement;
 
         let isValid = true;
 
@@ -90,7 +90,7 @@ export default function SignUp() {
     //ダイアログクローズ処理
     const handleSuccessDialogClose = () => {
         setOpenSuccessDialog(false);
-        navigate('/'); // 成功した場合の遷移先
+        window.location.reload();
     };
 
     return (
@@ -126,12 +126,14 @@ export default function SignUp() {
                             />
                         </FormControl>
                         <EMailForm
+                            keyText={signupKey}
                             email={email}
                             emailError={emailError}
                             errorMessage={emailErrorMessage}
                             onChange={(e) => setEmail(e.target.value)}
                         />
                         <PasswordForm
+                            keyText={signupKey}
                             password={password}
                             passwordError={passwordError}
                             errorMessage={passwordErrorMessage}

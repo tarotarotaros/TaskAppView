@@ -3,11 +3,14 @@ import { FormControl, FormLabel, TextField } from "@mui/material";
 type PasswordFormProps = {
     password: string,
     passwordError: boolean,
-    errorMessage: string
+    errorMessage: string,
+    keyText: string,
     onChange: (data: any) => void;
 };
 
-export default function PasswordForm({ password, passwordError, errorMessage, onChange }: PasswordFormProps) {
+export default function PasswordForm({ password, passwordError, errorMessage, keyText, onChange }: PasswordFormProps) {
+    const fullKeyText: string = keyText + "password";
+
     return (
         <FormControl>
             <FormLabel htmlFor="password">パスワード</FormLabel>
@@ -16,11 +19,11 @@ export default function PasswordForm({ password, passwordError, errorMessage, on
                 fullWidth
                 value={password}
                 onChange={onChange}
-                name="password"
+                name={fullKeyText}
                 placeholder="••••••"
                 type="password"
-                id="password"
-                autoComplete="new-password"
+                id={fullKeyText}
+                autoComplete={fullKeyText}
                 variant="outlined"
                 error={passwordError}
                 helperText={errorMessage}
