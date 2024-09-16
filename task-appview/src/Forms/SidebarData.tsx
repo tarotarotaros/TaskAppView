@@ -2,14 +2,12 @@ import BackupTable from "@mui/icons-material/BackupTable";
 import CalendarMonth from "@mui/icons-material/CalendarMonth";
 import Dashboard from "@mui/icons-material/Dashboard";
 import Flag from "@mui/icons-material/Flag";
-import GroupAdd from "@mui/icons-material/GroupAdd";
 import HomeIcon from "@mui/icons-material/Home";
 import Person from "@mui/icons-material/Person";
 import SettingsIcon from "@mui/icons-material/Settings";
 import Kanban from "../Pages/Kanban";
 import TaskList from "../Pages/TaskList";
-import SignIn from "./Signin/SignIn";
-import SignUp from "./Signup/Signup";
+import UserSignin from "../Pages/UserSignin";
 
 export const SidebarData = [
     {
@@ -20,18 +18,11 @@ export const SidebarData = [
         component: <></>,
     },
     {
-        title: "新規登録",
-        condition: "signout",
-        icon: <GroupAdd />,
-        link: "/signup",
-        component: <SignUp />,
-    },
-    {
-        title: "ログイン",
+        title: "サインイン（アカウント登録）",
         condition: "signout",
         icon: <Person />,
         link: "/signin",
-        component: <SignIn />,
+        component: <UserSignin />,
     },
     {
         title: "タスク",

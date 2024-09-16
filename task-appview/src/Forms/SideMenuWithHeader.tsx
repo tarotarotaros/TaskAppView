@@ -2,13 +2,14 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { AppBar, CssBaseline, Drawer, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar, Typography } from '@mui/material';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import SuccessPage from '../Pages/SuccessPage';
+import Hello from '../Pages/Hello';
 import { SidebarData } from "./SidebarData";
+import SigninStatus from './Signin/SigninStatus';
 
 const sidebarwidth = 250;
 export default function SideMenuWithHeader() {
     const [open, setOpen] = useState(false);
-    const [content, setContent] = useState(<SuccessPage />); // 初期コンテンツ
+    const [content, setContent] = useState(<Hello />); // 初期コンテンツ
     const navigate = useNavigate();
 
     const toggleDrawer = () => {
@@ -32,9 +33,10 @@ export default function SideMenuWithHeader() {
                     <IconButton edge="start" color="inherit" aria-label="menu" onClick={toggleDrawer}>
                         <MenuIcon />
                     </IconButton>
-                    <Typography variant="h6" noWrap>
+                    <Typography variant="h6" noWrap sx={{ flexGrow: 1 }}>
                         タスク管理
                     </Typography>
+                    <SigninStatus />
                 </Toolbar>
             </AppBar>
             <Drawer
