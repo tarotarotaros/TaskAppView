@@ -1,12 +1,13 @@
 
 import SignIn from '../Forms/Signin/SignIn';
 
-const Login = () => {
+default export function UserCheck() {
+
+
+
 
     return (
         <SignIn />
     );
 
 };
-
-export default Login;

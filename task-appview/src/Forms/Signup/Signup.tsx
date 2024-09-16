@@ -1,4 +1,4 @@
-import { Card, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
+import { Card, Dialog, DialogActions, DialogTitle } from '@mui/material';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -9,35 +9,47 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import API from './../../Constants';
+import { signup } from '../../infrastructures/signin';
 import EMailForm from './EMailForm';
 import PasswordForm from './PasswordForm';
 import './SignupStyle.css';
 
 export default function SignUp() {
-    const [emailError, setEmailError] = React.useState(false);
-    const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
-    const [passwordError, setPasswordError] = React.useState(false);
-    const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
+
+    const [name, setName] = useState('');
     const [nameError, setNameError] = React.useState(false);
     const [nameErrorMessage, setNameErrorMessage] = React.useState('');
-    const [username, setUsername] = useState('');
+
     const [email, setEmail] = useState('');
+    const [emailError, setEmailError] = React.useState(false);
+    const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
+
     const [password, setPassword] = useState('');
+    const [passwordError, setPasswordError] = React.useState(false);
+    const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
+
     const [openSuccessDialog, setOpenSuccessDialog] = useState(false);
-    const [openFailureDialog, setOpenFailureDialog] = useState(false);
     const navigate = useNavigate();
 
     const validateInputs = () => {
+        const name = document.getElementById('name') as HTMLInputElement;
         const email = document.getElementById('email') as HTMLInputElement;
         const password = document.getElementById('password') as HTMLInputElement;
-        const name = document.getElementById('name') as HTMLInputElement;
 
         let isValid = true;
 
+        if (!name.value || name.value.length < 1) {
+            setNameError(true);
+            setNameErrorMessage('ユーザー名は必須です。');
+            isValid = false;
+        } else {
+            setNameError(false);
+            setNameErrorMessage('');
+        }
+
         if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
             setEmailError(true);
-            setEmailErrorMessage('Please enter a valid email address.');
+            setEmailErrorMessage('有効なEメールアドレスを入力してください。');
             isValid = false;
         } else {
             setEmailError(false);
@@ -46,70 +58,39 @@ export default function SignUp() {
 
         if (!password.value || password.value.length < 6) {
             setPasswordError(true);
-            setPasswordErrorMessage('Password must be at least 6 characters long.');
+            setPasswordErrorMessage('パスワードは6文字以上でなければなりません。');
             isValid = false;
         } else {
             setPasswordError(false);
             setPasswordErrorMessage('');
         }
 
-        if (!name.value || name.value.length < 1) {
-            setNameError(true);
-            setNameErrorMessage('Name is required.');
-            isValid = false;
-        } else {
-            setNameError(false);
-            setNameErrorMessage('');
-        }
-
         return isValid;
     };
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        const data = new FormData(event.currentTarget);
-        console.log({
-            name: data.get('name'),
-            lastName: data.get('lastName'),
-            email: data.get('email'),
-            password: data.get('password'),
-        });
-    };
-
+    // ユーザー登録＋ログイン処理
     const handleRegister = async () => {
 
         let isOk = validateInputs();
         if (!isOk) return;
 
-        const registetApiUrl = new URL("api/user/register", API.BASE_URL);
-        const response = await fetch(`${registetApiUrl}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                name: username,
+        try {
+            const signupUserData = {
+                name: name,
                 email: email,
                 password: password,
-            }),
-        });
-
-        if (response.ok) {
+            }
+            await signup(signupUserData);
             setOpenSuccessDialog(true);
-            console.log('サインアップ成功');
-        } else {
-            setOpenFailureDialog(true);
-            console.error('サインアップ失敗');
+        } catch (error) {
+            console.error('ユーザー登録処理でエラーが発生しました:', error);
         }
     };
 
+    //ダイアログクローズ処理
     const handleSuccessDialogClose = () => {
         setOpenSuccessDialog(false);
-        navigate('/success-page'); // 成功した場合の遷移先
-    };
-
-    const handleFailureDialogClose = () => {
-        setOpenFailureDialog(false);
+        navigate('/'); // 成功した場合の遷移先
     };
 
     return (
@@ -126,7 +107,6 @@ export default function SignUp() {
                     </Typography>
                     <Box
                         component="form"
-                        onSubmit={handleSubmit}
                         sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
                     >
                         <FormControl>
@@ -136,8 +116,8 @@ export default function SignUp() {
                                 name="name"
                                 required
                                 fullWidth
-                                onChange={(e) => setUsername(e.target.value)}
-                                value={username}
+                                onChange={(e) => setName(e.target.value)}
+                                value={name}
                                 id="name"
                                 placeholder="username123"
                                 error={nameError}
@@ -158,11 +138,9 @@ export default function SignUp() {
                             onChange={(e) => setPassword(e.target.value)}
                         />
                         <Button
-                            type="submit"
                             fullWidth
                             variant="contained"
                             onClick={handleRegister}
-
                         >
                             登録
                         </Button>
@@ -174,36 +152,13 @@ export default function SignUp() {
                 open={openSuccessDialog}
                 onClose={handleSuccessDialogClose}
             >
-                <DialogTitle>登録成功</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>
-                        ユーザーの登録が成功しました。
-                    </DialogContentText>
-                </DialogContent>
+                <DialogTitle>ユーザー登録完了（自動ログイン）</DialogTitle>
                 <DialogActions>
                     <Button onClick={handleSuccessDialogClose} color="primary">
                         OK
                     </Button>
                 </DialogActions>
             </Dialog>
-
-            <Dialog
-                open={openFailureDialog}
-                onClose={handleFailureDialogClose}
-            >
-                <DialogTitle>登録失敗</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>
-                        ユーザーの登録に失敗しました。再度お試しください。
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleFailureDialogClose} color="primary">
-                        OK
-                    </Button>
-                </DialogActions>
-            </Dialog>
-
         </div>
     );
 }
