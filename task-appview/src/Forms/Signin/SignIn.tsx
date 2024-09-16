@@ -1,14 +1,14 @@
-import { Card, Stack } from '@mui/material';
+import { Card, Dialog, DialogActions, DialogTitle, Stack } from '@mui/material';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import Typography from '@mui/material/Typography';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { signin } from '../../infrastructures/signin';
 import EMailForm from '../Signup/EMailForm';
 import PasswordForm from '../Signup/PasswordForm';
 import '../Signup/SignupStyle.css';
-import API from './../../Constants';
 
 export default function SignIn() {
   const [emailError, setEmailError] = React.useState(false);
@@ -17,17 +17,9 @@ export default function SignIn() {
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const [openSigninDialog, setOpenSigninDialog] = useState(false);
   const navigate = useNavigate();
-
-
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
-  };
 
   const validateInputs = () => {
     const email = document.getElementById('email') as HTMLInputElement;
@@ -37,7 +29,7 @@ export default function SignIn() {
 
     if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
       setEmailError(true);
-      setEmailErrorMessage('Please enter a valid email address.');
+      setEmailErrorMessage('有効なEメールアドレスを入力してください。');
       isValid = false;
     } else {
       setEmailError(false);
@@ -46,7 +38,7 @@ export default function SignIn() {
 
     if (!password.value || password.value.length < 6) {
       setPasswordError(true);
-      setPasswordErrorMessage('Password must be at least 6 characters long.');
+      setPasswordErrorMessage('パスワードは6文字以上でなければなりません。');
       isValid = false;
     } else {
       setPasswordError(false);
@@ -62,33 +54,23 @@ export default function SignIn() {
       let isOk = validateInputs();
       if (!isOk) return;
 
-      const apiUrl = new URL("api/user/login", API.BASE_URL);
-      const response = await fetch(`${apiUrl}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: email,
-          password: password,
-        }),
-      });
-      if (response.ok) {
-        // 成功した場合の処理
-        console.log('ログイン成功');
-        const data = await response.json();
-        const token = data.token; // ここでAPIレスポンスからトークンを取得
-        sessionStorage.setItem('authToken', token); // セッションストレージにトークンを保存        
-        console.log(token);
-        navigate('/'); // 成功した場合の遷移先
-      } else {
-        // エラーハンドリング
-        console.error('ログイン失敗');
+      const signinUserData = {
+        email: email,
+        password: password,
       }
+      await signin(signinUserData);
+      console.log('ログイン完了');
+      setOpenSigninDialog(true);
+
     } catch (error) {
       console.error('エラーが発生しました:', error);
     }
   };
+
+  function closeSigninDialog() {
+    setOpenSigninDialog(false);
+    navigate('/'); // 成功した場合の遷移先
+  }
 
   return (
     <div>
@@ -104,7 +86,6 @@ export default function SignIn() {
           </Typography>
           <Box
             component="form"
-            onSubmit={handleSubmit}
             noValidate
             sx={{
               display: 'flex',
@@ -126,7 +107,6 @@ export default function SignIn() {
               onChange={(e) => setPassword(e.target.value)}
             />
             <Button
-              type="submit"
               fullWidth
               variant="contained"
               onClick={handleSiginin}
@@ -135,7 +115,18 @@ export default function SignIn() {
             </Button>
           </Box>
         </Card>
+
       </Stack>
+      <Dialog
+        open={openSigninDialog}
+      >
+        <DialogTitle>ログイン完了</DialogTitle>
+        <DialogActions>
+          <Button onClick={closeSigninDialog} color="primary">
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }
