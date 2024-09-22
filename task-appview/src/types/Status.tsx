@@ -2,6 +2,7 @@
 export interface Status {
     id: number;
     name: string;
+    color: string;
     created_by: string;
     updated_by: string;
     created_at: string;
@@ -12,6 +13,7 @@ export interface Status {
 export interface CreateStatus {
     id: number;
     name: string;
+    color: string;
     created_by: string;
     updated_by: string;
 }

@@ -1,6 +1,7 @@
 import { Card, Column, ControlledBoard, KanbanBoard, moveCard, OnDragEndNotification } from '@caldwell619/react-kanban';
 import '@caldwell619/react-kanban/dist/styles.css';
 import CircularProgress from '@mui/joy/CircularProgress';
+import { Chip } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { fetchStatuses } from '../infrastructures/statuses';
 import { fetchTasks, updateTask } from '../infrastructures/tasks';
@@ -11,6 +12,7 @@ import './Kanban.scss';
 export default function Kanban() {
 
     const [board, SetBoard] = useState<KanbanBoard<Card> | null>(null);
+    const [statuses, SetStatuses] = useState<Status[]>([]);
 
     // データロード処理
     useEffect(() => {
@@ -19,6 +21,7 @@ export default function Kanban() {
             const fetchedStatuses: Status[] = await fetchStatuses();
             const createdBoard = createKanbanBoard(fetchedTasks, fetchedStatuses);
             SetBoard(createdBoard);
+            SetStatuses(fetchedStatuses);
         };
         loadTasks();
     }, [])
@@ -38,7 +41,7 @@ export default function Kanban() {
                 column.cards.push({
                     id: task.task_id,
                     title: task.task_name,
-                    description: task.content
+                    description: task.content,
                 });
             }
         });
@@ -72,6 +75,10 @@ export default function Kanban() {
 
         return (
             <ControlledBoard
+                renderColumnHeader={(column: Column<Card>) => {
+                    const taskStatus = statuses.find(item => item.name === column.title);
+                    return (<Chip label={column.title} sx={{ backgroundColor: taskStatus?.color, color: 'white', marginBottom: '10px' }} />);
+                }}
                 disableColumnDrag={true}
                 allowRemoveCard={false}
                 allowRemoveColumn={false}
@@ -80,5 +87,7 @@ export default function Kanban() {
                 allowAddCard={false}
                 onCardDragEnd={handleCardMove}
             >{board}</ControlledBoard>);
+
     }
 }
+
