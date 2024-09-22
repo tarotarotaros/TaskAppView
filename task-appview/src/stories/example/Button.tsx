@@ -1,4 +1,3 @@
-import React from 'react';
 
 import './button.css';
 
@@ -27,15 +26,11 @@ export const Button = ({
   return (
     <button
       type="button"
+      style={{ backgroundColor }}
       className={['storybook-button', `storybook-button--${size}`, mode].join(' ')}
       {...props}
     >
       {label}
-      <style jsx>{`
-        button {
-          background-color: ${backgroundColor};
-        }
-      `}</style>
     </button>
   );
 };
