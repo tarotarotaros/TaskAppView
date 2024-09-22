@@ -72,6 +72,8 @@
     "@storybook/nextjs": "^8.3.0",
     "@storybook/react": "^8.3.0",
     "@storybook/test": "^8.3.0",
+    "@tailwindcss/typography": "^0.5.15",
+    "@types/marked": "^6.0.0",
     "eslint": "^8.57.0",
     "eslint-plugin-storybook": "^0.8.0",
     "storybook": "^8.3.0"

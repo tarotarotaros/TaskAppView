@@ -8,6 +8,7 @@ import SaveIcon from "@mui/icons-material/Save";
 import ThermostatIcon from "@mui/icons-material/Thermostat";
 import { Box, Button, TextField, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import Grid from '@mui/material/Grid2';
+import { marked } from "marked";
 import { useState } from 'react';
 import { SelectDataItem } from "../types/SelectDataItem";
 import { Task } from "../types/Task";
@@ -37,6 +38,13 @@ export default function TaskEditModal({ handleCloseModal, onSave, taskData, assi
     const [startDate, setStartDate] = useState<Date | null>(taskData?.start ? new Date(taskData.start) : new Date());
     const [endDate, setEndDate] = useState<Date | null>(taskData?.end ? new Date(taskData.end) : new Date());
     const [displyaPattern, setDisplyaPattern] = useState<string>(PLAIN_TEXT);
+
+    marked.setOptions({
+        gfm: true,
+        breaks: true,
+    });
+
+    const contentMarkDownText = marked.parse(content);
 
     const handleSave = () => {
 
@@ -78,7 +86,9 @@ export default function TaskEditModal({ handleCloseModal, onSave, taskData, assi
     };
 
     function handleChangedisplyaPattern(event: React.MouseEvent<HTMLElement>, value: any): void {
-        setDisplyaPattern(value);
+        if (value !== null) {
+            setDisplyaPattern(value);
+        }
     }
 
     return (
@@ -92,7 +102,7 @@ export default function TaskEditModal({ handleCloseModal, onSave, taskData, assi
                 borderRadius: "10px",
                 margin: "auto",
                 width: "70%",
-                height: "70%",
+                height: "80%",
                 bgcolor: "white",
             }}
         >
@@ -137,7 +147,22 @@ export default function TaskEditModal({ handleCloseModal, onSave, taskData, assi
                             onChange={(e) => setContent(e.target.value)}
                         />
                     ) : displyaPattern === MARK_DOWN_TEXT ? (
-                        <div>MarkDown表示領域</div>
+                        <Box
+
+                            sx={{
+
+                                width: '100%',
+                                height: '300px',
+                                padding: '5px',
+                                border: '0.5px solid gray',
+                                overflowY: 'auto', // 縦スクロールを有効にする
+                                wordWrap: 'break-word', // テキストが領域外に行かないように改行
+                                whiteSpace: 'pre-wrap', // 改行を保持
+                            }}
+                        >
+                            <div dangerouslySetInnerHTML={{ __html: contentMarkDownText.toString() }} />
+                        </Box>
+
                     ) : null}
                 </Grid>
                 <Grid size={4}>
