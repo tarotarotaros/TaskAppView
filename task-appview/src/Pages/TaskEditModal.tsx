@@ -6,7 +6,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import PersonIcon from "@mui/icons-material/Person";
 import SaveIcon from "@mui/icons-material/Save";
 import ThermostatIcon from "@mui/icons-material/Thermostat";
-import { Box, Button, TextField } from '@mui/material';
+import { Box, Button, TextField, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { useState } from 'react';
 import { SelectDataItem } from "../types/SelectDataItem";
@@ -33,6 +33,7 @@ export default function TaskEditModal({ handleCloseModal, onSave, taskData, assi
     const [deadlineDate, setDeadline] = useState<Date | null>(taskData?.deadline ? new Date(taskData.deadline) : new Date());
     const [startDate, setStartDate] = useState<Date | null>(taskData?.start ? new Date(taskData.start) : new Date());
     const [endDate, setEndDate] = useState<Date | null>(taskData?.end ? new Date(taskData.end) : new Date());
+    const [displyaPattern, setDisplyaPattern] = useState<string>('Plain');
 
     const handleSave = () => {
 
@@ -73,6 +74,10 @@ export default function TaskEditModal({ handleCloseModal, onSave, taskData, assi
         }
     };
 
+    function handleChangedisplyaPattern(event: React.MouseEvent<HTMLElement>, value: any): void {
+        setDisplyaPattern(value);
+    }
+
     return (
         <Box
             sx={{
@@ -97,9 +102,24 @@ export default function TaskEditModal({ handleCloseModal, onSave, taskData, assi
                 <Grid size={12}>
                     <TextField
                         id="outlined-basic"
+                        label="タイトル"
                         fullWidth
                         value={task_name}
                         onChange={(e) => setTitle(e.target.value)} />
+                </Grid>
+                <Grid container size={12} justifyContent="end" alignItems="center">
+                    <ToggleButtonGroup
+                        value={displyaPattern}
+                        exclusive
+                        onChange={handleChangedisplyaPattern}
+                    >
+                        <ToggleButton value="Plain">
+                            <div>Plain</div>
+                        </ToggleButton>
+                        <ToggleButton value="MarkDown">
+                            <div>MarkDown</div>
+                        </ToggleButton>
+                    </ToggleButtonGroup>
                 </Grid>
                 <Grid size={12}>
                     <TextField
