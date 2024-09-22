@@ -10,6 +10,7 @@ import { Box, Button, TextField, ToggleButton, ToggleButtonGroup } from '@mui/ma
 import Grid from '@mui/material/Grid2';
 import { marked } from "marked";
 import { useState } from 'react';
+import sanitizeHtml from 'sanitize-html';
 import { SelectDataItem } from "../types/SelectDataItem";
 import { Task } from "../types/Task";
 import DatePickerWithText from "./DatePickerWithText";
@@ -44,7 +45,12 @@ export default function TaskEditModal({ handleCloseModal, onSave, taskData, assi
         breaks: true,
     });
 
-    const contentMarkDownText = marked.parse(content);
+    const contentMarkDownText = marked.parse(
+        sanitizeHtml(content, {
+            allowedTags: [],
+            disallowedTagsMode: 'recursiveEscape',
+        })
+    );
 
     const handleSave = () => {
 
