@@ -25,6 +25,9 @@ type TaskEditModalProps = {
 
 export default function TaskEditModal({ handleCloseModal, onSave, taskData, assigneeSelectDataItem, priorirySelectDataItem, statusSelectDataItem }: TaskEditModalProps) {
 
+    const PLAIN_TEXT: string = 'Plain';
+    const MARK_DOWN_TEXT: string = 'MarkDown';
+
     const [task_name, setTitle] = useState(taskData?.task_name ? taskData.task_name : '');
     const [content, setContent] = useState(taskData?.content ? taskData.content : '');
     const [priority, setPriority] = useState(taskData?.priority ? taskData?.priority : 1);
@@ -33,7 +36,7 @@ export default function TaskEditModal({ handleCloseModal, onSave, taskData, assi
     const [deadlineDate, setDeadline] = useState<Date | null>(taskData?.deadline ? new Date(taskData.deadline) : new Date());
     const [startDate, setStartDate] = useState<Date | null>(taskData?.start ? new Date(taskData.start) : new Date());
     const [endDate, setEndDate] = useState<Date | null>(taskData?.end ? new Date(taskData.end) : new Date());
-    const [displyaPattern, setDisplyaPattern] = useState<string>('Plain');
+    const [displyaPattern, setDisplyaPattern] = useState<string>(PLAIN_TEXT);
 
     const handleSave = () => {
 
@@ -113,27 +116,30 @@ export default function TaskEditModal({ handleCloseModal, onSave, taskData, assi
                         exclusive
                         onChange={handleChangedisplyaPattern}
                     >
-                        <ToggleButton value="Plain">
+                        <ToggleButton value={PLAIN_TEXT}>
                             <div>Plain</div>
                         </ToggleButton>
-                        <ToggleButton value="MarkDown">
+                        <ToggleButton value={MARK_DOWN_TEXT}>
                             <div>MarkDown</div>
                         </ToggleButton>
                     </ToggleButtonGroup>
                 </Grid>
                 <Grid size={12}>
-                    <TextField
-                        multiline
-                        id="contents"
-                        label="内容"
-                        minRows={11}
-                        maxRows={11}
-                        fullWidth
-                        value={content}
-                        onChange={(e) => setContent(e.target.value)}
-                    />
+                    {displyaPattern === PLAIN_TEXT ? (
+                        <TextField
+                            multiline
+                            id="contents"
+                            label="内容"
+                            minRows={11}
+                            maxRows={11}
+                            fullWidth
+                            value={content}
+                            onChange={(e) => setContent(e.target.value)}
+                        />
+                    ) : displyaPattern === MARK_DOWN_TEXT ? (
+                        <div>MarkDown表示領域</div>
+                    ) : null}
                 </Grid>
-
                 <Grid size={4}>
                     <SelectBoxWithText
                         icon={<ThermostatIcon />}
