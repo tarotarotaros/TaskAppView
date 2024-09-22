@@ -1,7 +1,7 @@
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import { IconButton, Modal } from '@mui/material';
+import { Chip, IconButton, Modal } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import Paper from '@mui/material/Paper';
 import { DataGrid, GridActionsCellItem, GridColDef } from '@mui/x-data-grid';
@@ -37,9 +37,10 @@ export default function DataTable() {
         },
         {
             field: 'status', headerName: 'ステータス', width: 130, headerAlign: 'center', align: 'center',
-            valueFormatter: (params) => {
-                const result = statusselectdatas.find(item => Number(item.value) === Number(params));
-                return result ? result.label : "";
+            renderCell: (params) => {
+                const result = statusselectdatas.find(item => Number(item.value) === Number(params.value));
+                const displayText = result ? result.label : "";
+                return (<Chip label={displayText} sx={{ backgroundColor: result?.color, color: 'white' }} />);
             },
         },
         {
@@ -71,12 +72,10 @@ export default function DataTable() {
         },
         {
             field: 'assignee', headerName: '担当者', width: 130, headerAlign: 'center', align: 'center',
-
             valueFormatter: (params) => {
                 const result = assigneeselectdatas.find(item => Number(item.value) === Number(params));
                 return result ? result.label : "";
             },
-
         },
         {
             field: 'actions',
@@ -116,21 +115,24 @@ export default function DataTable() {
             const fetchedAssignees: Assignee[] = await fetchAssignees();
             let assigneedata = fetchedAssignees.map(assignee => ({
                 value: assignee.id.toString(), // 数値を文字列に変換
-                label: assignee.name
+                label: assignee.name,
+                color: ""
             }));
             setAssigneeSelectDatas(assigneedata);
 
             const fetchedStatuses: Status[] = await fetchStatuses();
             let statusdata = fetchedStatuses.map(status => ({
                 value: status.id.toString(), // 数値を文字列に変換
-                label: status.name
+                label: status.name,
+                color: status.color
             }));
             setStatusSelectDatas(statusdata);
 
             const fetchedPriorities: Priority[] = await fetchPriorities();
             let prioritydata = fetchedPriorities.map(priority => ({
                 value: priority.id.toString(), // 数値を文字列に変換
-                label: priority.name
+                label: priority.name,
+                color: ""
             }));
             setPriprotySelectDatas(prioritydata);
         };
@@ -226,8 +228,6 @@ export default function DataTable() {
         setEditModalIsOpen(false)
     };
 
-
-
     return (
         <div>
             <Grid container spacing={2} justifyContent="center" alignItems="center">
@@ -277,3 +277,4 @@ export default function DataTable() {
         </div >
     );
 }
+
