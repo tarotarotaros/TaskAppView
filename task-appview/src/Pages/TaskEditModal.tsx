@@ -137,7 +137,6 @@ export default function TaskEditModal({ handleCloseModal, onSave, taskData, assi
                             minRows={11}
                             maxRows={11}
                             fullWidth
-                            //sx={{ height: '300px' }}
                             value={content}
                             onChange={(e) => setContent(e.target.value)}
                         />
@@ -147,11 +146,11 @@ export default function TaskEditModal({ handleCloseModal, onSave, taskData, assi
                                 borderRadius: '3px',
                                 width: '100%',
                                 height: '300px',
-                                padding: '5px',
+                                padding: '10px',
                                 border: '0.5px solid #CCCCCC',
-                                overflowY: 'auto', // 縦スクロールを有効にする
-                                wordWrap: 'break-word', // テキストが領域外に行かないように改行
-                                whiteSpace: 'pre-wrap', // 改行を保持
+                                overflowY: 'auto',
+                                wordWrap: 'break-word',
+                                whiteSpace: 'pre-wrap',
                             }}
                         >
                             <MarkdownHtml content={content} />
@@ -218,7 +217,6 @@ export default function TaskEditModal({ handleCloseModal, onSave, taskData, assi
                         onChange={setAssignee}
                     />
                 </Grid>
-
                 <Grid my={2} size={12} justifyContent="end" spacing={1} container>
                     <Grid >
                         <Button startIcon={<SaveIcon />} sx={{ width: '100px' }} size="medium" variant="contained"
