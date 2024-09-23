@@ -2,13 +2,12 @@ import { Card, Column, ControlledBoard, KanbanBoard, moveCard, OnDragEndNotifica
 import '@caldwell619/react-kanban/dist/styles.css';
 import { Chip } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { fetchStatuses } from '../infrastructures/statuses';
-import { fetchTasks, updateTask } from '../infrastructures/tasks';
-import { Status } from '../types/Status';
-import { Task } from '../types/Task';
-import './Kanban.scss';
-import Loading from './Loading';
-
+import Loading from '../../../common/components/Loading';
+import { fetchStatuses } from '../../../infrastructures/statuses';
+import { fetchTasks, updateTask } from '../../../infrastructures/tasks';
+import { Status } from '../../../types/Status';
+import { Task } from '../../../types/Task';
+import '../styles/Kanban.scss';
 export default function Kanban() {
 
     const [board, SetBoard] = useState<KanbanBoard<Card> | null>(null);

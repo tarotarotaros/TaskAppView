@@ -2,9 +2,9 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { AppBar, CssBaseline, Drawer, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar, Typography } from '@mui/material';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Hello from '../Pages/Hello';
+import Hello from '../../home/components/Hello';
+import SigninStatus from '../../signin/components/SigninStatus';
 import { SidebarData } from "./SidebarData";
-import SigninStatus from './Signin/SigninStatus';
 
 const sidebarwidth = 250;
 export default function SideMenuWithHeader() {

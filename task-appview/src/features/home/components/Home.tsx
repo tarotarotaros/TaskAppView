@@ -1,4 +1,4 @@
-import SideMenuWithHeader from '../Forms/SideMenuWithHeader';
+import SideMenuWithHeader from "../../menu/components/SideMenuWithHeader";
 
 const Home = () => {
 
@@ -14,6 +14,5 @@ const Home = () => {
 
   );
 };
-
 
 export default Home;

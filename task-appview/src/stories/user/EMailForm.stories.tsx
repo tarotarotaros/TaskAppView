@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import EMailForm from '../../common/components/EMailForm';
 
-import EMailForm from '../../Forms/Signup/EMailForm';
 
 const meta = {
     title: 'User/EMailForm',
