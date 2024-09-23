@@ -5,9 +5,9 @@ import Flag from "@mui/icons-material/Flag";
 import HomeIcon from "@mui/icons-material/Home";
 import Person from "@mui/icons-material/Person";
 import SettingsIcon from "@mui/icons-material/Settings";
-import Kanban from "../Pages/Kanban";
-import TaskList from "../Pages/TaskList";
-import UserSignin from "../Pages/UserSignin";
+import Kanban from "../../kanban/components/Kanban";
+import UserSignin from "../../signin/components/UserSignin";
+import TaskList from "../../tasklist/components/TaskList";
 
 export const SidebarData = [
     {

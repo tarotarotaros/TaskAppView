@@ -4,10 +4,10 @@ import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import Typography from '@mui/material/Typography';
 import React, { useState } from 'react';
-import { signin } from '../../infrastructures/signin';
-import EMailForm from '../Signup/EMailForm';
-import PasswordForm from '../Signup/PasswordForm';
-import '../Signup/SignupStyle.css';
+import EMailForm from '../../../common/components/EMailForm';
+import PasswordForm from '../../../common/components/PasswordForm';
+import { signin } from '../../../infrastructures/signin';
+import '../styles/SignupStyle.css';
 
 export default function Signin() {
   const [emailError, setEmailError] = React.useState(false);

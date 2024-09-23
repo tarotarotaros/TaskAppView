@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import PasswordForm from '../../common/components/PasswordForm';
 
-import PasswordForm from '../../Forms/Signup/PasswordForm';
 
 const meta = {
     title: 'User/PasswordForm',

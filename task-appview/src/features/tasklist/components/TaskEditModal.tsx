@@ -9,12 +9,12 @@ import ThermostatIcon from "@mui/icons-material/Thermostat";
 import { Box, Button, TextField, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { useState } from 'react';
-import '../index.css';
-import { SelectDataItem } from "../types/SelectDataItem";
-import { Task } from "../types/Task";
-import DatePickerWithText from "./DatePickerWithText";
-import MarkdownHtml from "./MarkdownHtml";
-import SelectBoxWithText from "./SelectBoxWithText";
+import DatePickerWithText from "../../../common/components/DatePickerWithText";
+import MarkdownHtml from "../../../common/components/MarkdownHtml";
+import SelectBoxWithText from "../../../common/components/SelectBoxWithText";
+import '../../../index.css';
+import { SelectDataItem } from "../../../types/SelectDataItem";
+import { Task } from "../../../types/Task";
 
 type TaskEditModalProps = {
     handleCloseModal: React.MouseEventHandler<HTMLButtonElement>;

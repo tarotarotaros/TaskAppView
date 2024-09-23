@@ -8,10 +8,10 @@ import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import React, { useState } from 'react';
-import { signup } from '../../infrastructures/signin';
-import EMailForm from './EMailForm';
-import PasswordForm from './PasswordForm';
-import './SignupStyle.css';
+import EMailForm from '../../../common/components/EMailForm';
+import PasswordForm from '../../../common/components/PasswordForm';
+import { signup } from '../../../infrastructures/signin';
+import '../styles/SignupStyle.css';
 
 export default function SignUp() {
 
