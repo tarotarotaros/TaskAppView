@@ -8,12 +8,12 @@ import SaveIcon from "@mui/icons-material/Save";
 import ThermostatIcon from "@mui/icons-material/Thermostat";
 import { Box, Button, TextField, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import Grid from '@mui/material/Grid2';
-import { marked } from "marked";
 import { useState } from 'react';
-import sanitizeHtml from 'sanitize-html';
+import '../index.css';
 import { SelectDataItem } from "../types/SelectDataItem";
 import { Task } from "../types/Task";
 import DatePickerWithText from "./DatePickerWithText";
+import MarkdownHtml from "./MarkdownHtml";
 import SelectBoxWithText from "./SelectBoxWithText";
 
 type TaskEditModalProps = {
@@ -39,18 +39,6 @@ export default function TaskEditModal({ handleCloseModal, onSave, taskData, assi
     const [startDate, setStartDate] = useState<Date | null>(taskData?.start ? new Date(taskData.start) : new Date());
     const [endDate, setEndDate] = useState<Date | null>(taskData?.end ? new Date(taskData.end) : new Date());
     const [displyaPattern, setDisplyaPattern] = useState<string>(PLAIN_TEXT);
-
-    marked.setOptions({
-        gfm: true,
-        breaks: true,
-    });
-
-    const contentMarkDownText = marked.parse(
-        sanitizeHtml(content, {
-            allowedTags: [],
-            disallowedTagsMode: 'recursiveEscape',
-        })
-    );
 
     const handleSave = () => {
 
@@ -149,24 +137,24 @@ export default function TaskEditModal({ handleCloseModal, onSave, taskData, assi
                             minRows={11}
                             maxRows={11}
                             fullWidth
+                            //sx={{ height: '300px' }}
                             value={content}
                             onChange={(e) => setContent(e.target.value)}
                         />
                     ) : displyaPattern === MARK_DOWN_TEXT ? (
                         <Box
-
                             sx={{
-
+                                borderRadius: '3px',
                                 width: '100%',
                                 height: '300px',
                                 padding: '5px',
-                                border: '0.5px solid gray',
+                                border: '0.5px solid #CCCCCC',
                                 overflowY: 'auto', // 縦スクロールを有効にする
                                 wordWrap: 'break-word', // テキストが領域外に行かないように改行
                                 whiteSpace: 'pre-wrap', // 改行を保持
                             }}
                         >
-                            <div dangerouslySetInnerHTML={{ __html: contentMarkDownText.toString() }} />
+                            <MarkdownHtml content={content} />
                         </Box>
 
                     ) : null}
