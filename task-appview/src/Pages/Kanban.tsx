@@ -1,6 +1,5 @@
 import { Card, Column, ControlledBoard, KanbanBoard, moveCard, OnDragEndNotification } from '@caldwell619/react-kanban';
 import '@caldwell619/react-kanban/dist/styles.css';
-import CircularProgress from '@mui/joy/CircularProgress';
 import { Chip } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { fetchStatuses } from '../infrastructures/statuses';
@@ -8,6 +7,7 @@ import { fetchTasks, updateTask } from '../infrastructures/tasks';
 import { Status } from '../types/Status';
 import { Task } from '../types/Task';
 import './Kanban.scss';
+import Loading from './Loading';
 
 export default function Kanban() {
 
@@ -67,9 +67,7 @@ export default function Kanban() {
     }
 
     if (!board) {
-        return (
-            <div><p>Loading...</p>
-                <CircularProgress size="sm" /></div>)
+        return (<Loading />)
             ;
     } else {
 

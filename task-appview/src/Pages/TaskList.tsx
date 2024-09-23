@@ -16,6 +16,7 @@ import { Priority } from "../types/Priority";
 import { SelectDataItem } from "../types/SelectDataItem";
 import { Status } from "../types/Status";
 import { Task } from "../types/Task";
+import Loading from "./Loading";
 import RemoveConfirmModal from "./RemoveConfirmModal";
 import TaskEditModal from './TaskEditModal';
 import TaskEditModalStatus from './TaskEditModalStatus';
@@ -228,53 +229,60 @@ export default function DataTable() {
         setEditModalIsOpen(false)
     };
 
-    return (
-        <div>
-            <Grid container spacing={2} justifyContent="center" alignItems="center">
-                <Grid size={12}>
-                    <div>
-                        <Modal open={isEditModalOpen}>
-                            <TaskEditModal
-                                handleCloseModal={handleCloseEditModal}
-                                onSave={handleSaveTask}
-                                taskData={selectedTask}
-                                assigneeSelectDataItem={assigneeselectdatas}
-                                statusSelectDataItem={statusselectdatas}
-                                priorirySelectDataItem={priprotyselectdatas} />
-                        </Modal>
-                        <Modal open={isDeleteConfirmModalOpen}>
-                            <RemoveConfirmModal
-                                handleCancelModal={handleCloseDeleteConfirmModal}
-                                handleDeleteModal={handleDeleteModal} />
-                        </Modal>
-                    </div>
-                </Grid>
-                <Grid my={2} size={12} justifyContent="end" spacing={1} container>
-                    <Grid >
-                        <IconButton aria-label="add" onClick={handleOpenEditModal}>
-                            <AddIcon />
-                        </IconButton>
-                    </Grid>
-                    <Grid >
-                        <IconButton aria-label="delete" onClick={handleOpenDeleteConfirmModal} ><DeleteIcon /></IconButton>
-                    </Grid>
-                </Grid>
 
-                <Grid size={12}>
-                    <Paper sx={{ height: '90%', width: 'auto' }}>
-                        <DataGrid
-                            onRowSelectionModelChange={handleSelectionChange} // 選択モデルが変わったら呼ばれる
-                            rows={tasks}
-                            getRowId={(row) => row.task_id}
-                            checkboxSelection
-                            columns={columns}
-                            initialState={{ pagination: { paginationModel } }}
-                            pageSizeOptions={[5, 10]}
-                            sx={{ border: 0 }}
-                        />
-                    </Paper>
-                </Grid></Grid>
-        </div >
-    );
+    if (assigneeselectdatas.length === 0 ||
+        statusselectdatas.length === 0 ||
+        priprotyselectdatas.length === 0) {
+        return (<Loading />);
+    } else {
+        return (
+            <div>
+                <Grid container spacing={2} justifyContent="center" alignItems="center">
+                    <Grid size={12}>
+                        <div>
+                            <Modal open={isEditModalOpen}>
+                                <TaskEditModal
+                                    handleCloseModal={handleCloseEditModal}
+                                    onSave={handleSaveTask}
+                                    taskData={selectedTask}
+                                    assigneeSelectDataItem={assigneeselectdatas}
+                                    statusSelectDataItem={statusselectdatas}
+                                    priorirySelectDataItem={priprotyselectdatas} />
+                            </Modal>
+                            <Modal open={isDeleteConfirmModalOpen}>
+                                <RemoveConfirmModal
+                                    handleCancelModal={handleCloseDeleteConfirmModal}
+                                    handleDeleteModal={handleDeleteModal} />
+                            </Modal>
+                        </div>
+                    </Grid>
+                    <Grid my={2} size={12} justifyContent="end" spacing={1} container>
+                        <Grid >
+                            <IconButton aria-label="add" onClick={handleOpenEditModal}>
+                                <AddIcon />
+                            </IconButton>
+                        </Grid>
+                        <Grid >
+                            <IconButton aria-label="delete" onClick={handleOpenDeleteConfirmModal} ><DeleteIcon /></IconButton>
+                        </Grid>
+                    </Grid>
+
+                    <Grid size={12}>
+                        <Paper sx={{ height: '90%', width: 'auto' }}>
+                            <DataGrid
+                                onRowSelectionModelChange={handleSelectionChange} // 選択モデルが変わったら呼ばれる
+                                rows={tasks}
+                                getRowId={(row) => row.task_id}
+                                checkboxSelection
+                                columns={columns}
+                                initialState={{ pagination: { paginationModel } }}
+                                pageSizeOptions={[5, 10]}
+                                sx={{ border: 0 }}
+                            />
+                        </Paper>
+                    </Grid></Grid>
+            </div >
+        );
+    }
 }
 
