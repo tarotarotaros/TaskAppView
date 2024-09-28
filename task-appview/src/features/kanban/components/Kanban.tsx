@@ -25,22 +25,35 @@ export default function Kanban() {
         loadTasks();
     }, [])
 
+    function formatDate(date: Date): string {
+        const year = date.getFullYear();
+        const month = ('0' + (date.getMonth() + 1)).slice(-2); // 月は0から始まるので+1
+        const day = ('0' + date.getDate()).slice(-2); // 日を2桁にする
+        return `${year}年${month}月${day}日`;
+    }
+
+    function createDescriptionText(task: Task): string {
+        const deadline = task.deadline ? new Date(task.deadline) : undefined;
+        const text = "期限:" + (deadline ? formatDate(deadline) : "未設定")
+        return text;
+    }
+
     // カンバンボード用データを作成
-    function createKanbanBoard(fetchedTasks: any[], fetchedStatuses: any[]): KanbanBoard<Card> {
+    function createKanbanBoard(fetchedTasks: Task[], fetchedStatuses: any[]): KanbanBoard<Card> {
 
         const columns: Column<Card>[] = fetchedStatuses.map(status => ({
             id: status.id,
             title: status.name,
             cards: []
         }));
-
         fetchedTasks.forEach(task => {
             const column = columns.find(column => column.id === task.status);
+            const descriptionText = createDescriptionText(task);
             if (column) {
                 column.cards.push({
                     id: task.task_id,
                     title: task.task_name,
-                    description: task.content,
+                    description: descriptionText,
                 });
             }
         });
