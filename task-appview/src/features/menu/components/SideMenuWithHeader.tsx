@@ -1,15 +1,21 @@
 import MenuIcon from '@mui/icons-material/Menu';
-import { AppBar, CssBaseline, Drawer, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar, Typography } from '@mui/material';
+import { AppBar, CssBaseline, Drawer, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar, Typography, useTheme } from '@mui/material';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { themeConst } from '../../../themeConst';
 import Hello from '../../home/components/Hello';
 import SigninStatus from '../../signin/components/SigninStatus';
+import './../../../index.css';
 import { SidebarData } from "./SidebarData";
 
 const sidebarwidth = 250;
 export default function SideMenuWithHeader() {
+
+    const theme = useTheme(); // テーマを取得
+
     const [open, setOpen] = useState(false);
     const [content, setContent] = useState(<Hello />); // 初期コンテンツ
+    const [contentKey, setContentKey] = useState("home"); // 初期コンテンツ
     const navigate = useNavigate();
 
     const toggleDrawer = () => {
@@ -48,22 +54,33 @@ export default function SideMenuWithHeader() {
                     style: {
                         width: sidebarwidth,
                     },
+                    sx: {
+                        color: theme.palette.primary.contrastText,
+                        backgroundColor: theme.palette.primary.main,
+                        border: 0,
+                    }
                 }}
             >
                 <Toolbar />
-                <List>
+                <List >
+
                     {SidebarData.map((value, key) => {
                         if ((value.condition === "signin" && checkLoginStatus()) ||
                             (value.condition === "signout" && !checkLoginStatus()) ||
                             value.condition === "") {
+                            const selectedBackColor = value.key === contentKey ? themeConst.THEME_COLOR_BACK : theme.palette.primary.main;
                             return (
                                 <ListItem key={key} disablePadding>
                                     <ListItemButton
+                                        sx={{
+                                            backgroundColor: selectedBackColor
+                                        }}
                                         onClick={() => {
                                             if (value.title === "サインアウト") {
                                                 signout();
                                             } else {
                                                 setContent(value.component); // クリックされたアイテムのタイトルをコンテンツにセット
+                                                setContentKey(value.key);
                                             }
                                         }} >
                                         <ListItemIcon>
@@ -80,12 +97,12 @@ export default function SideMenuWithHeader() {
                     })}
                 </List>
             </Drawer>
-            <main style={{ flexGrow: 1, padding: '16px', marginLeft: open ? sidebarwidth : 0 }}>
+            <main style={{ background: themeConst.THEME_COLOR_BACK, flexGrow: 1, padding: '16px', marginLeft: open ? sidebarwidth : 0 }}>
                 <Toolbar />
                 <Typography>
                     {content} {/* 動的に変更されるコンテンツ */}
                 </Typography>
-            </main>
-        </div>
+            </main >
+        </div >
     );
 }

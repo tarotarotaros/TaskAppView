@@ -12,6 +12,7 @@ import TaskList from "../../tasklist/components/TaskList";
 export const SidebarData = [
     {
         title: "ホーム",
+        key: "home",
         condition: "",
         icon: <HomeIcon />,
         link: "/",
@@ -19,6 +20,7 @@ export const SidebarData = [
     },
     {
         title: "サインイン（アカウント登録）",
+        key: "signin",
         condition: "signout",
         icon: <Person />,
         link: "/signin",
@@ -26,6 +28,7 @@ export const SidebarData = [
     },
     {
         title: "タスク",
+        key: "task",
         condition: "signin",
         icon: <BackupTable />,
         link: "/friends",
@@ -33,6 +36,7 @@ export const SidebarData = [
     },
     {
         title: "カンバン",
+        key: "kanban",
         condition: "signin",
         icon: <CalendarMonth />,
         link: "/upload",
@@ -40,6 +44,7 @@ export const SidebarData = [
     },
     {
         title: "マイルストーン",
+        key: "milestone",
         condition: "signin",
         icon: <Flag />,
         link: "/upload",
@@ -47,6 +52,7 @@ export const SidebarData = [
     },
     {
         title: "分析",
+        key: "ana",
         condition: "signin",
         icon: <Dashboard />,
         link: "/payment",
@@ -54,6 +60,7 @@ export const SidebarData = [
     },
     {
         title: "サインアウト",
+        key: "signout",
         condition: "signin",
         icon: <SettingsIcon />,
         link: "/signout",

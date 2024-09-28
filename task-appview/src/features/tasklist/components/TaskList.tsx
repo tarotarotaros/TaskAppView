@@ -27,14 +27,18 @@ export default function DataTable() {
 
     // 列定義
     const columns: GridColDef[] = [
-        { field: 'task_id', headerName: 'ID', width: 100, headerAlign: 'center', align: 'center' },
-        { field: 'task_name', headerName: 'タイトル', width: 250, headerAlign: 'center', align: 'center' },
+        { field: 'task_id', headerName: 'ID', width: 100, headerAlign: 'center', align: 'center', headerClassName: 'custom-header' },
+        {
+            field: 'task_name', headerName: 'タイトル', width: 250, headerAlign: 'center', align: 'center', headerClassName: 'custom-header',
+            flex: 1
+        },
         {
             field: 'priority', headerName: '優先度', width: 130, headerAlign: 'center', align: 'center',
             valueFormatter: (params) => {
                 const result = priprotyselectdatas.find(item => Number(item.value) === Number(params));
                 return result ? result.label : "";
             },
+            headerClassName: 'custom-header'
         },
         {
             field: 'status', headerName: 'ステータス', width: 130, headerAlign: 'center', align: 'center',
@@ -43,6 +47,7 @@ export default function DataTable() {
                 const displayText = result ? result.label : "";
                 return (<Chip label={displayText} sx={{ backgroundColor: result?.color, color: 'white' }} />);
             },
+            headerClassName: 'custom-header'
         },
         {
             field: 'deadline',
@@ -53,7 +58,8 @@ export default function DataTable() {
             headerName: '期限',
             width: 130,
             headerAlign: 'center',
-            align: 'center'
+            align: 'center',
+            headerClassName: 'custom-header'
         },
         {
             field: 'start', headerName: '開始日',
@@ -61,7 +67,8 @@ export default function DataTable() {
             valueFormatter: (params) => {
                 return dayjs(params).format('YYYY/MM/DD');;
             },
-            width: 130, headerAlign: 'center', align: 'center'
+            width: 130, headerAlign: 'center', align: 'center',
+            headerClassName: 'custom-header'
         },
         {
             field: 'end', headerName: '終了日',
@@ -69,7 +76,8 @@ export default function DataTable() {
             valueFormatter: (params) => {
                 return dayjs(params).format('YYYY/MM/DD');;
             },
-            width: 130, headerAlign: 'center', align: 'center'
+            width: 130, headerAlign: 'center', align: 'center',
+            headerClassName: 'custom-header'
         },
         {
             field: 'assignee', headerName: '担当者', width: 130, headerAlign: 'center', align: 'center',
@@ -77,6 +85,7 @@ export default function DataTable() {
                 const result = assigneeselectdatas.find(item => Number(item.value) === Number(params));
                 return result ? result.label : "";
             },
+            headerClassName: 'custom-header'
         },
         {
             field: 'actions',
@@ -93,7 +102,8 @@ export default function DataTable() {
                     color="inherit"
                 />),
             headerAlign: 'center',
-            align: 'center'
+            align: 'center',
+            headerClassName: 'custom-header',
         },
     ];
 
@@ -270,6 +280,14 @@ export default function DataTable() {
                     <Grid size={12}>
                         <Paper sx={{ height: '90%', width: 'auto' }}>
                             <DataGrid
+                                sx={{
+                                    '& .MuiDataGrid-columnHeaderCheckbox': {
+                                        backgroundColor: '#fff',
+                                    },
+                                    '& .custom-header': {
+                                        backgroundColor: '#fff',
+                                    },
+                                }}
                                 onRowSelectionModelChange={handleSelectionChange} // 選択モデルが変わったら呼ばれる
                                 rows={tasks}
                                 getRowId={(row) => row.task_id}
@@ -277,7 +295,6 @@ export default function DataTable() {
                                 columns={columns}
                                 initialState={{ pagination: { paginationModel } }}
                                 pageSizeOptions={[5, 10]}
-                                sx={{ border: 0 }}
                             />
                         </Paper>
                     </Grid></Grid>

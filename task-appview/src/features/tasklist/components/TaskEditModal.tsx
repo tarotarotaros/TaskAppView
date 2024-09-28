@@ -102,7 +102,7 @@ export default function TaskEditModal({ handleCloseModal, onSave, taskData, assi
         >
             <Grid container spacing={2} >
                 <Grid size={12} justifyContent="end" container>
-                    <Button sx={{ width: '15px', height: '30px', backgroundColor: '#000' }} variant="contained" onClick={handleCloseModal}>
+                    <Button sx={{ width: '15px', height: '30px', backgroundColor: '#000', color: '#fff' }} variant="contained" onClick={handleCloseModal}>
                         <CloseIcon />
                     </Button>
                 </Grid>
