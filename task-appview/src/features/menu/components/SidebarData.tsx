@@ -1,10 +1,12 @@
 import BackupTable from "@mui/icons-material/BackupTable";
 import CalendarMonth from "@mui/icons-material/CalendarMonth";
 import Dashboard from "@mui/icons-material/Dashboard";
+import Dataset from "@mui/icons-material/Dataset";
 import Flag from "@mui/icons-material/Flag";
 import HomeIcon from "@mui/icons-material/Home";
 import Person from "@mui/icons-material/Person";
 import SettingsIcon from "@mui/icons-material/Settings";
+import DataEdit from "../../data/components/DataEdit";
 import Kanban from "../../kanban/components/Kanban";
 import UserSignin from "../../signin/components/UserSignin";
 import TaskList from "../../tasklist/components/TaskList";
@@ -41,6 +43,13 @@ export const SidebarData = [
         icon: <CalendarMonth />,
         link: "/upload",
         component: <Kanban />,
+    },
+    {
+        title: "データ編集",
+        key: "data",
+        condition: "signin",
+        icon: <Dataset />,
+        component: <DataEdit />,
     },
     {
         title: "マイルストーン",
