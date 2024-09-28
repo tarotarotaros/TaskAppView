@@ -16,6 +16,17 @@ const theme = createTheme({
   typography: {
     fontFamily: themeConst.FONT_TEXT, // 使用したいフォントファミリを指定
   },
+  palette: {
+    primary: {
+      light: themeConst.THEME_COLOR_LIGHT,
+      main: themeConst.THEME_COLOR_MAIN,
+      dark: themeConst.THEME_COLOR_DARK,
+      contrastText: themeConst.THTME_COLOR_FONT,
+    },
+    background: {
+      default: themeConst.THEME_COLOR_BACK,
+    },
+  }
 });
 
 root.render(
