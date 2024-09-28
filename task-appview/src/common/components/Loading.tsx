@@ -1,4 +1,4 @@
-import CircularProgress from '@mui/joy/CircularProgress';
+import CircularProgress from '@mui/material/CircularProgress';
 import Grid from '@mui/material/Grid2';
 
 export default function Loading() {
@@ -7,7 +7,7 @@ export default function Loading() {
         <div>
             <Grid container size={12} justifyContent="center" alignItems="center" spacing={2}>
                 <Grid>
-                    <CircularProgress size="sm" />
+                    <CircularProgress size="30px" />
                 </Grid>
                 <Grid>
                     <h1 style={{ fontSize: '2rem' }}>Loading... </h1>

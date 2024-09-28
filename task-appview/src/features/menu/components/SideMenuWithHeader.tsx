@@ -4,10 +4,13 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Hello from '../../home/components/Hello';
 import SigninStatus from '../../signin/components/SigninStatus';
+import './../../../index.css';
 import { SidebarData } from "./SidebarData";
 
 const sidebarwidth = 250;
 export default function SideMenuWithHeader() {
+    const menuBackgroundColor = "#D8EBF2";
+    const contentBackgroundColor = "#D8EBF2";
     const [open, setOpen] = useState(false);
     const [content, setContent] = useState(<Hello />); // 初期コンテンツ
     const navigate = useNavigate();
@@ -48,10 +51,17 @@ export default function SideMenuWithHeader() {
                     style: {
                         width: sidebarwidth,
                     },
+                    sx: {
+                        backgroundColor: menuBackgroundColor,
+                        border: 1,
+                        //border: '2px dotted';
+                        borderColor: '#000000'
+                    }
                 }}
             >
                 <Toolbar />
-                <List>
+                <List >
+
                     {SidebarData.map((value, key) => {
                         if ((value.condition === "signin" && checkLoginStatus()) ||
                             (value.condition === "signout" && !checkLoginStatus()) ||
@@ -80,12 +90,12 @@ export default function SideMenuWithHeader() {
                     })}
                 </List>
             </Drawer>
-            <main style={{ flexGrow: 1, padding: '16px', marginLeft: open ? sidebarwidth : 0 }}>
+            <main style={{ background: contentBackgroundColor, flexGrow: 1, padding: '16px', marginLeft: open ? sidebarwidth : 0 }}>
                 <Toolbar />
                 <Typography>
                     {content} {/* 動的に変更されるコンテンツ */}
                 </Typography>
-            </main>
-        </div>
+            </main >
+        </div >
     );
 }
