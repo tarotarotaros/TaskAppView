@@ -2,6 +2,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { AppBar, CssBaseline, Drawer, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar, Typography } from '@mui/material';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { themeConst } from '../../../themeConst';
 import Hello from '../../home/components/Hello';
 import SigninStatus from '../../signin/components/SigninStatus';
 import './../../../index.css';
@@ -9,8 +10,7 @@ import { SidebarData } from "./SidebarData";
 
 const sidebarwidth = 250;
 export default function SideMenuWithHeader() {
-    const menuBackgroundColor = "#D8EBF2";
-    const contentBackgroundColor = "#D8EBF2";
+
     const [open, setOpen] = useState(false);
     const [content, setContent] = useState(<Hello />); // 初期コンテンツ
     const navigate = useNavigate();
@@ -52,7 +52,7 @@ export default function SideMenuWithHeader() {
                         width: sidebarwidth,
                     },
                     sx: {
-                        backgroundColor: menuBackgroundColor,
+                        backgroundColor: themeConst.COLOR_TEXT_1,
                         border: 1,
                         //border: '2px dotted';
                         borderColor: '#000000'
@@ -90,7 +90,7 @@ export default function SideMenuWithHeader() {
                     })}
                 </List>
             </Drawer>
-            <main style={{ background: contentBackgroundColor, flexGrow: 1, padding: '16px', marginLeft: open ? sidebarwidth : 0 }}>
+            <main style={{ background: themeConst.COLOR_TEXT_1, flexGrow: 1, padding: '16px', marginLeft: open ? sidebarwidth : 0 }}>
                 <Toolbar />
                 <Typography>
                     {content} {/* 動的に変更されるコンテンツ */}

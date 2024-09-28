@@ -5,17 +5,16 @@ import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
+import { themeConst } from './themeConst';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 
-const font = "'Noto Sans JP', sans-serif";
-
 // フォントを含めたテーマを作成
 const theme = createTheme({
   typography: {
-    fontFamily: font, // 使用したいフォントファミリを指定
+    fontFamily: themeConst.FONT_TEXT, // 使用したいフォントファミリを指定
   },
 });
 
@@ -23,7 +22,6 @@ root.render(
   <React.StrictMode>
     <BrowserRouter>
       <ThemeProvider theme={theme}>
-        {/* <GlobalStyle /> */}
         <App />
       </ThemeProvider>
     </BrowserRouter>
