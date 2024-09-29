@@ -8,75 +8,14 @@ import Grid from '@mui/material/Grid2';
 import { DataGrid, GridActionsCellItem, GridColDef, GridEventListener, GridRowEditStopReasons, GridRowId, GridRowModel, GridRowModes, GridRowModesModel, GridRowsProp } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
 import Loading from "../../../common/components/Loading";
-import { fetchPriorities } from "../../../infrastructures/priorities";
-import { Priority } from "../../../types/Priority";
+import { createPriority, deletePriority, fetchPriorities, updatePriority } from "../../../infrastructures/priorities";
+import { CreatePriority, Priority } from "../../../types/Priority";
 
 export default function DataEditGrid() {
-    const [rows, setRows] = useState<GridRowsProp>([]);
-    const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
-    const [errorMessage, setErrorMessage] = useState<string | null>(null);
-    const [openValidateErrorDialog, setValidateErrorDialog] = useState(false);
 
-    useEffect(() => {
-        loadPriorities();
-    }, []);
+    const nameNullErrorMessage: string = "名前が未入力です。";
 
-    const loadPriorities = async () => {
-        const fetchedPriorities: Priority[] = await fetchPriorities(); // データ取得
-        setRows(fetchedPriorities.map((priority) => ({ id: priority.id, name: priority.name })));
-    };
-
-    const handleRowEditStop: GridEventListener<'rowEditStop'> = (params, event) => {
-        if (params.reason === GridRowEditStopReasons.rowFocusOut) {
-            event.defaultMuiPrevented = true;
-        }
-    };
-
-    const handleEditClick = (id: GridRowId) => () => {
-        setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
-    };
-
-    const handleSaveClick = (id: GridRowId) => () => {
-        setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
-    };
-
-    const handleDeleteClick = (id: GridRowId) => () => {
-        setRows(rows.filter((row) => row.id !== id));
-    };
-
-    const handleCancelClick = (id: GridRowId) => () => {
-        setRowModesModel({
-            ...rowModesModel,
-            [id]: { mode: GridRowModes.View, ignoreModifications: true },
-        });
-
-        const editedRow = rows.find((row) => row.id === id);
-        if (editedRow!.isNew) {
-            setRows(rows.filter((row) => row.id !== id));
-        }
-    };
-
-    const processRowUpdate = (newRow: GridRowModel) => {
-        const updatedRow = { ...newRow, isNew: false };
-
-        if (!newRow.name || newRow.name.trim() === '') {
-            setErrorMessage('名前が未入力です。'); // 名前が空の場合はエラーを設定
-            throw new Error('名前が未入力です。');
-        }
-
-        setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
-        return updatedRow;
-    };
-
-    const handleProcessRowUpdateError = (error: Error) => {
-        console.error(error);
-        setValidateErrorDialog(true);
-    };
-
-    function closeValiteErrorDialog() {
-        setValidateErrorDialog(false);
-    }
-
+    // 列定義
     const columns: GridColDef[] = [
         {
             field: 'id', headerName: 'ID',
@@ -115,6 +54,112 @@ export default function DataEditGrid() {
             },
         },
     ];
+
+
+    const [rows, setRows] = useState<GridRowsProp>([]);
+    const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [openValidateErrorDialog, setValidateErrorDialog] = useState(false);
+
+    useEffect(() => {
+        loadPriorities();
+    }, []);
+
+    const loadPriorities = async () => {
+        const fetchedPriorities: Priority[] = await fetchPriorities(); // データ取得
+        setRows(fetchedPriorities.map((priority) => ({ id: priority.id, name: priority.name })));
+    };
+
+    const handleRowEditStop: GridEventListener<'rowEditStop'> = (params, event) => {
+        if (params.reason === GridRowEditStopReasons.rowFocusOut) {
+            event.defaultMuiPrevented = true;
+        }
+    };
+
+    // 行操作処理
+
+    const handleEditClick = (id: GridRowId) => () => {
+        setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
+    };
+
+    const handleSaveClick = (id: GridRowId) => () => {
+        setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
+    };
+
+    const handleDeleteClick = (id: GridRowId) => () => {
+        handleDeletePriorities(Number(id));
+        setRows(rows.filter((row) => row.id !== id));
+    };
+
+    const handleCancelClick = (id: GridRowId) => () => {
+        setRowModesModel({
+            ...rowModesModel,
+            [id]: { mode: GridRowModes.View, ignoreModifications: true },
+        });
+
+        const editedRow = rows.find((row) => row.id === id);
+        if (editedRow!.isNew) {
+            setRows(rows.filter((row) => row.id !== id));
+        }
+    };
+
+    // データ処理
+    const handleCreateTask = async (data: CreatePriority) => {
+        try {
+            await createPriority(data);
+        } catch (error) {
+            console.error('優先度の作成に失敗しました', error);
+        }
+    };
+
+    const handleUpdatePriority = async (id: number, data: any) => {
+        try {
+            const updateData = { ...data, updated_by: 'システム' }
+            console.log(updateData)
+            await updatePriority(id, updateData);
+        } catch (error) {
+            console.error('優先度の更新に失敗しました', error);
+        }
+    };
+
+    const handleDeletePriorities = async (priorityId: number) => {
+        try {
+            await deletePriority(priorityId);
+        } catch (error) {
+            console.error('優先度の削除に失敗しました', error);
+        }
+    };
+
+
+    const processRowUpdate = (newRow: GridRowModel) => {
+        const updatedRow = { ...newRow, isNew: false };
+
+        if (!newRow.name || newRow.name.trim() === '') {
+            setErrorMessage(nameNullErrorMessage);
+            throw new Error(nameNullErrorMessage);
+        }
+
+        const isNew: boolean = newRow.isNew;
+        const pr: Priority = newRow as Priority;
+        if (isNew) {
+            handleCreateTask(convertToCreatePriority(pr));
+        } else {
+            handleUpdatePriority(pr.id, pr);
+        }
+
+        setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
+        return updatedRow;
+    };
+
+    const handleProcessRowUpdateError = (error: Error) => {
+        console.error(error);
+        setValidateErrorDialog(true);
+    };
+
+    function closeValiteErrorDialog() {
+        setValidateErrorDialog(false);
+    }
+
     const handleClick = () => {
         // rowsの中から最大のIDを取得し、+1で新しいIDを生成
         const id = Math.max(...rows.map((row) => row.id as number)) + 1;
@@ -125,6 +170,18 @@ export default function DataEditGrid() {
         }));
     };
 
+
+    function convertToCreatePriority(priority: Priority): CreatePriority {
+        const { id, name, created_by, updated_by } = priority;
+
+        return {
+            id,
+            name,
+            created_by,
+            updated_by
+        };
+    }
+
     if (rows.length === 0) {
         return (<Loading />);
     } else {
@@ -132,7 +189,7 @@ export default function DataEditGrid() {
             <div>
                 <Grid my={2} size={12} justifyContent="end" spacing={1} container>
                     <Button color="primary" startIcon={<AddIcon />} onClick={handleClick}>
-                        Add record
+                        Add
                     </Button>
                 </Grid>
                 <Box sx={{
