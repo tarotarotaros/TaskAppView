@@ -1,11 +1,14 @@
 import { Box, Tab, Tabs } from "@mui/material";
 import { useState } from "react";
 import DataEditGrid from "./DataEditGrid";
+import { PriorityServiceImpl } from "./PriorityServiceImpl";
 
 export default function DataEdit() {
 
+    const priorityService = new PriorityServiceImpl();
+
     const displayDatas = [
-        { label: "優先度", content: <DataEditGrid /> },
+        { label: "優先度", content: <DataEditGrid priorityService={priorityService} /> },
         { label: "ステータス", content: <div>ステータスの内容</div> },
         { label: "担当者", content: <div>担当者の内容</div> },
         { label: "プロジェクト", content: <div>プロジェクトの内容</div> }

@@ -8,11 +8,15 @@ import Grid from '@mui/material/Grid2';
 import { DataGrid, GridActionsCellItem, GridColDef, GridEventListener, GridRowEditStopReasons, GridRowId, GridRowModel, GridRowModes, GridRowModesModel, GridRowsProp } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
 import Loading from "../../../common/components/Loading";
-import { createPriority, deletePriority, fetchPriorities, updatePriority } from "../../../infrastructures/priorities";
+import { fetchPriorities } from "../../../infrastructures/priorities";
 import { CreatePriority, Priority } from "../../../types/Priority";
+import { PriorityService } from "./PriorityService";
 
-export default function DataEditGrid() {
+interface DataEditGridProps {
+    priorityService: PriorityService;
+}
 
+export default function DataEditGrid({ priorityService }: DataEditGridProps) {
     const nameNullErrorMessage: string = "名前が未入力です。";
 
     // 列定義
@@ -55,7 +59,6 @@ export default function DataEditGrid() {
         },
     ];
 
-
     const [rows, setRows] = useState<GridRowsProp>([]);
     const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -66,7 +69,7 @@ export default function DataEditGrid() {
     }, []);
 
     const loadPriorities = async () => {
-        const fetchedPriorities: Priority[] = await fetchPriorities(); // データ取得
+        const fetchedPriorities: Priority[] = await fetchPriorities();
         setRows(fetchedPriorities.map((priority) => ({ id: priority.id, name: priority.name })));
     };
 
@@ -75,8 +78,6 @@ export default function DataEditGrid() {
             event.defaultMuiPrevented = true;
         }
     };
-
-    // 行操作処理
 
     const handleEditClick = (id: GridRowId) => () => {
         setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
@@ -104,19 +105,19 @@ export default function DataEditGrid() {
     };
 
     // データ処理
-    const handleCreateTask = async (data: CreatePriority) => {
+    const handleCreatePriority = async (data: CreatePriority) => {
         try {
-            await createPriority(data);
+            await priorityService.createPriority(data);
         } catch (error) {
             console.error('優先度の作成に失敗しました', error);
         }
     };
 
-    const handleUpdatePriority = async (id: number, data: any) => {
+    const handleUpdatePriority = async (id: number, data: Priority) => {
         try {
-            const updateData = { ...data, updated_by: 'システム' }
-            console.log(updateData)
-            await updatePriority(id, updateData);
+            const updateData = { ...data, updated_by: 'システム' };
+            console.log(updateData);
+            await priorityService.updatePriority(id, updateData);
         } catch (error) {
             console.error('優先度の更新に失敗しました', error);
         }
@@ -124,12 +125,11 @@ export default function DataEditGrid() {
 
     const handleDeletePriorities = async (priorityId: number) => {
         try {
-            await deletePriority(priorityId);
+            await priorityService.deletePriority(priorityId);
         } catch (error) {
             console.error('優先度の削除に失敗しました', error);
         }
     };
-
 
     const processRowUpdate = (newRow: GridRowModel) => {
         const updatedRow = { ...newRow, isNew: false };
@@ -142,7 +142,7 @@ export default function DataEditGrid() {
         const isNew: boolean = newRow.isNew;
         const pr: Priority = newRow as Priority;
         if (isNew) {
-            handleCreateTask(convertToCreatePriority(pr));
+            handleCreatePriority(convertToCreatePriority(pr));
         } else {
             handleUpdatePriority(pr.id, pr);
         }
@@ -161,7 +161,6 @@ export default function DataEditGrid() {
     }
 
     const handleClick = () => {
-        // rowsの中から最大のIDを取得し、+1で新しいIDを生成
         const id = Math.max(...rows.map((row) => row.id as number)) + 1;
         setRows((oldRows) => [...oldRows, { id, name: '', isNew: true }]);
         setRowModesModel((oldModel) => ({
@@ -169,7 +168,6 @@ export default function DataEditGrid() {
             [id]: { mode: GridRowModes.Edit, fieldToFocus: 'name' },
         }));
     };
-
 
     function convertToCreatePriority(priority: Priority): CreatePriority {
         const { id, name, created_by, updated_by } = priority;
@@ -193,13 +191,12 @@ export default function DataEditGrid() {
                     </Button>
                 </Grid>
                 <Box sx={{
-                    display: 'flex',           // Flexboxを有効にする
-                    justifyContent: 'center',   // 横方向の中央揃え
-                    alignItems: 'center',       // 縦方向の中央揃え
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
                     width: '500px',
-                    margin: '0 auto'            // Box自体を中央に寄せる
+                    margin: '0 auto'
                 }}>
-
                     <DataGrid
                         hideFooter
                         rows={rows}
@@ -209,12 +206,10 @@ export default function DataEditGrid() {
                         onRowModesModelChange={setRowModesModel}
                         onRowEditStop={handleRowEditStop}
                         processRowUpdate={processRowUpdate}
-                        onProcessRowUpdateError={handleProcessRowUpdateError} // エラー発生時に処理を行う
+                        onProcessRowUpdateError={handleProcessRowUpdateError}
                     />
                 </Box>
-                <Dialog
-                    open={openValidateErrorDialog}
-                >
+                <Dialog open={openValidateErrorDialog}>
                     <DialogTitle>エラー({errorMessage})</DialogTitle>
                     <DialogActions>
                         <Button onClick={closeValiteErrorDialog} color="primary">
