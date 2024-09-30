@@ -8,7 +8,6 @@ import Grid from '@mui/material/Grid2';
 import { DataGrid, GridActionsCellItem, GridColDef, GridEventListener, GridRowEditStopReasons, GridRowId, GridRowModel, GridRowModes, GridRowModesModel, GridRowsProp } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
 import Loading from "../../../common/components/Loading";
-import { fetchPriorities } from "../../../infrastructures/priorities";
 import { CreatePriority, Priority } from "../../../types/Priority";
 import { DataEditService } from "./DataEditService";
 
@@ -70,8 +69,8 @@ export default function DataEditGrid({ dataEditService, dataLabel }: DataEditGri
     }, []);
 
     const loadPriorities = async () => {
-        const fetchedPriorities: Priority[] = await fetchPriorities();
-        setRows(fetchedPriorities.map((priority) => ({ id: priority.id, name: priority.name })));
+        const fetchedDatas: any[] = await dataEditService.fetch();
+        setRows(fetchedDatas.map((data) => ({ id: data.id, name: data.name })));
     };
 
     const handleRowEditStop: GridEventListener<'rowEditStop'> = (params, event) => {
