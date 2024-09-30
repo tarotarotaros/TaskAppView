@@ -10,13 +10,14 @@ import { useEffect, useState } from "react";
 import Loading from "../../../common/components/Loading";
 import { fetchPriorities } from "../../../infrastructures/priorities";
 import { CreatePriority, Priority } from "../../../types/Priority";
-import { PriorityService } from "./PriorityService";
+import { DataEditService } from "./DataEditService";
 
 interface DataEditGridProps {
-    priorityService: PriorityService;
+    dataEditService: DataEditService;
+    dataLabel: string;
 }
 
-export default function DataEditGrid({ priorityService }: DataEditGridProps) {
+export default function DataEditGrid({ dataEditService, dataLabel }: DataEditGridProps) {
     const nameNullErrorMessage: string = "名前が未入力です。";
 
     // 列定義
@@ -88,7 +89,7 @@ export default function DataEditGrid({ priorityService }: DataEditGridProps) {
     };
 
     const handleDeleteClick = (id: GridRowId) => () => {
-        handleDeletePriorities(Number(id));
+        handleDeleteData(Number(id));
         setRows(rows.filter((row) => row.id !== id));
     };
 
@@ -105,29 +106,29 @@ export default function DataEditGrid({ priorityService }: DataEditGridProps) {
     };
 
     // データ処理
-    const handleCreatePriority = async (data: CreatePriority) => {
+    const handleCreateData = async (data: any) => {
         try {
-            await priorityService.createPriority(data);
+            await dataEditService.create(data);
         } catch (error) {
-            console.error('優先度の作成に失敗しました', error);
+            console.error(`${dataLabel}の作成に失敗しました`, error);
         }
     };
 
-    const handleUpdatePriority = async (id: number, data: Priority) => {
+    const handleUpdateData = async (id: number, data: any) => {
         try {
             const updateData = { ...data, updated_by: 'システム' };
             console.log(updateData);
-            await priorityService.updatePriority(id, updateData);
+            await dataEditService.update(id, updateData);
         } catch (error) {
-            console.error('優先度の更新に失敗しました', error);
+            console.error(`${dataLabel}の更新に失敗しました`, error);
         }
     };
 
-    const handleDeletePriorities = async (priorityId: number) => {
+    const handleDeleteData = async (id: number) => {
         try {
-            await priorityService.deletePriority(priorityId);
+            await dataEditService.delete(id);
         } catch (error) {
-            console.error('優先度の削除に失敗しました', error);
+            console.error(`${dataLabel}の削除に失敗しました`, error);
         }
     };
 
@@ -142,9 +143,9 @@ export default function DataEditGrid({ priorityService }: DataEditGridProps) {
         const isNew: boolean = newRow.isNew;
         const pr: Priority = newRow as Priority;
         if (isNew) {
-            handleCreatePriority(convertToCreatePriority(pr));
+            handleCreateData(convertToCreatePriority(pr));
         } else {
-            handleUpdatePriority(pr.id, pr);
+            handleUpdateData(pr.id, pr);
         }
 
         setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
