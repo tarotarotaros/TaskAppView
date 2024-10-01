@@ -12,9 +12,9 @@ export default function DataEdit() {
     const assigneeDataEditService = new AssigneeDataEditService();
 
     const displayDatas = [
-        { label: "優先度", content: <DataEditGrid dataLabel="優先度" dataEditService={priorityDataEditService} /> },
-        { label: "ステータス", content: <DataEditGrid dataLabel="ステータス" dataEditService={statusDataEditService} /> },
-        { label: "担当者", content: <DataEditGrid dataLabel="担当者" dataEditService={assigneeDataEditService} /> },
+        { label: "優先度", content: <DataEditGrid hasColor={false} dataLabel="優先度" dataEditService={priorityDataEditService} /> },
+        { label: "ステータス", content: <DataEditGrid hasColor={true} dataLabel="ステータス" dataEditService={statusDataEditService} /> },
+        { label: "担当者", content: <DataEditGrid hasColor={false} dataLabel="担当者" dataEditService={assigneeDataEditService} /> },
         { label: "プロジェクト", content: <div>プロジェクトの内容</div> }
     ];
 

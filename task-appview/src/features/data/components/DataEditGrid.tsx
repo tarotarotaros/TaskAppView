@@ -5,18 +5,18 @@ import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
 import { Box, Button, Dialog, DialogActions, DialogTitle } from "@mui/material";
 import Grid from '@mui/material/Grid2';
-import { DataGrid, GridActionsCellItem, GridColDef, GridEventListener, GridRowEditStopReasons, GridRowId, GridRowModel, GridRowModes, GridRowModesModel, GridRowsProp } from "@mui/x-data-grid";
+import { DataGrid, GridActionsCellItem, GridAlignment, GridColDef, GridEventListener, GridRowEditStopReasons, GridRowId, GridRowModel, GridRowModes, GridRowModesModel, GridRowsProp } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
 import Loading from "../../../common/components/Loading";
-import { CreatePriority, Priority } from "../../../types/Priority";
 import { DataEditService } from "./DataEditService";
 
 interface DataEditGridProps {
     dataEditService: DataEditService;
     dataLabel: string;
+    hasColor: boolean;
 }
 
-export default function DataEditGrid({ dataEditService, dataLabel }: DataEditGridProps) {
+export default function DataEditGrid({ dataEditService, dataLabel, hasColor }: DataEditGridProps) {
     const nameNullErrorMessage: string = "名前が未入力です。";
 
     // 列定義
@@ -30,6 +30,19 @@ export default function DataEditGrid({ dataEditService, dataLabel }: DataEditGri
             field: 'name', headerName: 'Name',
             headerAlign: 'center', width: 250, editable: true, flex: 1
         },
+        ...(hasColor
+            ? [
+                {
+                    field: 'color', headerName: 'Color',
+                    headerAlign: 'center' as GridAlignment, // 型を明示的に指定
+                    align: 'center' as GridAlignment,       // 型を明示的に指定
+                    width: 130,
+                    valueFormatter: (params: string) => {
+                        return params || ''; // 値がない場合は'N/A'と表示
+                    },
+                },
+            ]
+            : []),
         {
             field: 'actions',
             type: 'actions',
@@ -65,12 +78,17 @@ export default function DataEditGrid({ dataEditService, dataLabel }: DataEditGri
     const [openValidateErrorDialog, setValidateErrorDialog] = useState(false);
 
     useEffect(() => {
-        loadPriorities();
+        loadDatas();
     }, []);
 
-    const loadPriorities = async () => {
+    const loadDatas = async () => {
         const fetchedDatas: any[] = await dataEditService.fetch();
-        setRows(fetchedDatas.map((data) => ({ id: data.id, name: data.name })));
+        setRows(fetchedDatas.map((data) => ({
+            id: data.id,
+            name: data.name,
+            color: data.color !== undefined ? data.color : null  // colorフィールドが存在するか確認
+        })));
+
     };
 
     const handleRowEditStop: GridEventListener<'rowEditStop'> = (params, event) => {
@@ -140,11 +158,10 @@ export default function DataEditGrid({ dataEditService, dataLabel }: DataEditGri
         }
 
         const isNew: boolean = newRow.isNew;
-        const pr: Priority = newRow as Priority;
         if (isNew) {
-            handleCreateData(convertToCreatePriority(pr));
+            handleCreateData(convertToCreateData(newRow));
         } else {
-            handleUpdateData(pr.id, pr);
+            handleUpdateData(newRow.id, newRow);
         }
 
         setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
@@ -169,8 +186,8 @@ export default function DataEditGrid({ dataEditService, dataLabel }: DataEditGri
         }));
     };
 
-    function convertToCreatePriority(priority: Priority): CreatePriority {
-        const { id, name, created_by, updated_by } = priority;
+    function convertToCreateData(data: any): any {
+        const { id, name, created_by, updated_by } = data;
 
         return {
             id,
