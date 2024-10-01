@@ -3,10 +3,12 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
-import { Box, Button, Dialog, DialogActions, DialogTitle } from "@mui/material";
+import { Box, Button, Chip, Dialog, DialogActions, DialogTitle } from "@mui/material";
 import Grid from '@mui/material/Grid2';
-import { DataGrid, GridActionsCellItem, GridAlignment, GridColDef, GridEventListener, GridRowEditStopReasons, GridRowId, GridRowModel, GridRowModes, GridRowModesModel, GridRowsProp } from "@mui/x-data-grid";
+import { DataGrid, GridActionsCellItem, GridAlignment, GridColDef, GridEventListener, GridRenderCellParams, GridRowEditStopReasons, GridRowId, GridRowModel, GridRowModes, GridRowModesModel, GridRowsProp } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
+import { ColorResult } from "react-color";
+import SketchPicker from "react-color/lib/components/sketch/Sketch";
 import Loading from "../../../common/components/Loading";
 import { DataEditService } from "./DataEditService";
 
@@ -28,7 +30,11 @@ export default function DataEditGrid({ dataEditService, dataLabel, hasColor }: D
         },
         {
             field: 'name', headerName: 'Name',
-            headerAlign: 'center', width: 250, editable: true, flex: 1
+            headerAlign: 'center', width: 250, editable: true, flex: 1,
+            renderCell: (params: GridRenderCellParams) => {
+                return (<Chip label={params.row.name} sx={{ backgroundColor: params.row.color, color: 'white' }} />);
+            },
+
         },
         ...(hasColor
             ? [
@@ -37,9 +43,14 @@ export default function DataEditGrid({ dataEditService, dataLabel, hasColor }: D
                     headerAlign: 'center' as GridAlignment, // 型を明示的に指定
                     align: 'center' as GridAlignment,       // 型を明示的に指定
                     width: 130,
-                    valueFormatter: (params: string) => {
-                        return params || ''; // 値がない場合は'N/A'と表示
-                    },
+                    renderCell: (params: GridRenderCellParams) => (
+                        <div
+                            onClick={() => handleColorCellClick(params.id, params.value)} // セルクリック時の処理
+                            style={{ cursor: 'pointer', width: '100%', height: '100%' }}
+                        >
+                            {params.value || 'N/A'} {/* params.value を表示 */}
+                        </div>
+                    ),
                 },
             ]
             : []),
@@ -76,6 +87,9 @@ export default function DataEditGrid({ dataEditService, dataLabel, hasColor }: D
     const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [openValidateErrorDialog, setValidateErrorDialog] = useState(false);
+    const [showPicker, setShowPicker] = useState(false);
+    const [editColor, setEditColor] = useState<string>("");
+    const [editId, setEditId] = useState<string>("");
 
     useEffect(() => {
         loadDatas();
@@ -103,6 +117,8 @@ export default function DataEditGrid({ dataEditService, dataLabel, hasColor }: D
 
     const handleSaveClick = (id: GridRowId) => () => {
         setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
+
+        setShowPicker(false);
     };
 
     const handleDeleteClick = (id: GridRowId) => () => {
@@ -120,6 +136,34 @@ export default function DataEditGrid({ dataEditService, dataLabel, hasColor }: D
         if (editedRow!.isNew) {
             setRows(rows.filter((row) => row.id !== id));
         }
+
+        setShowPicker(false);
+    };
+
+    function handleColorCellClick(id: any, color: any): any {
+        if (rowModesModel[id]?.mode !== GridRowModes.Edit) return;
+        console.log("open:" + color);
+        setEditColor(color);
+        setEditId(id);
+        setShowPicker(true);
+    }
+
+    const handleColorChange = (value: ColorResult) => {
+        console.log("close:" + value.hex);
+
+        // editId の行を見つけ、その color を更新
+        const updatedRows = rows.map((row) => {
+            if (row.id === editId) {
+                return { ...row, color: value.hex }; // color を更新
+            }
+            return row;
+        });
+
+        // 状態を更新
+        setRows(updatedRows);
+
+        setEditColor(value.hex); // 選択された色も更新
+        setShowPicker(false); // ピッカーを閉じる
     };
 
     // データ処理
@@ -161,6 +205,7 @@ export default function DataEditGrid({ dataEditService, dataLabel, hasColor }: D
         if (isNew) {
             handleCreateData(convertToCreateData(newRow));
         } else {
+            console.log("update:" + newRow.color);
             handleUpdateData(newRow.id, newRow);
         }
 
@@ -234,6 +279,7 @@ export default function DataEditGrid({ dataEditService, dataLabel, hasColor }: D
                         </Button>
                     </DialogActions>
                 </Dialog>
+                {showPicker && <SketchPicker onChange={handleColorChange} color={editColor} />}
             </div>
         );
     }

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { CreateStatus } from '../types/Status';
+import { CreateStatus, Status } from '../types/Status';
 import { BASE_URL, getAuthToken } from './API';
 
 const ASSIGNEE_API_URL = BASE_URL + "statuses";
@@ -49,7 +49,7 @@ export const createStatus = async (statusData: CreateStatus) => {
 
 
 // ステータスを更新
-export const updateStatus = async (statusId: number, statusData: Partial<CreateStatus>) => {
+export const updateStatus = async (statusId: number, statusData: Partial<Status>) => {
     const token = getAuthToken();
 
     if (!token) {
@@ -62,6 +62,7 @@ export const updateStatus = async (statusId: number, statusData: Partial<CreateS
                 Authorization: `Bearer ${token}`,
             },
         });
+        console.log(statusData);
         return response.data;
     } catch (error) {
         console.error('ステータスの更新に失敗しました', error);
