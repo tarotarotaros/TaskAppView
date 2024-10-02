@@ -29,7 +29,6 @@ export const fetchStatuses = async () => {
 // ステータスを新規作成
 export const createStatus = async (statusData: CreateStatus) => {
     const token = getAuthToken();
-
     if (!token) {
         throw new Error('認証トークンが見つかりません。ログインが必要です。');
     }
