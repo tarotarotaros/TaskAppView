@@ -64,7 +64,7 @@ export const updatePriority = async (priorityId: number, priorityData: Partial<C
         });
         return response.data;
     } catch (error) {
-        console.error('ステータスの更新に失敗しました', error);
+        console.error('優先順位の更新に失敗しました', error);
         throw error;
     }
 };
