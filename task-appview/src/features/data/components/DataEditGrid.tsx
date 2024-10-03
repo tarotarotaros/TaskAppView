@@ -6,7 +6,7 @@ import SaveIcon from "@mui/icons-material/Save";
 import { Box, Button, Chip, Dialog, DialogActions, DialogTitle } from "@mui/material";
 import Grid from '@mui/material/Grid2';
 import { DataGrid, GridActionsCellItem, GridAlignment, GridColDef, GridEventListener, GridRenderCellParams, GridRowEditStopReasons, GridRowId, GridRowModel, GridRowModes, GridRowModesModel, GridRowsProp } from "@mui/x-data-grid";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import { ColorResult, GithubPicker } from "react-color";
 import Loading from "../../../common/components/Loading";
 import { DataEditService } from "./DataEditService";
@@ -43,26 +43,12 @@ export default function DataEditGrid({ dataEditService, dataLabel, hasColor }: D
             ? [
                 {
                     field: 'color', headerName: 'Color',
-                    headerAlign: 'center' as GridAlignment, // 型を明示的に指定
-                    align: 'center' as GridAlignment,       // 型を明示的に指定
+                    headerAlign: 'center' as GridAlignment,
+                    align: 'center' as GridAlignment,
                     width: 130,
                     renderCell: (params: GridRenderCellParams) => {
-
-                        // const cellElement = params.api.getCellElement(params.id, params.field);
-                        // const rect = cellElement.getBoundingClientRect();
-                        // const x = rect.left ? rect?.left : 0;  // X座標（セルの左端の位置）
-                        // const y = rect.top;   // Y座標（セルの上端の位置）
-
                         const cellElement = params.api.getCellElement(params.id, params.field);
-                        let x = 0;
-                        let y = 0;
-
-                        if (cellElement) {
-                            const rect = cellElement.getBoundingClientRect();
-                            x = rect?.left ?? 0;  // `rect.left` が存在しない場合、`0` にする
-                            y = rect?.bottom ?? 0;   // `rect.top` が存在しない場合、`0` にする
-
-                        }
+                        let { x, y } = getLocation(cellElement);
 
                         return (
                             <div
@@ -112,18 +98,18 @@ export default function DataEditGrid({ dataEditService, dataLabel, hasColor }: D
     const [editId, setEditId] = useState<string>("");
     const [popupPosition, setPopupPosition] = useState<{ x: number, y: number }>({ x: 0, y: 0 });
 
-    useEffect(() => {
-        loadDatas();
-    }, []);
-
-    const loadDatas = async () => {
+    const loadDatas = useCallback(async () => {
         const fetchedDatas: any[] = await dataEditService.fetch();
         setRows(fetchedDatas.map((data) => ({
             id: data.id,
             name: data.name,
             color: data.color !== undefined ? data.color : null  // colorフィールドが存在するか確認
         })));
-    };
+    }, [dataEditService]);  // 依存関係が必要ならここに追加
+
+    useEffect(() => {
+        loadDatas();
+    }, [loadDatas]);
 
     const handleRowEditStop: GridEventListener<'rowEditStop'> = (params, event) => {
         if (params.reason === GridRowEditStopReasons.rowFocusOut) {
@@ -137,7 +123,6 @@ export default function DataEditGrid({ dataEditService, dataLabel, hasColor }: D
 
     const handleSaveClick = (id: GridRowId) => () => {
         setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
-
         setShowColorPicker(false);
     };
 
@@ -274,6 +259,17 @@ export default function DataEditGrid({ dataEditService, dataLabel, hasColor }: D
         }
     }
 
+    function getLocation(cellElement: HTMLDivElement | null) {
+        let x = 0;
+        let y = 0;
+        if (cellElement) {
+            const rect = cellElement.getBoundingClientRect();
+            x = rect?.left ?? 0;
+            y = rect?.bottom ?? 0;
+        }
+        return { x, y };
+    }
+
 
     if (rows.length === 0) {
         return (<Loading />);
@@ -324,8 +320,6 @@ export default function DataEditGrid({ dataEditService, dataLabel, hasColor }: D
                             onChange={handleGithubPickerChange} />
                     </div>
                 }
-
-
             </div>
         );
     }
