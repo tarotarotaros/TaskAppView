@@ -210,7 +210,12 @@ export default function DataEditGrid({ dataEditService, dataLabel, hasColor }: D
     // データCUD処理
     const handleCreateData = async (data: any) => {
         try {
-            await dataEditService.create(data);
+            const createdData = {
+                ...data,
+                created_by: 'システム',
+                updated_by: 'システム',
+            };
+            await dataEditService.create(createdData);
         } catch (error) {
             console.error(`${dataLabel}の作成に失敗しました`, error);
         }
@@ -218,7 +223,10 @@ export default function DataEditGrid({ dataEditService, dataLabel, hasColor }: D
 
     const handleUpdateData = async (id: number, data: any) => {
         try {
-            const updateData = { ...data, updated_by: 'システム' };
+            const updateData = {
+                ...data,
+                updated_by: 'システム'
+            };
             console.log(updateData);
             await dataEditService.update(id, updateData);
         } catch (error) {

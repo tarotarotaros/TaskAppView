@@ -5,6 +5,7 @@ import { DataEditService } from "./DataEditService";
 export class ProjectDataEditService implements DataEditService {
     async create(data: CreateProject): Promise<void> {
         try {
+            console.log(data);
             await createProject(data);  // 実際の依存関数を呼び出す
         } catch (error) {
             console.error('プロジェクトの作成に失敗しました', error);
