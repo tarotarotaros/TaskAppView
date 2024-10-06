@@ -3,6 +3,7 @@ import { useState } from "react";
 import { AssigneeDataEditService } from "./AssigneeDataEditService";
 import DataEditGrid from "./DataEditGrid";
 import { PriorityDataEditService } from "./PriorityDataEditService";
+import { ProjectDataEditService } from "./ProjectDataEditService";
 import { StatusDataEditService } from "./StatusDataEditService";
 
 export default function DataEdit() {
@@ -10,12 +11,13 @@ export default function DataEdit() {
     const priorityDataEditService = new PriorityDataEditService();
     const statusDataEditService = new StatusDataEditService();
     const assigneeDataEditService = new AssigneeDataEditService();
+    const projectDataEditService = new ProjectDataEditService();
 
     const displayDatas = [
         { label: "優先度", content: <DataEditGrid hasColor={false} dataLabel="優先度" dataEditService={priorityDataEditService} /> },
         { label: "ステータス", content: <DataEditGrid hasColor={true} dataLabel="ステータス" dataEditService={statusDataEditService} /> },
         { label: "担当者", content: <DataEditGrid hasColor={false} dataLabel="担当者" dataEditService={assigneeDataEditService} /> },
-        { label: "プロジェクト", content: <div>プロジェクトの内容</div> }
+        { label: "プロジェクト", content: <DataEditGrid hasColor={false} dataLabel="プロジェクト" dataEditService={projectDataEditService} /> }
     ];
 
     const [value, setValue] = useState(0);
