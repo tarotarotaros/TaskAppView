@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SimpleDialog from '../../../common/components/SelectDialog';
 import { fetchProjects } from '../../../infrastructures/projects';
+import { fetchAuthUserInfo, UpdateUserProject } from '../../../infrastructures/user';
 import { themeConst } from '../../../themeConst';
 import { SelectDataItem } from '../../../types/SelectDataItem';
 import Hello from '../../home/components/Hello';
@@ -18,6 +19,7 @@ export default function SideMenuWithHeader() {
     const theme = useTheme(); // テーマを取得
 
     const [open, setOpen] = useState(false);
+    const [userId, SetUserId] = useState(0);
     const [openSelectProjectDialog, SetOpenSelectProjectDialog] = useState(false);
     const [selectProjectList, SetSelectProjectList] = useState<SelectDataItem[]>([]);
     const [selectProject, SetSelectProject] = useState<string>('');
@@ -49,6 +51,8 @@ export default function SideMenuWithHeader() {
             }));
             SetSelectProject(projectItems[0].label);
             SetSelectProjectList(projectItems);
+            const userInfo = await fetchAuthUserInfo();
+            SetUserId(userInfo.id);
             SetOpenSelectProjectDialog(true);
         } catch (error) {
             console.error('プロジェクトの取得に失敗しました', error);
@@ -58,7 +62,7 @@ export default function SideMenuWithHeader() {
     }
 
     function handleCloseSelectProjectDialog(selectedId: string): void {
-        console.log(selectedId);
+        UpdateUserProject(Number(selectedId), userId);
         SetOpenSelectProjectDialog(false);
     }
 
