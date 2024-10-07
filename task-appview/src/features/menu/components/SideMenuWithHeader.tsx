@@ -30,7 +30,7 @@ export default function SideMenuWithHeader() {
     const toggleDrawer = () => {
         setOpen(!open);
     };
-    const checkLoginStatus = (): boolean => {
+    const isSignin = (): boolean => {
         let token = sessionStorage.getItem('authToken');
         return token !== null && token !== "";  // トークンが存在し、空でないかを確認
     };
@@ -66,6 +66,23 @@ export default function SideMenuWithHeader() {
         SetOpenSelectProjectDialog(false);
     }
 
+    const SelectProjectButton = () => {
+        if (isSignin()) {
+            return (
+                <div>
+                    <IconButton color='inherit' onClick={handleChangeProjectClick}
+                        sx={{ marginRight: 10 }}>
+                        <WebAssetOutlinedIcon />
+                    </IconButton>
+                </div>
+            );
+        }
+        else {
+            return null;
+        }
+    };
+
+
     return (
         <div style={{ display: 'flex' }}>
             <CssBaseline />
@@ -77,10 +94,7 @@ export default function SideMenuWithHeader() {
                     <Typography variant="h6" noWrap sx={{ flexGrow: 1 }}>
                         タスク管理
                     </Typography>
-                    <IconButton color='inherit' onClick={handleChangeProjectClick}
-                        sx={{ marginRight: 10 }}>
-                        <WebAssetOutlinedIcon />
-                    </IconButton>
+                    <SelectProjectButton />
                     <SigninStatus />
                 </Toolbar>
             </AppBar>
@@ -104,8 +118,8 @@ export default function SideMenuWithHeader() {
                 <List >
 
                     {SidebarData.map((value, key) => {
-                        if ((value.condition === "signin" && checkLoginStatus()) ||
-                            (value.condition === "signout" && !checkLoginStatus()) ||
+                        if ((value.condition === "signin" && isSignin()) ||
+                            (value.condition === "signout" && !isSignin()) ||
                             value.condition === "") {
                             const selectedBackColor = value.key === contentKey ? themeConst.THEME_COLOR_BACK : theme.palette.primary.main;
                             return (
