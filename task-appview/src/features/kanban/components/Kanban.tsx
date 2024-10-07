@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from 'react';
 import Loading from '../../../common/components/Loading';
 import { fetchStatuses } from '../../../infrastructures/statuses';
 import { fetchTasks, updateTask } from '../../../infrastructures/tasks';
+import { fetchAuthUserInfo } from '../../../infrastructures/user';
 import { Status } from '../../../types/Status';
 import { Task } from '../../../types/Task';
 import '../styles/Kanban.scss';
@@ -56,7 +57,8 @@ export default function Kanban() {
     // データロード処理
     useEffect(() => {
         const loadTasks = async () => {
-            const fetchedTasks: Task[] = await fetchTasks();
+            const userInfo = await fetchAuthUserInfo();
+            const fetchedTasks: Task[] = await fetchTasks(userInfo.project);
             const fetchedStatuses: Status[] = await fetchStatuses();
             const createdBoard = createKanbanBoard(fetchedTasks, fetchedStatuses);
             SetBoard(createdBoard);

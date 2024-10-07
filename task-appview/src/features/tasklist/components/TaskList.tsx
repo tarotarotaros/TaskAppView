@@ -13,6 +13,7 @@ import { fetchAssignees } from "../../../infrastructures/assignees";
 import { fetchPriorities } from "../../../infrastructures/priorities";
 import { fetchStatuses } from "../../../infrastructures/statuses";
 import { createTask, deleteTask, fetchTasks, updateTask } from "../../../infrastructures/tasks";
+import { fetchAuthUserInfo } from "../../../infrastructures/user";
 import { Assignee } from "../../../types/Assignee";
 import { Priority } from "../../../types/Priority";
 import { SelectDataItem } from "../../../types/SelectDataItem";
@@ -120,7 +121,8 @@ export default function DataTable() {
     // タスクの一覧/担当者一覧を取得
     useEffect(() => {
         const loadTasks = async () => {
-            const fetchedTasks = await fetchTasks();
+            const userInfo = await fetchAuthUserInfo();
+            const fetchedTasks = await fetchTasks(userInfo.project);
             setTasks(fetchedTasks);
 
             const fetchedAssignees: Assignee[] = await fetchAssignees();
@@ -156,7 +158,8 @@ export default function DataTable() {
         try {
             //エラーチェック
             console.log("handleCreateTask:" + task);
-            const createdTask = await createTask(task);
+            const userInfo = await fetchAuthUserInfo();
+            const createdTask = await createTask(task, userInfo.id);
             setTasks([...tasks, createdTask]);
         } catch (error) {
             console.error('タスクの作成に失敗しました', error);

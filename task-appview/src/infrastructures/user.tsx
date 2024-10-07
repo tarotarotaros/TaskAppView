@@ -57,6 +57,31 @@ export const UpdateUserProject = async (projectId: number, userId: number) => {
     }
 };
 
+
+export const fetchUserProject = async (userId: number) => {
+    const token = getAuthToken();
+    try {
+        if (token) {
+            const response = await axios.get
+                (
+                    USERS_API_URL + `/${userId.toString()}/project`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
+
+            return response.data;
+        } else {
+            console.error('認証トークンが見つかりません');
+        }
+    } catch (error) {
+        console.error('ユーザープロジェクト情報の取得に失敗しました', error);
+        throw error;
+    }
+};
+
 // プロジェクト一覧を取得
 export const fetchUserInfo = async (userId: number) => {
     const token = getAuthToken();
