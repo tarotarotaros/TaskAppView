@@ -18,7 +18,27 @@ export const fetchProjects = async () => {
                 Authorization: `Bearer ${token}`,
             },
         });
-        console.log(response.data);
+        return response.data;
+    } catch (error) {
+        console.error('プロジェクトの取得に失敗しました', error);
+        throw error;
+    }
+};
+
+export const fetchProject = async (projectId: number) => {
+    const token = getAuthToken();
+
+    if (!token) {
+        throw new Error('認証トークンが見つかりません。ログインが必要です。');
+    }
+
+    try {
+        const response = await axios.get(ASSIGNEE_API_URL + `/${projectId}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
         return response.data;
     } catch (error) {
         console.error('プロジェクトの取得に失敗しました', error);

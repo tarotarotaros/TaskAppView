@@ -1,10 +1,9 @@
 import MenuIcon from '@mui/icons-material/Menu';
-import WebAssetOutlinedIcon from '@mui/icons-material/WebAssetOutlined';
-import { AppBar, CssBaseline, Drawer, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar, Typography, useTheme } from '@mui/material';
-import { useState } from 'react';
+import { AppBar, Button, CssBaseline, Drawer, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar, Typography, useTheme } from '@mui/material';
+import { cloneElement, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SimpleDialog from '../../../common/components/SelectDialog';
-import { fetchProjects } from '../../../infrastructures/projects';
+import { fetchProject, fetchProjects } from '../../../infrastructures/projects';
 import { fetchAuthUserInfo, UpdateUserProject } from '../../../infrastructures/user';
 import { themeConst } from '../../../themeConst';
 import { SelectDataItem } from '../../../types/SelectDataItem';
@@ -23,9 +22,19 @@ export default function SideMenuWithHeader() {
     const [openSelectProjectDialog, SetOpenSelectProjectDialog] = useState(false);
     const [selectProjectList, SetSelectProjectList] = useState<SelectDataItem[]>([]);
     const [selectProject, SetSelectProject] = useState<string>('');
-    const [content, setContent] = useState(<Hello />); // 初期コンテンツ
-    const [contentKey, setContentKey] = useState("home"); // 初期コンテンツ
+    const [displayProject, SetDisplayProject] = useState<string>('');
+    const [content, SetContent] = useState(<Hello />); // 初期コンテンツ
+    const [contentKey, SetContentKey] = useState("home"); // 初期コンテンツ
     const navigate = useNavigate();
+
+    // プロジェクトを初期表示
+    useEffect(() => {
+        const loadDisplayProject = async () => {
+            const project = await GetSelectProject();
+            SetDisplayProject(project.name);
+        };
+        loadDisplayProject();
+    }, []);
 
     const toggleDrawer = () => {
         setOpen(!open);
@@ -60,8 +69,21 @@ export default function SideMenuWithHeader() {
 
     }
 
-    function handleCloseSelectProjectDialog(selectedId: string): void {
-        UpdateUserProject(Number(selectedId), userId);
+    const handleCloseSelectProjectDialog = async (selectedId: string) => {
+        if (isNumeric(selectedId)) {
+            UpdateUserProject(Number(selectedId), userId);
+            const project = await fetchProject(Number(selectedId));
+            SetDisplayProject(project.name);
+
+            // コンテンツを再描画
+            if (contentKey === "task" || contentKey === "kanban") {
+                const taskComponent = SidebarData.find(item => item.key === "task" || item.key === "kanban")?.component;
+                if (taskComponent) {
+                    // キーを更新して強制的に再描画を行う
+                    SetContent(cloneElement(taskComponent, { key: `task-${Date.now()}` }));
+                }
+            }
+        }
         SetOpenSelectProjectDialog(false);
     }
 
@@ -69,10 +91,10 @@ export default function SideMenuWithHeader() {
         if (isSignin()) {
             return (
                 <div>
-                    <IconButton color='inherit' onClick={handleChangeProjectClick}
-                        sx={{ marginRight: 10 }}>
-                        <WebAssetOutlinedIcon />
-                    </IconButton>
+                    <Button size="medium" color='inherit' onClick={handleChangeProjectClick}
+                        sx={{ marginRight: 10, border: 1 }}>
+                        {displayProject}
+                    </Button>
                 </div>
             );
         }
@@ -81,6 +103,16 @@ export default function SideMenuWithHeader() {
         }
     };
 
+    async function GetSelectProject() {
+        const userInfo = await fetchAuthUserInfo();
+        const project = await fetchProject(userInfo.project);
+        return project;
+    }
+
+    function isNumeric(value: string): boolean {
+        // 数値に変換し、NaN（数値でない値）かどうかを確認
+        return !isNaN(Number(value));
+    }
 
     return (
         <div style={{ display: 'flex' }}>
@@ -131,8 +163,8 @@ export default function SideMenuWithHeader() {
                                             if (value.title === "サインアウト") {
                                                 signout();
                                             } else {
-                                                setContent(value.component); // クリックされたアイテムのタイトルをコンテンツにセット
-                                                setContentKey(value.key);
+                                                SetContent(value.component); // クリックされたアイテムのタイトルをコンテンツにセット
+                                                SetContentKey(value.key);
                                             }
                                         }} >
                                         <ListItemIcon>
@@ -164,6 +196,7 @@ export default function SideMenuWithHeader() {
             />
         </div >
     );
+
 }
 
 
