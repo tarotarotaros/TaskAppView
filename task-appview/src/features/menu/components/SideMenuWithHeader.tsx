@@ -76,11 +76,17 @@ export default function SideMenuWithHeader() {
             SetDisplayProject(project.name);
 
             // コンテンツを再描画
-            if (contentKey === "task" || contentKey === "kanban") {
-                const taskComponent = SidebarData.find(item => item.key === "task" || item.key === "kanban")?.component;
+            if (contentKey === "task") {
+                const taskComponent = SidebarData.find(item => item.key === "task")?.component;
                 if (taskComponent) {
-                    // キーを更新して強制的に再描画を行う
                     SetContent(cloneElement(taskComponent, { key: `task-${Date.now()}` }));
+                }
+            }
+
+            if (contentKey === "kanban") {
+                const kanbanComponent = SidebarData.find(item => item.key === "kanban")?.component;
+                if (kanbanComponent) {
+                    SetContent(cloneElement(kanbanComponent, { key: `kanban-${Date.now()}` }));
                 }
             }
         }
