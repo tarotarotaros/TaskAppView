@@ -37,7 +37,6 @@ export default function SideMenuWithHeader() {
 
     const signout = () => {
         sessionStorage.removeItem('authToken')
-        console.log("ログアウト")
         navigate('/'); // 更新
     }
 
