@@ -31,6 +31,10 @@ export default function SideMenuWithHeader() {
     useEffect(() => {
         const loadDisplayProject = async () => {
             const project = await GetSelectProject();
+            if (project == null) {
+                await handleChangeProjectClick();
+                return;
+            }
             console.log("load_project:" + project.name)
             SetDisplayProject(project.name);
         };
@@ -51,48 +55,36 @@ export default function SideMenuWithHeader() {
     }
 
     const handleChangeProjectClick = async () => {
-        try {
-            const projects: any[] = await fetchProjects();
-            const projectItems: SelectDataItem[] = projects.map((data) => ({
-                value: data.id,
-                label: data.name,
-                color: data.color !== undefined ? data.color : null
-            }));
-            SetSelectProjectList(projectItems);
-            const userInfo = await fetchAuthUserInfo();
-            SetUserId(userInfo.id);
-            SetOpenSelectProjectDialog(true);
-        } catch (error) {
-            console.error('プロジェクトの取得に失敗しました', error);
-            throw error;
-        }
-
+        await updateSelectProjectList();
+        await setUserInfo();
+        SetOpenSelectProjectDialog(true);
     }
 
     const handleCloseSelectProjectDialog = async (selectedId: string | null) => {
-        if (selectedId !== NO_SELECT_PROJECT__TEXT &&
-            isNumeric(selectedId as string)) {
+        if (selectedProject(selectedId)) {
             UpdateUserProject(Number(selectedId), userId);
             const project = await fetchProject(Number(selectedId));
             SetDisplayProject(project.name);
 
             // コンテンツを再描画
-            if (contentKey === "task") {
-                const taskComponent = SidebarData.find(item => item.key === "task")?.component;
-                if (taskComponent) {
-                    SetContent(cloneElement(taskComponent, { key: `task-${Date.now()}` }));
-                }
-            }
-
-            if (contentKey === "kanban") {
-                const kanbanComponent = SidebarData.find(item => item.key === "kanban")?.component;
-                if (kanbanComponent) {
-                    SetContent(cloneElement(kanbanComponent, { key: `kanban-${Date.now()}` }));
-                }
+            updateContent("task");
+            updateContent("kanban");
+        } else {
+            // 選択していない&初期状態なら閉じない
+            if (isInitSelectProject()) {
+                return;
             }
         }
+
         SetOpenSelectProjectDialog(false);
     }
+
+
+    useEffect(() => {
+        if (displayProject !== '') {
+            SetOpenSelectProjectDialog(false);
+        }
+    }, [displayProject]);
 
     const SelectProjectButton = () => {
         if (isSignin()) {
@@ -116,8 +108,42 @@ export default function SideMenuWithHeader() {
         }
     };
 
+    function updateContent(componentKey: string) {
+        if (contentKey === componentKey) {
+            const kanbanComponent = SidebarData.find(item => item.key === componentKey)?.component;
+            if (kanbanComponent) {
+                SetContent(cloneElement(kanbanComponent, { key: `${componentKey}-${Date.now()}` }));
+            }
+        }
+    }
+
+    function selectedProject(selectedId: string | null) {
+        return selectedId !== NO_SELECT_PROJECT__TEXT &&
+            isNumeric(selectedId as string);
+    }
+
+    function isInitSelectProject() {
+        return displayProject === '';
+    }
+
+    async function setUserInfo() {
+        const userInfo = await fetchAuthUserInfo();
+        SetUserId(userInfo.id);
+    }
+
+    async function updateSelectProjectList() {
+        const projects: any[] = await fetchProjects();
+        const projectItems: SelectDataItem[] = projects.map((data) => ({
+            value: data.id,
+            label: data.name,
+            color: data.color !== undefined ? data.color : null
+        }));
+        SetSelectProjectList(projectItems);
+    }
+
     async function GetSelectProject() {
         const userInfo = await fetchAuthUserInfo();
+        if (userInfo.project == null) return null;
         const project = await fetchProject(userInfo.project);
         return project;
     }
