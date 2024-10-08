@@ -1,6 +1,6 @@
 import MenuIcon from '@mui/icons-material/Menu';
 import { AppBar, Button, CssBaseline, Drawer, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar, Typography, useTheme } from '@mui/material';
-import { cloneElement, useEffect, useState } from 'react';
+import { cloneElement, useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Loading from '../../../common/components/Loading';
 import SimpleDialog, { NO_SELECT_PROJECT__TEXT } from '../../../common/components/SelectDialog';
@@ -18,19 +18,43 @@ export default function SideMenuWithHeader() {
 
     const theme = useTheme(); // テーマを取得
 
+    const INIT_DISPLAY_PROJECT_TEXT: string = '';
+
     const [open, setOpen] = useState(false);
     const [userId, SetUserId] = useState(0);
     const [openSelectProjectDialog, SetOpenSelectProjectDialog] = useState(false);
     const [selectProjectList, SetSelectProjectList] = useState<SelectDataItem[]>([]);
-    const [displayProject, SetDisplayProject] = useState<string>('');
+    const [displayProject, SetDisplayProject] = useState<string>(INIT_DISPLAY_PROJECT_TEXT);
     const [content, SetContent] = useState(<Hello />); // 初期コンテンツ
     const [contentKey, SetContentKey] = useState("home"); // 初期コンテンツ
     const navigate = useNavigate();
 
-    // プロジェクトを初期表示
+    // データ処理関係
+    const setUserInfo = useCallback(async () => {
+        const userInfo = await fetchAuthUserInfo();
+        SetUserId(userInfo.id);
+    }, []);
+
+    const updateSelectProjectList = useCallback(async () => {
+        const projects: any[] = await fetchProjects();
+        const projectItems: SelectDataItem[] = projects.map((data) => ({
+            value: data.id,
+            label: data.name,
+            color: data.color !== undefined ? data.color : null
+        }));
+        SetSelectProjectList(projectItems);
+    }, []);
+
+    const handleChangeProjectClick = useCallback(async () => {
+        await updateSelectProjectList();
+        await setUserInfo();
+        SetOpenSelectProjectDialog(true);
+    }, [updateSelectProjectList, setUserInfo]);
+
+    // 初期表示
     useEffect(() => {
         const loadDisplayProject = async () => {
-            const project = await GetSelectProject();
+            const project = await getSelectProject();
             if (project == null) {
                 await handleChangeProjectClick();
                 return;
@@ -39,29 +63,11 @@ export default function SideMenuWithHeader() {
             SetDisplayProject(project.name);
         };
         loadDisplayProject();
-    }, []);
+    }, [handleChangeProjectClick]);
 
-    const toggleDrawer = () => {
-        setOpen(!open);
-    };
-    const isSignin = (): boolean => {
-        let token = sessionStorage.getItem('authToken');
-        return token !== null && token !== "";  // トークンが存在し、空でないかを確認
-    };
-
-    const signout = () => {
-        sessionStorage.removeItem('authToken')
-        navigate('/'); // 更新
-    }
-
-    const handleChangeProjectClick = async () => {
-        await updateSelectProjectList();
-        await setUserInfo();
-        SetOpenSelectProjectDialog(true);
-    }
-
+    // イベント
     const handleCloseSelectProjectDialog = async (selectedId: string | null) => {
-        if (selectedProject(selectedId)) {
+        if (isSelectedProject(selectedId)) {
             UpdateUserProject(Number(selectedId), userId);
             const project = await fetchProject(Number(selectedId));
             SetDisplayProject(project.name);
@@ -79,12 +85,49 @@ export default function SideMenuWithHeader() {
         SetOpenSelectProjectDialog(false);
     }
 
+    const toggleDrawer = () => {
+        setOpen(!open);
+    };
+    const isSignin = (): boolean => {
+        let token = sessionStorage.getItem('authToken');
+        return token !== null && token !== "";  // トークンが存在し、空でないかを確認
+    };
 
-    useEffect(() => {
-        if (displayProject !== '') {
-            SetOpenSelectProjectDialog(false);
+    const signout = () => {
+        sessionStorage.removeItem('authToken')
+        navigate('/'); // 更新
+    }
+
+    function updateContent(componentKey: string) {
+        if (contentKey === componentKey) {
+            const kanbanComponent = SidebarData.find(item => item.key === componentKey)?.component;
+            if (kanbanComponent) {
+                SetContent(cloneElement(kanbanComponent, { key: `${componentKey}-${Date.now()}` }));
+            }
         }
-    }, [displayProject]);
+    }
+
+    function isSelectedProject(selectedId: string | null) {
+        return selectedId !== NO_SELECT_PROJECT__TEXT &&
+            isNumeric(selectedId as string);
+    }
+
+    function isInitSelectProject() {
+        return displayProject === INIT_DISPLAY_PROJECT_TEXT;
+    }
+
+    function isNumeric(value: string): boolean {
+        // 数値に変換し、NaN（数値でない値）かどうかを確認
+        return !isNaN(Number(value));
+    }
+
+
+    async function getSelectProject() {
+        const userInfo = await fetchAuthUserInfo();
+        if (userInfo.project == null) return null;
+        const project = await fetchProject(userInfo.project);
+        return project;
+    }
 
     const SelectProjectButton = () => {
         if (isSignin()) {
@@ -107,51 +150,6 @@ export default function SideMenuWithHeader() {
             return null;
         }
     };
-
-    function updateContent(componentKey: string) {
-        if (contentKey === componentKey) {
-            const kanbanComponent = SidebarData.find(item => item.key === componentKey)?.component;
-            if (kanbanComponent) {
-                SetContent(cloneElement(kanbanComponent, { key: `${componentKey}-${Date.now()}` }));
-            }
-        }
-    }
-
-    function selectedProject(selectedId: string | null) {
-        return selectedId !== NO_SELECT_PROJECT__TEXT &&
-            isNumeric(selectedId as string);
-    }
-
-    function isInitSelectProject() {
-        return displayProject === '';
-    }
-
-    async function setUserInfo() {
-        const userInfo = await fetchAuthUserInfo();
-        SetUserId(userInfo.id);
-    }
-
-    async function updateSelectProjectList() {
-        const projects: any[] = await fetchProjects();
-        const projectItems: SelectDataItem[] = projects.map((data) => ({
-            value: data.id,
-            label: data.name,
-            color: data.color !== undefined ? data.color : null
-        }));
-        SetSelectProjectList(projectItems);
-    }
-
-    async function GetSelectProject() {
-        const userInfo = await fetchAuthUserInfo();
-        if (userInfo.project == null) return null;
-        const project = await fetchProject(userInfo.project);
-        return project;
-    }
-
-    function isNumeric(value: string): boolean {
-        // 数値に変換し、NaN（数値でない値）かどうかを確認
-        return !isNaN(Number(value));
-    }
 
     return (
         <div style={{ display: 'flex' }}>
