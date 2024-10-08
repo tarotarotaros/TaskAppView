@@ -2,6 +2,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { AppBar, Button, CssBaseline, Drawer, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar, Typography, useTheme } from '@mui/material';
 import { cloneElement, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Loading from '../../../common/components/Loading';
 import SimpleDialog, { NO_SELECT_PROJECT__TEXT } from '../../../common/components/SelectDialog';
 import { fetchProject, fetchProjects } from '../../../infrastructures/projects';
 import { fetchAuthUserInfo, UpdateUserProject } from '../../../infrastructures/user';
@@ -30,6 +31,7 @@ export default function SideMenuWithHeader() {
     useEffect(() => {
         const loadDisplayProject = async () => {
             const project = await GetSelectProject();
+            console.log("load_project:" + project.name)
             SetDisplayProject(project.name);
         };
         loadDisplayProject();
@@ -94,14 +96,20 @@ export default function SideMenuWithHeader() {
 
     const SelectProjectButton = () => {
         if (isSignin()) {
-            return (
-                <div>
-                    <Button size="medium" color='inherit' onClick={handleChangeProjectClick}
-                        sx={{ marginRight: 10, border: 1 }}>
-                        {displayProject}
-                    </Button>
-                </div>
-            );
+            if (displayProject === '') {
+                return (<Loading size="small" marginRight={10} color='secondary' />)
+            }
+            else {
+
+                return (
+                    <div>
+                        <Button size="medium" color='inherit' onClick={handleChangeProjectClick}
+                            sx={{ marginRight: 10, border: 1 }}>
+                            {displayProject}
+                        </Button>
+                    </div>
+                );
+            }
         }
         else {
             return null;
