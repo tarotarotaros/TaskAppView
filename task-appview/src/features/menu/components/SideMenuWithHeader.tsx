@@ -2,7 +2,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { AppBar, Button, CssBaseline, Drawer, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar, Typography, useTheme } from '@mui/material';
 import { cloneElement, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import SimpleDialog from '../../../common/components/SelectDialog';
+import SimpleDialog, { NO_SELECT_PROJECT__TEXT } from '../../../common/components/SelectDialog';
 import { fetchProject, fetchProjects } from '../../../infrastructures/projects';
 import { fetchAuthUserInfo, UpdateUserProject } from '../../../infrastructures/user';
 import { themeConst } from '../../../themeConst';
@@ -21,7 +21,6 @@ export default function SideMenuWithHeader() {
     const [userId, SetUserId] = useState(0);
     const [openSelectProjectDialog, SetOpenSelectProjectDialog] = useState(false);
     const [selectProjectList, SetSelectProjectList] = useState<SelectDataItem[]>([]);
-    const [selectProject, SetSelectProject] = useState<string>('');
     const [displayProject, SetDisplayProject] = useState<string>('');
     const [content, SetContent] = useState(<Hello />); // 初期コンテンツ
     const [contentKey, SetContentKey] = useState("home"); // 初期コンテンツ
@@ -57,7 +56,6 @@ export default function SideMenuWithHeader() {
                 label: data.name,
                 color: data.color !== undefined ? data.color : null
             }));
-            SetSelectProject(projectItems[0].label);
             SetSelectProjectList(projectItems);
             const userInfo = await fetchAuthUserInfo();
             SetUserId(userInfo.id);
@@ -69,8 +67,9 @@ export default function SideMenuWithHeader() {
 
     }
 
-    const handleCloseSelectProjectDialog = async (selectedId: string) => {
-        if (isNumeric(selectedId)) {
+    const handleCloseSelectProjectDialog = async (selectedId: string | null) => {
+        if (selectedId !== NO_SELECT_PROJECT__TEXT &&
+            isNumeric(selectedId as string)) {
             UpdateUserProject(Number(selectedId), userId);
             const project = await fetchProject(Number(selectedId));
             SetDisplayProject(project.name);
@@ -196,7 +195,6 @@ export default function SideMenuWithHeader() {
             <SimpleDialog
                 title={'プロジェクト選択'}
                 options={selectProjectList}
-                selectedValue={selectProject}
                 open={openSelectProjectDialog}
                 onClose={handleCloseSelectProjectDialog}
             />

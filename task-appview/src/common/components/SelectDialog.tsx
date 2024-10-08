@@ -6,15 +6,16 @@ export interface SimpleDialogProps {
     open: boolean;
     title: string;
     options: SelectDataItem[];
-    selectedValue: string;
-    onClose: (value: string) => void;
+    onClose: (value: string | null) => void;
 }
 
+export const NO_SELECT_PROJECT__TEXT: string | null = null
+
 export default function SimpleDialog(props: SimpleDialogProps) {
-    const { onClose, selectedValue, open, options, title } = props;
+    const { onClose, open, options, title } = props;
 
     const handleClose = () => {
-        onClose(selectedValue);
+        onClose(NO_SELECT_PROJECT__TEXT);
     };
 
     const handleListItemClick = (value: string) => {
