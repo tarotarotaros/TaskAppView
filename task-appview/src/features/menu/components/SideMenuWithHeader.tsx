@@ -186,9 +186,7 @@ export default function SideMenuWithHeader() {
                 <List >
 
                     {SidebarData.map((value, key) => {
-                        if ((value.condition === "signin" && isSignin()) ||
-                            (value.condition === "signout" && !isSignin()) ||
-                            value.condition === "") {
+                        if (isDisplayCondition(value)) {
                             const selectedBackColor = value.key === contentKey ? themeConst.THEME_COLOR_BACK : theme.palette.primary.main;
                             return (
                                 <ListItem key={key} disablePadding>
@@ -233,6 +231,22 @@ export default function SideMenuWithHeader() {
         </div >
     );
 
+
+    function isDisplayCondition(value: any) {
+
+        const isOk: boolean = (value.condition === "signin" && isSignin()) ||
+            (value.condition === "signout" && !isSignin()) ||
+            value.condition === "";
+
+        let isOkProjectCondition: boolean = false;
+        if (value.isSelectProject) {
+            isOkProjectCondition = !isInitSelectProject();
+        } else {
+            isOkProjectCondition = true;
+        }
+
+        return isOk && isOkProjectCondition;
+    }
 }
 
 
