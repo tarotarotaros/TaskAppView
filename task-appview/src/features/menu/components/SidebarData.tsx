@@ -1,8 +1,6 @@
 import BackupTable from "@mui/icons-material/BackupTable";
 import CalendarMonth from "@mui/icons-material/CalendarMonth";
-import Dashboard from "@mui/icons-material/Dashboard";
 import Dataset from "@mui/icons-material/Dataset";
-import Flag from "@mui/icons-material/Flag";
 import HomeIcon from "@mui/icons-material/Home";
 import Person from "@mui/icons-material/Person";
 import SettingsIcon from "@mui/icons-material/Settings";
@@ -50,22 +48,6 @@ export const SidebarData = [
         condition: "signin",
         icon: <Dataset />,
         component: <DataEdit />,
-    },
-    {
-        title: "マイルストーン",
-        key: "milestone",
-        condition: "signin",
-        icon: <Flag />,
-        link: "/upload",
-        component: <></>,
-    },
-    {
-        title: "分析",
-        key: "ana",
-        condition: "signin",
-        icon: <Dashboard />,
-        link: "/payment",
-        component: <></>,
     },
     {
         title: "サインアウト",
