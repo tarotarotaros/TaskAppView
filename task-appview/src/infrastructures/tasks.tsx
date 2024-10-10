@@ -5,7 +5,7 @@ import { BASE_URL, getAuthToken } from './API';
 const TASK_API_URL = BASE_URL + "tasks";
 
 // タスク一覧を取得
-export const fetchTasks = async () => {
+export const fetchTasks = async (projectId: number) => {
     const token = getAuthToken();
 
     if (!token) {
@@ -13,11 +13,12 @@ export const fetchTasks = async () => {
     }
 
     try {
-        const response = await axios.get(TASK_API_URL, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
+        const response = await axios.get(TASK_API_URL + `/${projectId}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
         console.log(response.data);
         return response.data;
     } catch (error) {
@@ -27,7 +28,7 @@ export const fetchTasks = async () => {
 };
 
 // タスクを新規作成
-export const createTask = async (taskData: CreateTask) => {
+export const createTask = async (taskData: CreateTask, userId: number) => {
     const token = getAuthToken();
 
     if (!token) {
@@ -35,11 +36,15 @@ export const createTask = async (taskData: CreateTask) => {
     }
 
     try {
-        const response = await axios.post(TASK_API_URL, taskData, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
+        const response = await axios.post(
+            TASK_API_URL + `/${userId}`,
+            taskData,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
         return response.data;
     } catch (error) {
         console.error('タスクの作成に失敗しました', error);

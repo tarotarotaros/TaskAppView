@@ -91,6 +91,7 @@ export default function DataEditGrid({ dataEditService, dataLabel, hasColor }: D
     ];
 
     const [rows, setRows] = useState<GridRowsProp>([]);
+    const [isLoadComplete, SetLoadComplete] = useState<boolean>(false);
     const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [openValidateErrorDialog, setValidateErrorDialog] = useState(false);
@@ -105,6 +106,7 @@ export default function DataEditGrid({ dataEditService, dataLabel, hasColor }: D
             name: data.name,
             color: data.color !== undefined ? data.color : null  // colorフィールドが存在するか確認
         })));
+        SetLoadComplete(true);
     }, [dataEditService]);  // 依存関係が必要ならここに追加
 
     useEffect(() => {
@@ -197,7 +199,7 @@ export default function DataEditGrid({ dataEditService, dataLabel, hasColor }: D
     }
 
     const handleClick = () => {
-        const id = Math.max(...rows.map((row) => row.id as number)) + 1;
+        const id = rows.length > 0 ? Math.max(...rows.map((row) => row.id as number)) + 1 : 1;
         setRows((oldRows) => [...oldRows, { id, name: '', isNew: true }]);
         setRowModesModel((oldModel) => ({
             ...oldModel,
@@ -208,7 +210,12 @@ export default function DataEditGrid({ dataEditService, dataLabel, hasColor }: D
     // データCUD処理
     const handleCreateData = async (data: any) => {
         try {
-            await dataEditService.create(data);
+            const createdData = {
+                ...data,
+                created_by: 'システム',
+                updated_by: 'システム',
+            };
+            await dataEditService.create(createdData);
         } catch (error) {
             console.error(`${dataLabel}の作成に失敗しました`, error);
         }
@@ -216,7 +223,10 @@ export default function DataEditGrid({ dataEditService, dataLabel, hasColor }: D
 
     const handleUpdateData = async (id: number, data: any) => {
         try {
-            const updateData = { ...data, updated_by: 'システム' };
+            const updateData = {
+                ...data,
+                updated_by: 'システム'
+            };
             console.log(updateData);
             await dataEditService.update(id, updateData);
         } catch (error) {
@@ -271,7 +281,7 @@ export default function DataEditGrid({ dataEditService, dataLabel, hasColor }: D
     }
 
 
-    if (rows.length === 0) {
+    if (!isLoadComplete) {
         return (<Loading />);
     } else {
         return (
