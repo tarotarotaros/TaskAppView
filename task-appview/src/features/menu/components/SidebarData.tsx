@@ -4,6 +4,7 @@ import Dataset from "@mui/icons-material/Dataset";
 import HomeIcon from "@mui/icons-material/Home";
 import Person from "@mui/icons-material/Person";
 import SettingsIcon from "@mui/icons-material/Settings";
+import { UserService } from "../../../infrastructures/UserService";
 import DataEdit from "../../data/components/DataEdit";
 import Kanban from "../../kanban/components/Kanban";
 import UserSignin from "../../signin/components/UserSignin";
@@ -35,7 +36,7 @@ export const SidebarData = [
         isSelectProject: true,
         icon: <BackupTable />,
         link: "/friends",
-        component: <TaskList />,
+        component: <TaskList userService={new UserService()} />,
     },
     {
         title: "カンバン",
@@ -44,7 +45,7 @@ export const SidebarData = [
         isSelectProject: true,
         icon: <CalendarMonth />,
         link: "/upload",
-        component: <Kanban />,
+        component: <Kanban userService={new UserService()} />,
     },
     {
         title: "データ編集",

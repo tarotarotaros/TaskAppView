@@ -3,13 +3,18 @@ import '@caldwell619/react-kanban/dist/styles.css';
 import { Chip } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import Loading from '../../../common/components/Loading';
+import { IUserService } from '../../../infrastructures/IUserService';
 import { fetchStatuses } from '../../../infrastructures/statuses';
 import { fetchTasks, updateTask } from '../../../infrastructures/tasks';
-import { fetchAuthUserInfo } from '../../../infrastructures/user';
 import { Status } from '../../../types/Status';
 import { Task } from '../../../types/Task';
 import '../styles/Kanban.scss';
-export default function Kanban() {
+
+type KanbanProps = {
+    userService: IUserService;
+};
+
+export default function Kanban({ userService }: KanbanProps) {
 
     const [board, SetBoard] = useState<KanbanBoard<Card> | null>(null);
     const [statuses, SetStatuses] = useState<Status[]>([]);
@@ -57,7 +62,7 @@ export default function Kanban() {
     // データロード処理
     useEffect(() => {
         const loadTasks = async () => {
-            const userInfo = await fetchAuthUserInfo();
+            const userInfo = await userService.fetchAuthUserInfo();
             const fetchedTasks: Task[] = await fetchTasks(userInfo.project);
             const fetchedStatuses: Status[] = await fetchStatuses();
             const createdBoard = createKanbanBoard(fetchedTasks, fetchedStatuses);

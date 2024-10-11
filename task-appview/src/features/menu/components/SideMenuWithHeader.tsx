@@ -4,17 +4,24 @@ import { cloneElement, useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Loading from '../../../common/components/Loading';
 import SimpleDialog, { NO_SELECT_PROJECT__TEXT } from '../../../common/components/SelectDialog';
+import { IUserService } from '../../../infrastructures/IUserService';
 import { fetchProject, fetchProjects } from '../../../infrastructures/projects';
-import { fetchAuthUserInfo, UpdateUserProject } from '../../../infrastructures/user';
 import { themeConst } from '../../../themeConst';
 import { SelectDataItem } from '../../../types/SelectDataItem';
 import Hello from '../../home/components/Hello';
-import SigninStatus from '../../signin/components/SigninStatus';
+import SigninStatusButton from '../../signin/components/SigninStatusButton';
+import UserSetting from '../../user/components/UserSetting';
 import './../../../index.css';
 import { SidebarData } from "./SidebarData";
 
 const sidebarwidth = 250;
-export default function SideMenuWithHeader() {
+
+type SideMenuWithHeaderProps = {
+    userService: IUserService;
+};
+
+
+export default function SideMenuWithHeader({ userService }: SideMenuWithHeaderProps) {
 
     const theme = useTheme(); // テーマを取得
 
@@ -31,7 +38,7 @@ export default function SideMenuWithHeader() {
 
     // データ処理関係
     const setUserInfo = useCallback(async () => {
-        const userInfo = await fetchAuthUserInfo();
+        const userInfo = await userService.fetchAuthUserInfo();
         SetUserId(userInfo.id);
     }, []);
 
@@ -68,7 +75,7 @@ export default function SideMenuWithHeader() {
     // イベント
     const handleCloseSelectProjectDialog = async (selectedId: string | null) => {
         if (isSelectedProject(selectedId)) {
-            UpdateUserProject(Number(selectedId), userId);
+            userService.updateUserProject(Number(selectedId), userId);
             const project = await fetchProject(Number(selectedId));
             SetDisplayProject(project.name);
 
@@ -123,7 +130,7 @@ export default function SideMenuWithHeader() {
 
 
     async function getSelectProject() {
-        const userInfo = await fetchAuthUserInfo();
+        const userInfo = await userService.fetchAuthUserInfo();
         if (userInfo.project == null) return null;
         const project = await fetchProject(userInfo.project);
         return project;
@@ -151,6 +158,11 @@ export default function SideMenuWithHeader() {
         }
     };
 
+    function handleClickUserSetting(): void {
+        SetContent(<UserSetting />); // クリックされたアイテムのタイトルをコンテンツにセット
+        SetContentKey("UserSeting");
+    }
+
     return (
         <div style={{ display: 'flex' }}>
             <CssBaseline />
@@ -163,7 +175,7 @@ export default function SideMenuWithHeader() {
                         タスク管理
                     </Typography>
                     <SelectProjectButton />
-                    <SigninStatus />
+                    <SigninStatusButton onClickButton={handleClickUserSetting} />
                 </Toolbar>
             </AppBar>
             <Drawer

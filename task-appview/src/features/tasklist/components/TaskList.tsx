@@ -10,10 +10,10 @@ import { useEffect, useState } from 'react';
 import Loading from "../../../common/components/Loading";
 import RemoveConfirmModal from "../../../common/components/RemoveConfirmModal";
 import { fetchAssignees } from "../../../infrastructures/assignees";
+import { IUserService } from "../../../infrastructures/IUserService";
 import { fetchPriorities } from "../../../infrastructures/priorities";
 import { fetchStatuses } from "../../../infrastructures/statuses";
 import { createTask, deleteTask, fetchTasks, updateTask } from "../../../infrastructures/tasks";
-import { fetchAuthUserInfo } from "../../../infrastructures/user";
 import { Assignee } from "../../../types/Assignee";
 import { Priority } from "../../../types/Priority";
 import { SelectDataItem } from "../../../types/SelectDataItem";
@@ -24,7 +24,12 @@ import TaskEditModalStatus from "./TaskEditModalStatus";
 
 const paginationModel = { page: 0, pageSize: 20 };
 
-export default function DataTable() {
+
+type TaskListProps = {
+    userService: IUserService;
+};
+
+export default function TaskList({ userService }: TaskListProps) {
 
     // 列定義
     const columns: GridColDef[] = [
@@ -121,7 +126,7 @@ export default function DataTable() {
     // タスクの一覧/担当者一覧を取得
     useEffect(() => {
         const loadTasks = async () => {
-            const userInfo = await fetchAuthUserInfo();
+            const userInfo = await userService.fetchAuthUserInfo();
             const fetchedTasks = await fetchTasks(userInfo.project);
             setTasks(fetchedTasks);
 
@@ -158,7 +163,7 @@ export default function DataTable() {
         try {
             //エラーチェック
             console.log("handleCreateTask:" + task);
-            const userInfo = await fetchAuthUserInfo();
+            const userInfo = await userService.fetchAuthUserInfo();
             const createdTask = await createTask(task, userInfo.id);
             setTasks([...tasks, createdTask]);
         } catch (error) {
