@@ -1,4 +1,5 @@
 import axios from "axios";
+import { SigninUser, User } from "../types/User";
 import { BASE_URL, getAuthToken } from "./API";
 import { IUserService } from "./IUserService";
 
@@ -6,23 +7,18 @@ const USER_API_URL = BASE_URL + "user";
 const USERS_API_URL = BASE_URL + "users";
 
 export class UserService implements IUserService {
-    private token: string | null;
-
-    constructor() {
-        this.token = getAuthToken();
-        if (!this.token) {
-            throw new Error('認証トークンが見つかりません。ログインが必要です。');
-        }
-    }
 
     private async request(method: 'get' | 'put', url: string, data?: any): Promise<any> {
         try {
+
+            const token = getAuthToken();
+            if (!token) return null;
             const response = await axios({
                 method,
                 url,
                 data,
                 headers: {
-                    Authorization: `Bearer ${this.token}`,
+                    Authorization: `Bearer ${token}`,
                 },
             });
             return response.data;
@@ -47,4 +43,38 @@ export class UserService implements IUserService {
     public async fetchUserInfo(userId: number): Promise<any> {
         return this.request('get', USERS_API_URL + `/${userId}/`);
     }
+
+
+    // ユーザーサインイン
+    public async signin(signinUser: SigninUser): Promise<void> {
+        try {
+            console.log(signinUser);
+            const response = await axios.post(USER_API_URL + "/login", signinUser);
+            const token: string = response.data.token; // トークンが含まれているキー名を適宜変更
+            sessionStorage.setItem('authToken', token);
+            //this.token = token; // ログイン後のトークンを保存
+        } catch (error) {
+            console.error('ユーザーサインインに失敗しました', error);
+            throw error;
+        }
+    }
+
+    // ユーザーサインアップ
+    public async signup(signupUser: User): Promise<void> {
+        try {
+            await axios.post(USER_API_URL + "/register", signupUser);
+
+            // 自動ログイン
+            const signinUserData: SigninUser = {
+                email: signupUser.email,
+                password: signupUser.password,
+            }
+            await this.signin(signinUserData); // サインアップ後の自動サインイン
+        } catch (error) {
+            console.error('ユーザーサインアップに失敗しました', error);
+            throw error;
+        }
+    }
+
+
 }

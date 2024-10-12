@@ -10,7 +10,7 @@ import { themeConst } from '../../../themeConst';
 import { SelectDataItem } from '../../../types/SelectDataItem';
 import Hello from '../../home/components/Hello';
 import SigninStatusButton from '../../signin/components/SigninStatusButton';
-import UserSetting from '../../user/components/UserSetting';
+import UserInfo from '../../user/components/UserInfo';
 import './../../../index.css';
 import { SidebarData } from "./SidebarData";
 
@@ -40,7 +40,7 @@ export default function SideMenuWithHeader({ userService }: SideMenuWithHeaderPr
     const setUserInfo = useCallback(async () => {
         const userInfo = await userService.fetchAuthUserInfo();
         SetUserId(userInfo.id);
-    }, []);
+    }, [userService]);
 
     const updateSelectProjectList = useCallback(async () => {
         const projects: any[] = await fetchProjects();
@@ -56,11 +56,19 @@ export default function SideMenuWithHeader({ userService }: SideMenuWithHeaderPr
         await updateSelectProjectList();
         await setUserInfo();
         SetOpenSelectProjectDialog(true);
-    }, [updateSelectProjectList, setUserInfo]);
+    }, [updateSelectProjectList, setUserInfo])
+
+    const getSelectProject = useCallback(async () => {
+        const userInfo = await userService.fetchAuthUserInfo();
+        if (!userInfo || !userInfo.project) return null;
+        const project = await fetchProject(userInfo.project);
+        return project;
+    }, [userService]);
 
     // 初期表示
     useEffect(() => {
         const loadDisplayProject = async () => {
+            if (sessionStorage.getItem('authToken') === null) return;
             const project = await getSelectProject();
             if (project == null) {
                 await handleChangeProjectClick();
@@ -70,7 +78,7 @@ export default function SideMenuWithHeader({ userService }: SideMenuWithHeaderPr
             SetDisplayProject(project.name);
         };
         loadDisplayProject();
-    }, [handleChangeProjectClick]);
+    }, [handleChangeProjectClick, getSelectProject]);
 
     // イベント
     const handleCloseSelectProjectDialog = async (selectedId: string | null) => {
@@ -129,12 +137,12 @@ export default function SideMenuWithHeader({ userService }: SideMenuWithHeaderPr
     }
 
 
-    async function getSelectProject() {
-        const userInfo = await userService.fetchAuthUserInfo();
-        if (userInfo.project == null) return null;
-        const project = await fetchProject(userInfo.project);
-        return project;
-    }
+    // async function getSelectProject() {
+    //     const userInfo = await userService.fetchAuthUserInfo();
+    //     if (userInfo === null || userInfo.project === null) return null;
+    //     const project = await fetchProject(userInfo.project);
+    //     return project;
+    // }
 
     const SelectProjectButton = () => {
         if (isSignin()) {
@@ -159,7 +167,7 @@ export default function SideMenuWithHeader({ userService }: SideMenuWithHeaderPr
     };
 
     function handleClickUserSetting(): void {
-        SetContent(<UserSetting />); // クリックされたアイテムのタイトルをコンテンツにセット
+        SetContent(<UserInfo userService={userService} />); // クリックされたアイテムのタイトルをコンテンツにセット
         SetContentKey("UserSeting");
     }
 

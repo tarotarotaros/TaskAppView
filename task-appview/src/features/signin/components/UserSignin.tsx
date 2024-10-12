@@ -1,11 +1,15 @@
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
+import { IUserService } from '../../../infrastructures/IUserService';
 import Signin from './Signin';
 import Signup from './Signup';
 
+type UserSigninProps = {
+    userService: IUserService;
+};
 
-export default function UserSignin() {
+export default function UserSignin({ userService }: UserSigninProps) {
     return (
         <div>
             <Accordion>
@@ -17,7 +21,7 @@ export default function UserSignin() {
                     サインイン
                 </AccordionSummary>
                 <AccordionDetails>
-                    <Signin />
+                    <Signin userService={userService} />
                 </AccordionDetails>
             </Accordion>
             <Accordion>
@@ -29,7 +33,7 @@ export default function UserSignin() {
                     アカウント登録
                 </AccordionSummary>
                 <AccordionDetails>
-                    <Signup />
+                    <Signup userService={userService} />
                 </AccordionDetails>
             </Accordion>
         </div>

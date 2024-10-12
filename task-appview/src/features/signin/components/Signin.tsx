@@ -6,10 +6,14 @@ import Typography from '@mui/material/Typography';
 import React, { useState } from 'react';
 import EMailForm from '../../../common/components/EMailForm';
 import PasswordForm from '../../../common/components/PasswordForm';
-import { signin } from '../../../infrastructures/signin';
+import { IUserService } from '../../../infrastructures/IUserService';
 import '../styles/SignupStyle.css';
 
-export default function Signin() {
+type SideMenuWithHeaderProps = {
+  userService: IUserService;
+};
+
+export default function Signin({ userService }: SideMenuWithHeaderProps) {
   const [emailError, setEmailError] = React.useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
   const [passwordError, setPasswordError] = React.useState(false);
@@ -56,7 +60,7 @@ export default function Signin() {
         email: email,
         password: password,
       }
-      await signin(signinUserData);
+      await userService.signin(signinUserData);
       console.log('ログイン完了');
       setOpenSigninDialog(true);
 

@@ -27,7 +27,7 @@ export const SidebarData = [
         isSelectProject: false,
         icon: <Person />,
         link: "/signin",
-        component: <UserSignin />,
+        component: <UserSignin userService={new UserService()} />,
     },
     {
         title: "タスク",
