@@ -1,8 +1,13 @@
 import { Box, Button, Card, CssBaseline, Dialog, DialogActions, DialogTitle, Stack, Typography } from "@mui/material";
 import { useState } from "react";
 import PasswordForm from "../../../common/components/PasswordForm";
+import { IUserService } from "../../../infrastructures/IUserService";
 
-export default function PasswordChange() {
+type PasswordChangeProps = {
+    userService: IUserService;
+};
+
+export default function PasswordChange({ userService }: PasswordChangeProps) {
 
     const CURRENT_PASSWORD_KEY: string = "currentPassword";
     const NEW_PASSWORD_KEY: string = "newPassword";
@@ -29,11 +34,17 @@ export default function PasswordChange() {
         setOpenSuccessDialog(false);
     }
 
-    function handleClickExeButton() {
+    async function handleClickExeButton() {
         let isOk = validateInputs();
         if (!isOk) return;
 
-        // TODO:パスワード変更処理
+        try {
+            const userInfo = await userService.fetchAuthUserInfo();
+            await userService.updatePassword(userInfo.id, currentPassword, newPassword, newConfirmPassword);
+        } catch (error) {
+            console.error('パスワードの変更に失敗しました', error);
+            throw error;
+        }
 
         setOpenSuccessDialog(true);
     }
@@ -89,7 +100,6 @@ export default function PasswordChange() {
             }
         });
 
-        // TODO:現在のパスワード確認
 
         return isValid;
     };

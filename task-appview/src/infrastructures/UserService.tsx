@@ -21,6 +21,7 @@ export class UserService implements IUserService {
                     Authorization: `Bearer ${token}`,
                 },
             });
+
             return response.data;
         } catch (error) {
             console.error('APIリクエストに失敗しました', error);
@@ -44,6 +45,31 @@ export class UserService implements IUserService {
         return this.request('get', USERS_API_URL + `/${userId}/`);
     }
 
+    // パスワード変更
+    public async updatePassword(userId: string,
+        currentPassword: string, newPassword: string, newConfirmPassword: string): Promise<any> {
+        try {
+            const data = {
+                'current_password': currentPassword,
+                'new_password': newPassword,
+                'new_password_confirmation': newConfirmPassword
+            }
+            const token = getAuthToken();
+            if (!token) return null;
+
+            const response = await axios.post(USERS_API_URL + `/${userId}/change-password`,
+                data, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            return response.data;
+        } catch (error) {
+            console.error('パスワードの変更に失敗しました', error);
+            throw error;
+        }
+    }
 
     // ユーザーサインイン
     public async signin(signinUser: SigninUser): Promise<void> {

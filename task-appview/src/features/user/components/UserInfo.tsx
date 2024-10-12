@@ -33,7 +33,7 @@ export default function UserInfo({ userService }: UserInfoProps) {
                     パスワード変更
                 </AccordionSummary>
                 <AccordionDetails>
-                    <PasswordChange />
+                    <PasswordChange userService={userService} />
                 </AccordionDetails>
             </Accordion>
             <Accordion>

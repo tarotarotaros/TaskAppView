@@ -23,10 +23,12 @@ export default function Signin({ userService }: SideMenuWithHeaderProps) {
   const [openSigninDialog, setOpenSigninDialog] = useState(false);
 
   const signinKey: string = "signin";
+  const signinEmailKey: string = signinKey + "email";
+  const signinPasswordKey: string = signinKey + "password";
 
   const validateInputs = () => {
-    const email = document.getElementById(signinKey + "email") as HTMLInputElement;
-    const password = document.getElementById(signinKey + "password") as HTMLInputElement;
+    const email = document.getElementById(signinEmailKey) as HTMLInputElement;
+    const password = document.getElementById(signinPasswordKey) as HTMLInputElement;
 
     let isValid = true;
 
@@ -97,14 +99,14 @@ export default function Signin({ userService }: SideMenuWithHeaderProps) {
             }}
           >
             <EMailForm
-              keyText={signinKey}
+              keyText={signinEmailKey}
               email={email}
               emailError={emailError}
               errorMessage={emailErrorMessage}
               onChange={(e) => setEmail(e.target.value)}
             />
             <PasswordForm
-              keyText={signinKey}
+              keyText={signinPasswordKey}
               password={password}
               passwordError={passwordError}
               errorMessage={passwordErrorMessage}
