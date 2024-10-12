@@ -2,6 +2,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
 import { IUserService } from "../../../infrastructures/IUserService";
 import PasswordChange from './PasswordChage';
+import UserDelete from './UserDelete';
 import UserSetting from "./UserSetting";
 
 type UserInfoProps = {
@@ -42,10 +43,10 @@ export default function UserInfo({ userService }: UserInfoProps) {
                     aria-controls="panel1-content"
                     id="panel1-header"
                 >
-                    アカウント削除
+                    ユーザーアカウント削除
                 </AccordionSummary>
                 <AccordionDetails>
-                    {"a"}
+                    <UserDelete userService={userService} />
                 </AccordionDetails>
             </Accordion>
         </div>
