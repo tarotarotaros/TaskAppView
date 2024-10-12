@@ -71,6 +71,26 @@ export class UserService implements IUserService {
         }
     }
 
+    // パスワード変更
+    public async deleteUser(userId: string): Promise<any> {
+        try {
+            const token = getAuthToken();
+            if (!token) return null;
+
+            const response = await axios.delete(USERS_API_URL + `/${userId}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+            return response.data;
+        } catch (error) {
+            console.error('ユーザー情報の削除に失敗しました', error);
+            throw error;
+        }
+    }
+
     // ユーザーサインイン
     public async signin(signinUser: SigninUser): Promise<void> {
         try {

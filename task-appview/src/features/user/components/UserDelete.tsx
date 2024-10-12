@@ -1,5 +1,6 @@
 import { Box, Button, Card, Dialog, DialogActions, DialogTitle, Stack, Typography } from "@mui/material";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { IUserService } from "../../../infrastructures/IUserService";
 
 type UserDeleteProps = {
@@ -9,14 +10,38 @@ type UserDeleteProps = {
 export default function UserDelete({ userService }: UserDeleteProps) {
 
     const [openSuccessDialog, setOpenSuccessDialog] = useState(false);
-
+    const [openDeleteConfirmDialog, setOpenDeleteConfirmDialog] = useState(false);
+    const navigate = useNavigate();
 
     function handleClickExeButton(): void {
-        throw new Error("Function not implemented.");
+        setOpenDeleteConfirmDialog(true);
+    }
+
+    function handleCancelDeleteConfirmDialog(): void {
+        setOpenDeleteConfirmDialog(false);
+    }
+
+    async function handleDeleteConfirmDialog() {
+        try {
+            const userInfo = await userService.fetchAuthUserInfo();
+            await userService.deleteUser(userInfo.id);
+        } catch (error) {
+            console.error('パスワードの変更に失敗しました', error);
+            throw error;
+        }
+
+        setOpenDeleteConfirmDialog(false);
+        setOpenSuccessDialog(true);
+        logout();
     }
 
     function handleSuccessDialogClose(): void {
-        throw new Error("Function not implemented.");
+        setOpenSuccessDialog(false);
+    }
+
+    function logout() {
+        sessionStorage.removeItem('authToken')
+        navigate('/'); // 更新
     }
 
     return (<div>
@@ -44,12 +69,26 @@ export default function UserDelete({ userService }: UserDeleteProps) {
                 </Box>
             </Card>
         </Stack>
+        <Dialog
+            open={openDeleteConfirmDialog}
+            onClose={handleCancelDeleteConfirmDialog}
+        >
+            <DialogTitle>{"アカウントを削除しますか？"}</DialogTitle>
+            <DialogActions>
+                <Button onClick={handleDeleteConfirmDialog} color="error">
+                    OK
+                </Button>
+                <Button onClick={handleCancelDeleteConfirmDialog} color="primary">
+                    キャンセル
+                </Button>
+            </DialogActions>
+        </Dialog>
 
         <Dialog
             open={openSuccessDialog}
             onClose={handleSuccessDialogClose}
         >
-            <DialogTitle>{"変更完了"}</DialogTitle>
+            <DialogTitle>{"アカウント削除完了"}</DialogTitle>
             <DialogActions>
                 <Button onClick={handleSuccessDialogClose} color="primary">
                     OK
