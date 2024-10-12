@@ -19,8 +19,9 @@ type UserInfoInputProps = {
 
 export default function UserInfoInput({ functionKey, functionDisplayTitleText, functionSusccessDialogTitleText, functionExeButtonText, onClickExeButton,
     settingName = "", settingEmail = "", settingPassword = "" }: UserInfoInputProps) {
-    console.log("settingEmail:", settingEmail);
 
+    const emailKey = functionKey + "email";
+    const passwordKey = functionKey + "password";
 
     const [name, setName] = useState(settingName);
     const [nameError, setNameError] = React.useState(false);
@@ -44,8 +45,8 @@ export default function UserInfoInput({ functionKey, functionDisplayTitleText, f
 
     const validateInputs = () => {
         const name = document.getElementById('name') as HTMLInputElement;
-        const email = document.getElementById(functionKey + "email") as HTMLInputElement;
-        const password = document.getElementById(functionKey + "password") as HTMLInputElement;
+        const email = document.getElementById(emailKey) as HTMLInputElement;
+        const password = document.getElementById(passwordKey) as HTMLInputElement;
 
         let isValid = true;
 
@@ -139,14 +140,14 @@ export default function UserInfoInput({ functionKey, functionDisplayTitleText, f
                             />
                         </FormControl>
                         <EMailForm
-                            keyText={functionKey}
+                            keyText={emailKey}
                             email={email}
                             emailError={emailError}
                             errorMessage={emailErrorMessage}
                             onChange={(e) => setEmail(e.target.value)}
                         />
                         <PasswordForm
-                            keyText={functionKey}
+                            keyText={passwordKey}
                             password={password}
                             passwordError={passwordError}
                             errorMessage={passwordErrorMessage}
