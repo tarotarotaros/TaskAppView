@@ -1,5 +1,5 @@
 /* カードの基本スタイル */
-.signup-card {
+.register-card {
     display: flex;
     flex-direction: column;
     align-self: center;
@@ -17,13 +17,13 @@
 @media (min-width: 600px) {
 
     /* 600pxはsmのブレークポイントの例 */
-    .signup-card {
+    .register-card {
         width: 450px;
     }
 }
 
 /* ログインコンテナの基本スタイル */
-.signup-container {
+.register-container {
     height: 100%;
     padding: 20px;
     background-image: radial-gradient(ellipse at 50% 50%, hsl(210, 100%, 97%), hsl(0, 0%, 100%));

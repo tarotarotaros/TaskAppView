@@ -38,7 +38,7 @@ export default function UserSetting({ userService }: UserSettingProps) {
 
     // 設定変更
     async function handleChangeUserSetting(user: User): Promise<ExeResult> {
-        const result: ExeResult = await userService.signup(user);
+        const result: ExeResult = await userService.register(user);
         return result;
     };
 

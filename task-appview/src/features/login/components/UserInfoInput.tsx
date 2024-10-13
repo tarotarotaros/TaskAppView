@@ -5,7 +5,7 @@ import EMailForm from '../../../common/components/EMailForm';
 import PasswordForm from '../../../common/components/PasswordForm';
 import { ExeResult } from '../../../types/ExeResult';
 import { User } from '../../../types/User';
-import '../styles/SignupStyle.css';
+import '../styles/RegisterStyle.css';
 
 type UserInfoInputProps = {
     functionKey: string;
@@ -115,8 +115,8 @@ export default function UserInfoInput({ functionKey, functionDisplayTitleText, f
     return (
         <div>
             <CssBaseline enableColorScheme />
-            <Stack className="signup-container" direction="column" justifyContent="space-between">
-                <Card className="signup-card" variant="outlined">
+            <Stack className="register-container" direction="column" justifyContent="space-between">
+                <Card className="register-card" variant="outlined">
                     <Typography
                         component="h1"
                         variant="h4"

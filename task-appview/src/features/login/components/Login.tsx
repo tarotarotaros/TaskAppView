@@ -7,7 +7,7 @@ import React, { useState } from 'react';
 import EMailForm from '../../../common/components/EMailForm';
 import PasswordForm from '../../../common/components/PasswordForm';
 import { IUserService } from '../../../infrastructures/IUserService';
-import '../styles/SignupStyle.css';
+import '../styles/RegisterStyle.css';
 
 type SideMenuWithHeaderProps = {
   userService: IUserService;
@@ -78,8 +78,8 @@ export default function Login({ userService }: SideMenuWithHeaderProps) {
   return (
     <div>
       <CssBaseline enableColorScheme />
-      <Stack className="signup-container" direction="column" justifyContent="space-between">
-        <Card className="signup-card" variant="outlined">
+      <Stack className="register-container" direction="column" justifyContent="space-between">
+        <Card className="register-card" variant="outlined">
           <Typography
             component="h1"
             variant="h4"

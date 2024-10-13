@@ -3,7 +3,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
 import { IUserService } from '../../../infrastructures/IUserService';
 import Login from './Login';
-import Signup from './Signup';
+import Register from './Register';
 
 type UserLoginProps = {
     userService: IUserService;
@@ -33,7 +33,7 @@ export default function UserLogin({ userService }: UserLoginProps) {
                     アカウント登録
                 </AccordionSummary>
                 <AccordionDetails>
-                    <Signup userService={userService} />
+                    <Register userService={userService} />
                 </AccordionDetails>
             </Accordion>
         </div>

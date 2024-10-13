@@ -106,14 +106,14 @@ export class UserService implements IUserService {
     }
 
     // ユーザー登録
-    public async signup(signupUser: User): Promise<ExeResult> {
+    public async register(registerUser: User): Promise<ExeResult> {
         try {
-            await axios.post(USER_API_URL + "/register", signupUser);
+            await axios.post(USER_API_URL + "/register", registerUser);
 
             // 自動ログイン
             const loginUserData: LoginUser = {
-                email: signupUser.email,
-                password: signupUser.password,
+                email: registerUser.email,
+                password: registerUser.password,
             }
             const result = await this.login(loginUserData);
             return result.merge(new ExeResult(true, "ユーザー登録 & 自動ログイン成功"));

@@ -16,7 +16,7 @@ export default {
 // `StoryObj` を使ったストーリー定義
 export const Default: StoryObj<typeof UserInfoInput> = {
     args: {
-        functionKey: 'signup',
+        functionKey: 'register',
         functionDisplayTitleText: 'アカウント登録',
         functionSusccessDialogTitleText: 'ユーザー登録完了',
         functionExeButtonText: '登録',

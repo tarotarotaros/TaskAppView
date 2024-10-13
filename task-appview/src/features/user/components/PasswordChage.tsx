@@ -111,8 +111,8 @@ export default function PasswordChange({ userService }: PasswordChangeProps) {
 
         <div>
             <CssBaseline enableColorScheme />
-            <Stack className="signup-container" direction="column" justifyContent="space-between">
-                <Card className="signup-card" variant="outlined">
+            <Stack className="register-container" direction="column" justifyContent="space-between">
+                <Card className="register-card" variant="outlined">
                     <Typography
                         component="h1"
                         variant="h4"

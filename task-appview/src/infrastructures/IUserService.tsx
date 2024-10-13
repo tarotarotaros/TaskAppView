@@ -9,5 +9,5 @@ export interface IUserService {
     updatePassword(userId: string, currentPassword: string, newPassword: string, newConfirmPassword: string): Promise<any>;
     deleteUser(userId: string): Promise<any>;
     login(loginUser: LoginUser): Promise<ExeResult>;
-    signup(signupUser: User): Promise<ExeResult>;
+    register(registerUser: User): Promise<ExeResult>;
 }
