@@ -1,6 +1,6 @@
 import { IUserService } from '../../../infrastructures/IUserService';
 import { ExeResult } from '../../../types/ExeResult';
-import { LoginUser, User } from '../../../types/User';
+import { User } from '../../../types/User';
 import UserInfoInput from './UserInfoInput';
 
 type RegisterProps = {
@@ -12,15 +12,7 @@ export default function Register({ userService }: RegisterProps) {
     async function handleRegister(user: User): Promise<ExeResult> {
         const result = await userService.register(user);
         return result;
-        //window.location.reload();
     };
-
-    function convertToLoginUser(user: User): LoginUser {
-        return {
-            email: user.email,
-            password: user.password
-        };
-    }
 
     return (
         <UserInfoInput functionKey={"register"}

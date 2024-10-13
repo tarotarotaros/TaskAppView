@@ -35,7 +35,6 @@ export class UserService implements IUserService {
     }
 
     public async updateUserProject(projectId: number, userId: number): Promise<any> {
-        console.log("updateUserProject:" + "userId:" + userId + "projectId:" + projectId);
         return this.request('put', USERS_API_URL + `/${userId}/project`, { project: projectId });
     }
 

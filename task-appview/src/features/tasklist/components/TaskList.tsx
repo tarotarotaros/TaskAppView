@@ -156,7 +156,7 @@ export default function TaskList({ userService }: TaskListProps) {
         };
 
         loadTasks();
-    }, []);
+    }, [userService]);
 
     // 新しいタスクを追加
     const handleCreateTask = async (task: any) => {

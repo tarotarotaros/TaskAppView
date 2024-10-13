@@ -1,7 +1,6 @@
 import MenuIcon from '@mui/icons-material/Menu';
 import { AppBar, Button, CssBaseline, Drawer, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar, Typography, useTheme } from '@mui/material';
 import { cloneElement, useCallback, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import Loading from '../../../common/components/Loading';
 import SimpleDialog, { NO_SELECT_PROJECT__TEXT } from '../../../common/components/SelectDialog';
 import { IUserService } from '../../../infrastructures/IUserService';
@@ -34,7 +33,6 @@ export default function SideMenuWithHeader({ userService }: SideMenuWithHeaderPr
     const [displayProject, SetDisplayProject] = useState<string>(INIT_DISPLAY_PROJECT_TEXT);
     const [content, SetContent] = useState(<Hello />); // 初期コンテンツ
     const [contentKey, SetContentKey] = useState("home"); // 初期コンテンツ
-    const navigate = useNavigate();
 
     // データ処理関係
     const setUserInfo = useCallback(async () => {

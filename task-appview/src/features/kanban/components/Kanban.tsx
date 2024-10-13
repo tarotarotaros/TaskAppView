@@ -70,7 +70,7 @@ export default function Kanban({ userService }: KanbanProps) {
             SetStatuses(fetchedStatuses);
         };
         loadTasks();
-    }, [createKanbanBoard]); // createKanbanBoardを依存配列に追加
+    }, [createKanbanBoard, userService]); // createKanbanBoardを依存配列に追加
 
     // カード移動時にデータ更新
     const handleCardMove: OnDragEndNotification<Card> = async (_card, source, destination) => {
