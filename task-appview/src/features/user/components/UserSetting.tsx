@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { IUserService } from "../../../infrastructures/IUserService";
+import { ExeResult } from "../../../types/ExeResult";
 import { User } from "../../../types/User";
 import UserInfoInput from "../../signin/components/UserInfoInput";
 
@@ -36,12 +37,9 @@ export default function UserSetting({ userService }: UserSettingProps) {
     }, [userService]);
 
     // 設定変更
-    const handleChangeUserSetting = async (user: User) => {
-        try {
-            //await userService.signup(user);
-        } catch (error) {
-            console.error('ユーザー設定変更処理でエラーが発生しました:', error);
-        }
+    async function handleChangeUserSetting(user: User): Promise<ExeResult> {
+        const result: ExeResult = await userService.signup(user);
+        return result;
     };
 
     return (

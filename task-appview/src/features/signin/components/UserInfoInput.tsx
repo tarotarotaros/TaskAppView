@@ -3,6 +3,7 @@ import Button from '@mui/material/Button';
 import React, { useEffect, useState } from 'react';
 import EMailForm from '../../../common/components/EMailForm';
 import PasswordForm from '../../../common/components/PasswordForm';
+import { ExeResult } from '../../../types/ExeResult';
 import { User } from '../../../types/User';
 import '../styles/SignupStyle.css';
 
@@ -11,7 +12,7 @@ type UserInfoInputProps = {
     functionDisplayTitleText: string;//アカウント登録
     functionSusccessDialogTitleText: string;//ユーザー登録完了（自動ログイン）
     functionExeButtonText: string;//登録
-    onClickExeButton: (user: User) => void;
+    onClickExeButton: (user: User) => Promise<ExeResult>;
     settingName?: string;
     settingEmail?: string;
     settingPassword?: string;
@@ -81,7 +82,7 @@ export default function UserInfoInput({ functionKey, functionDisplayTitleText, f
     };
 
     // ユーザー登録＋ログイン処理
-    const handleClickExeButton = () => {
+    async function handleClickExeButton() {
 
         let isOk = validateInputs();
         if (!isOk) return;
@@ -92,8 +93,13 @@ export default function UserInfoInput({ functionKey, functionDisplayTitleText, f
                 email: email,
                 password: password,
             }
-            onClickExeButton(inputUserData)
-            setOpenSuccessDialog(true);
+            const result: ExeResult = await onClickExeButton(inputUserData);
+            if (result.Result) {
+                setOpenSuccessDialog(true);
+            }
+            else {
+                alert(result.Message);
+            }
         } catch (error) {
             console.error('ユーザー登録処理でエラーが発生しました:', error);
         }

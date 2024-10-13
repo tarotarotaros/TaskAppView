@@ -1,4 +1,5 @@
 import axios from "axios";
+import { ExeResult } from "../types/ExeResult";
 import { SigninUser, User } from "../types/User";
 import { BASE_URL, getAuthToken } from "./API";
 import { IUserService } from "./IUserService";
@@ -33,7 +34,8 @@ export class UserService implements IUserService {
         return this.request('get', USER_API_URL);
     }
 
-    public async updateUserProject(userId: number, projectId: number): Promise<any> {
+    public async updateUserProject(projectId: number, userId: number): Promise<any> {
+        console.log("updateUserProject:" + "userId:" + userId + "projectId:" + projectId);
         return this.request('put', USERS_API_URL + `/${userId}/project`, { project: projectId });
     }
 
@@ -91,22 +93,20 @@ export class UserService implements IUserService {
         }
     }
 
-    // ユーザーサインイン
-    public async signin(signinUser: SigninUser): Promise<void> {
+    // ユーザーログイン
+    public async signin(signinUser: SigninUser): Promise<ExeResult> {
         try {
-            console.log(signinUser);
             const response = await axios.post(USER_API_URL + "/login", signinUser);
-            const token: string = response.data.token; // トークンが含まれているキー名を適宜変更
+            const token: string = response.data.token;
             sessionStorage.setItem('authToken', token);
-            //this.token = token; // ログイン後のトークンを保存
+            return new ExeResult(true, "ログイン成功");
         } catch (error) {
-            console.error('ユーザーサインインに失敗しました', error);
-            throw error;
+            return new ExeResult(false, "ログイン失敗");
         }
     }
 
-    // ユーザーサインアップ
-    public async signup(signupUser: User): Promise<void> {
+    // ユーザー登録
+    public async signup(signupUser: User): Promise<ExeResult> {
         try {
             await axios.post(USER_API_URL + "/register", signupUser);
 
@@ -115,10 +115,10 @@ export class UserService implements IUserService {
                 email: signupUser.email,
                 password: signupUser.password,
             }
-            await this.signin(signinUserData); // サインアップ後の自動サインイン
+            const result = await this.signin(signinUserData);
+            return result.merge(new ExeResult(true, "ユーザー登録 & 自動ログイン成功"));
         } catch (error) {
-            console.error('ユーザーサインアップに失敗しました', error);
-            throw error;
+            return new ExeResult(false, "ユーザー登録に失敗しました");
         }
     }
 

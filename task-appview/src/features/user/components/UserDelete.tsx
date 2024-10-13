@@ -1,6 +1,5 @@
-import { Box, Button, Card, Dialog, DialogActions, DialogTitle, Stack, Typography } from "@mui/material";
+import { Box, Button, Card, CircularProgress, Dialog, DialogActions, DialogTitle, Stack, Typography } from "@mui/material";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { IUserService } from "../../../infrastructures/IUserService";
 
 type UserDeleteProps = {
@@ -11,8 +10,6 @@ export default function UserDelete({ userService }: UserDeleteProps) {
 
     const [openSuccessDialog, setOpenSuccessDialog] = useState(false);
     const [openDeleteConfirmDialog, setOpenDeleteConfirmDialog] = useState(false);
-    const navigate = useNavigate();
-
     function handleClickExeButton(): void {
         setOpenDeleteConfirmDialog(true);
     }
@@ -26,22 +23,24 @@ export default function UserDelete({ userService }: UserDeleteProps) {
             const userInfo = await userService.fetchAuthUserInfo();
             await userService.deleteUser(userInfo.id);
         } catch (error) {
-            console.error('パスワードの変更に失敗しました', error);
+            console.error('アカウント削除に失敗しました', error);
             throw error;
         }
 
         setOpenDeleteConfirmDialog(false);
         setOpenSuccessDialog(true);
-        logout();
+        setTimeout(() => {
+            logout();
+        }, 3000);
     }
 
     function handleSuccessDialogClose(): void {
-        setOpenSuccessDialog(false);
+        // nothing to do
     }
 
     function logout() {
-        sessionStorage.removeItem('authToken')
-        navigate('/'); // 更新
+        sessionStorage.removeItem('authToken');
+        window.location.reload();
     }
 
     return (<div>
@@ -88,11 +87,9 @@ export default function UserDelete({ userService }: UserDeleteProps) {
             open={openSuccessDialog}
             onClose={handleSuccessDialogClose}
         >
-            <DialogTitle>{"アカウント削除完了"}</DialogTitle>
-            <DialogActions>
-                <Button onClick={handleSuccessDialogClose} color="primary">
-                    OK
-                </Button>
+            <DialogTitle>{"アカウント削除完了(自動遷移)"}</DialogTitle>
+            <DialogActions style={{ display: 'flex', justifyContent: 'center' }}>
+                <CircularProgress color="secondary" />
             </DialogActions>
         </Dialog>
     </div>

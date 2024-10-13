@@ -53,21 +53,20 @@ export default function Signin({ userService }: SideMenuWithHeaderProps) {
     return isValid;
   };
 
-  const handleSiginin = async () => {
-    try {
-      let isOk = validateInputs();
-      if (!isOk) return;
+  async function handleSiginin() {
+    let isOk = validateInputs();
+    if (!isOk) return;
 
-      const signinUserData = {
-        email: email,
-        password: password,
-      }
-      await userService.signin(signinUserData);
-      console.log('ログイン完了');
+    const signinUserData = {
+      email: email,
+      password: password,
+    }
+    const result = await userService.signin(signinUserData);
+    if (result.Result === true) {
       setOpenSigninDialog(true);
-
-    } catch (error) {
-      console.error('エラーが発生しました:', error);
+    }
+    else {
+      alert(result.Message);
     }
   };
 

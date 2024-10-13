@@ -74,7 +74,6 @@ export default function SideMenuWithHeader({ userService }: SideMenuWithHeaderPr
                 await handleChangeProjectClick();
                 return;
             }
-            console.log("load_project:" + project.name)
             SetDisplayProject(project.name);
         };
         loadDisplayProject();
@@ -135,14 +134,6 @@ export default function SideMenuWithHeader({ userService }: SideMenuWithHeaderPr
         // 数値に変換し、NaN（数値でない値）かどうかを確認
         return !isNaN(Number(value));
     }
-
-
-    // async function getSelectProject() {
-    //     const userInfo = await userService.fetchAuthUserInfo();
-    //     if (userInfo === null || userInfo.project === null) return null;
-    //     const project = await fetchProject(userInfo.project);
-    //     return project;
-    // }
 
     const SelectProjectButton = () => {
         if (isSignin()) {
