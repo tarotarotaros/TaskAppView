@@ -107,7 +107,7 @@ export default function SideMenuWithHeader({ userService }: SideMenuWithHeaderPr
         return token !== null && token !== "";  // トークンが存在し、空でないかを確認
     };
 
-    const signout = () => {
+    function logout() {
         sessionStorage.removeItem('authToken')
         window.location.reload();
     }
@@ -207,7 +207,7 @@ export default function SideMenuWithHeader({ userService }: SideMenuWithHeaderPr
                                         }}
                                         onClick={() => {
                                             if (value.title === "サインアウト") {
-                                                signout();
+                                                logout();
                                             } else {
                                                 SetContent(value.component); // クリックされたアイテムのタイトルをコンテンツにセット
                                                 SetContentKey(value.key);
@@ -246,7 +246,7 @@ export default function SideMenuWithHeader({ userService }: SideMenuWithHeaderPr
     function isDisplayCondition(value: any) {
 
         const isOk: boolean = (value.condition === "login" && isLogin()) ||
-            (value.condition === "signout" && !isLogin()) ||
+            (value.condition === "logout" && !isLogin()) ||
             value.condition === "";
 
         let isOkProjectCondition: boolean = false;
