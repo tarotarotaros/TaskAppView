@@ -9,6 +9,14 @@ const USERS_API_URL = BASE_URL + "users";
 
 export class UserService implements IUserService {
 
+    readonly FAULSE_GET_TOKEN_MESSAGE: string = "ユーザー認証情報の取得に失敗しました";
+    readonly SUCCESS_UPDATE_USER_MESSAGE: string = "ユーザー情報の更新に成功しました";
+    readonly FAULSE_UPDATE_USER_MESSAGE: string = "ユーザー情報の更新に失敗しました";
+    readonly SUCCESS_GET_USER_MESSAGE: string = "ユーザー情報の取得に成功しました";
+    readonly FAULSE_GET_USER_MESSAGE: string = "ユーザー情報の取得に失敗しました";
+    readonly SUCCESS_DELETE_USER_MESSAGE: string = "ユーザー情報の削除に成功しました";
+
+
     private async request(method: 'get' | 'put', url: string, data?: any): Promise<any> {
         try {
 
@@ -30,10 +38,14 @@ export class UserService implements IUserService {
         }
     }
 
+    /**
+     * ユーザー情報を取得
+     * @returns 実行結果とユーザー情報
+     */
     public async fetchAuthUserInfo(): Promise<fetchUserInfo> {
         try {
             const token = getAuthToken();
-            if (!token) return new fetchUserInfo(new ExeResult(false, "ユーザー情報の取得に失敗しました"), new User("", "", ""));
+            if (!token) return new fetchUserInfo(new ExeResult(false, this.FAULSE_GET_TOKEN_MESSAGE), new User("", "", ""));
 
             const response = await axios.get(
                 USER_API_URL, {
@@ -44,16 +56,30 @@ export class UserService implements IUserService {
             );
 
             const data = response.data;
-            return new fetchUserInfo(new ExeResult(true, "ユーザー情報の取得に成功しました"), new User(data.name, data.email, data.password, data.id, data.projectId));
-        } catch {
-            return new fetchUserInfo(new ExeResult(false, "ユーザー情報の取得に失敗しました"), new User("", "", ""));
+            return new fetchUserInfo(new ExeResult(true, this.SUCCESS_GET_USER_MESSAGE), new User(data.name, data.email, data.password, data.id, data.projectId));
+        } catch (error: any) {
+            return new fetchUserInfo(new ExeResult(false, error.response.data), new User("", "", ""));
         }
     }
 
+    /**
+     * ユーザーのプロジェクトを更新
+     * @param projectId プロジェクトID
+     * @param userId ユーザーID
+     * @returns なし
+     */
     public async updateUserProject(projectId: number, userId: number): Promise<any> {
         return this.request('put', USERS_API_URL + `/${userId}/project`, { project: projectId });
     }
 
+    /**
+     * ユーザー情報を更新
+     * @param userId ユーザーID
+     * @param username ユーザー名
+     * @param email email
+     * @param password パスワード
+     * @returns 実行結果
+     */
     public async updateUser(userId: number, username: string, email: string, password: string): Promise<ExeResult> {
         try {
             const data = {
@@ -64,7 +90,7 @@ export class UserService implements IUserService {
             }
 
             const token = getAuthToken();
-            if (!token) return new ExeResult(false, "ユーザー情報の取得に失敗しました");
+            if (!token) return new ExeResult(false, this.FAULSE_GET_TOKEN_MESSAGE);
 
             const response = await axios.put(
                 USERS_API_URL + `/${userId}`,
@@ -77,24 +103,41 @@ export class UserService implements IUserService {
             );
             if (response.status) return new ExeResult(false, response.data.error);
 
-            return new ExeResult(true, "ユーザー情報の更新に成功しました");
+            return new ExeResult(true, this.SUCCESS_UPDATE_USER_MESSAGE);
         } catch (error: any) {
             return new ExeResult(false, error.response.data);
         }
 
     }
 
+    /**
+     * ユーザーのプロジェクトを取得
+     * @param userId ユーザーID
+     * @returns プロジェクト情報
+     */
     public async fetchUserProject(userId: number): Promise<any> {
         return this.request('get', USERS_API_URL + `/${userId}/project`);
     }
 
+    /**
+     * ユーザー情報を取得
+     * @param userId ユーザーID
+     * @returns ユーザー情報
+     */
     public async fetchUserInfo(userId: number): Promise<any> {
         return this.request('get', USERS_API_URL + `/${userId}/`);
     }
 
-    // パスワード変更
+    /**
+     * パスワードを更新
+     * @param userId ユーザーID
+     * @param currentPassword 現在のパスワード
+     * @param newPassword 新しいパスワード
+     * @param newConfirmPassword 新しいパスワード(確認用)
+     * @returns 実行結果
+     */
     public async updatePassword(userId: number,
-        currentPassword: string, newPassword: string, newConfirmPassword: string): Promise<any> {
+        currentPassword: string, newPassword: string, newConfirmPassword: string): Promise<ExeResult> {
         try {
             const data = {
                 'current_password': currentPassword,
@@ -102,7 +145,7 @@ export class UserService implements IUserService {
                 'new_password_confirmation': newConfirmPassword
             }
             const token = getAuthToken();
-            if (!token) return null;
+            if (!token) return new ExeResult(false, this.FAULSE_GET_TOKEN_MESSAGE);
 
             const response = await axios.post(USERS_API_URL + `/${userId}/change-password`,
                 data, {
@@ -118,7 +161,11 @@ export class UserService implements IUserService {
         }
     }
 
-    // パスワード変更
+    /**
+     * ユーザ情報の削除
+     * @param userId ユーザーID
+     * @returns データ
+     */
     public async deleteUser(userId: number): Promise<any> {
         try {
             const token = getAuthToken();
@@ -133,12 +180,16 @@ export class UserService implements IUserService {
 
             return response.data;
         } catch (error) {
-            console.error('ユーザー情報の削除に失敗しました', error);
+            console.error(this.SUCCESS_DELETE_USER_MESSAGE, error);
             throw error;
         }
     }
 
-    // ユーザーログイン
+    /**
+     * ログイン処理
+     * @param loginUser ログインユーザー情報
+     * @returns 実行結果
+     */
     public async login(loginUser: LoginUser): Promise<ExeResult> {
         try {
             const response = await axios.post(USER_API_URL + "/login", loginUser);
@@ -150,7 +201,11 @@ export class UserService implements IUserService {
         }
     }
 
-    // ユーザー登録
+    /**
+     * 登録処理
+     * @param registerUser 登録ユーザー情報 
+     * @returns 実行結果
+     */
     public async register(registerUser: User): Promise<ExeResult> {
         try {
             await axios.post(USER_API_URL + "/register", registerUser);

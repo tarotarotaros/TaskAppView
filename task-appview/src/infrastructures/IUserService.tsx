@@ -7,7 +7,7 @@ export interface IUserService {
     updateUser(userId: number, username: string, email: string, password: string): Promise<ExeResult>;
     fetchUserProject(userId: number): Promise<any>;
     fetchUserInfo(userId: number): Promise<any>;
-    updatePassword(userId: number, currentPassword: string, newPassword: string, newConfirmPassword: string): Promise<any>;
+    updatePassword(userId: number, currentPassword: string, newPassword: string, newConfirmPassword: string): Promise<ExeResult>;
     deleteUser(userId: number): Promise<any>;
     login(loginUser: LoginUser): Promise<ExeResult>;
     register(registerUser: User): Promise<ExeResult>;

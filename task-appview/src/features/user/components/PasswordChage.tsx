@@ -2,6 +2,7 @@ import { Box, Button, Card, CssBaseline, Dialog, DialogActions, DialogTitle, Sta
 import { useState } from "react";
 import PasswordForm from "../../../common/components/PasswordForm";
 import { IUserService } from "../../../infrastructures/IUserService";
+import { ExeResult } from "../../../types/ExeResult";
 
 type PasswordChangeProps = {
     userService: IUserService;
@@ -38,15 +39,23 @@ export default function PasswordChange({ userService }: PasswordChangeProps) {
         let isOk = validateInputs();
         if (!isOk) return;
 
+        let result: ExeResult;
         try {
             const fetchUserInfo = await userService.fetchAuthUserInfo();
-            await userService.updatePassword(fetchUserInfo.User.id, currentPassword, newPassword, newConfirmPassword);
-        } catch (error) {
-            console.error('パスワードの変更に失敗しました', error);
-            throw error;
+            if (!fetchUserInfo.Result.Result) {
+                alert(fetchUserInfo.Result.Message);
+                return;
+            };
+            result = await userService.updatePassword(fetchUserInfo.User.id, currentPassword, newPassword, newConfirmPassword);
+        } catch (error: any) {
+            result = new ExeResult(false, error.response.data);
         }
 
-        setOpenSuccessDialog(true);
+        if (result.Result) {
+            setOpenSuccessDialog(true);
+        } else {
+            alert(result.Message);
+        }
     }
 
     function validateInputs(): boolean {
