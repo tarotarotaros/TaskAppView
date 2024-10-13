@@ -20,8 +20,8 @@ export default function UserDelete({ userService }: UserDeleteProps) {
 
     async function handleDeleteConfirmDialog() {
         try {
-            const userInfo = await userService.fetchAuthUserInfo();
-            await userService.deleteUser(userInfo.id);
+            const fetchUserInfo = await userService.fetchAuthUserInfo();
+            await userService.deleteUser(fetchUserInfo.User.id);
         } catch (error) {
             console.error('アカウント削除に失敗しました', error);
             throw error;

@@ -56,7 +56,7 @@ export const SidebarData = [
         component: <DataEdit />,
     },
     {
-        title: "サインアウト",
+        title: "ログアウト",
         key: "logout",
         condition: "login",
         isSelectProject: false,

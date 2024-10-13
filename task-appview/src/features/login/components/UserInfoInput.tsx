@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react';
 import EMailForm from '../../../common/components/EMailForm';
 import PasswordForm from '../../../common/components/PasswordForm';
 import { ExeResult } from '../../../types/ExeResult';
-import { User } from '../../../types/User';
 import '../styles/RegisterStyle.css';
 
 type UserInfoInputProps = {
@@ -12,11 +11,20 @@ type UserInfoInputProps = {
     functionDisplayTitleText: string;//アカウント登録
     functionSusccessDialogTitleText: string;//ユーザー登録完了（自動ログイン）
     functionExeButtonText: string;//登録
-    onClickExeButton: (user: User) => Promise<ExeResult>;
+    onClickExeButton: (user: UserSettingInput) => Promise<ExeResult>;
     settingName?: string;
     settingEmail?: string;
     settingPassword?: string;
 };
+
+
+export type UserSettingInput =
+    {
+        name: string;
+        email: string;
+        password: string;
+    }
+
 
 export default function UserInfoInput({ functionKey, functionDisplayTitleText, functionSusccessDialogTitleText, functionExeButtonText, onClickExeButton,
     settingName = "", settingEmail = "", settingPassword = "" }: UserInfoInputProps) {
@@ -88,7 +96,7 @@ export default function UserInfoInput({ functionKey, functionDisplayTitleText, f
         if (!isOk) return;
 
         try {
-            const inputUserData: User = {
+            const inputUserData: UserSettingInput = {
                 name: name,
                 email: email,
                 password: password,

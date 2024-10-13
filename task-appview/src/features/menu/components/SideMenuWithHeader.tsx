@@ -36,8 +36,9 @@ export default function SideMenuWithHeader({ userService }: SideMenuWithHeaderPr
 
     // データ処理関係
     const setUserInfo = useCallback(async () => {
-        const userInfo = await userService.fetchAuthUserInfo();
-        SetUserId(userInfo.id);
+        const fetchUserInfo = await userService.fetchAuthUserInfo();
+        SetUserId(fetchUserInfo.User.id);
+        console.log(fetchUserInfo.User.id);
     }, [userService]);
 
     const updateSelectProjectList = useCallback(async () => {
@@ -57,9 +58,9 @@ export default function SideMenuWithHeader({ userService }: SideMenuWithHeaderPr
     }, [updateSelectProjectList, setUserInfo])
 
     const getSelectProject = useCallback(async () => {
-        const userInfo = await userService.fetchAuthUserInfo();
-        if (!userInfo || !userInfo.project) return null;
-        const project = await fetchProject(userInfo.project);
+        const fetchUserInfo = await userService.fetchAuthUserInfo();
+        if (!fetchUserInfo.Result.Result) return null;
+        const project = await fetchProject(fetchUserInfo.User.projectId);
         return project;
     }, [userService]);
 

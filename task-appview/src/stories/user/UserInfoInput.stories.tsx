@@ -1,8 +1,7 @@
 // UserInfoInput.stories.tsx
 import type { Meta, StoryObj } from '@storybook/react';
-import UserInfoInput from '../../features/login/components/UserInfoInput';
+import UserInfoInput, { UserSettingInput } from '../../features/login/components/UserInfoInput';
 import { ExeResult } from '../../types/ExeResult';
-import { User } from '../../types/User';
 
 // メタデータを定義
 export default {
@@ -20,7 +19,7 @@ export const Default: StoryObj<typeof UserInfoInput> = {
         functionDisplayTitleText: 'アカウント登録',
         functionSusccessDialogTitleText: 'ユーザー登録完了',
         functionExeButtonText: '登録',
-        onClickExeButton: (user: User) => Promise.resolve(new ExeResult(true, '登録成功')),
+        onClickExeButton: (user: UserSettingInput) => Promise.resolve(new ExeResult(true, '登録成功')),
         settingName: '',
         settingEmail: '',
         settingPassword: '',

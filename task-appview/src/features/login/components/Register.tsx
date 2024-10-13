@@ -1,7 +1,7 @@
 import { IUserService } from '../../../infrastructures/IUserService';
 import { ExeResult } from '../../../types/ExeResult';
 import { User } from '../../../types/User';
-import UserInfoInput from './UserInfoInput';
+import UserInfoInput, { UserSettingInput } from './UserInfoInput';
 
 type RegisterProps = {
     userService: IUserService;
@@ -9,8 +9,9 @@ type RegisterProps = {
 
 export default function Register({ userService }: RegisterProps) {
 
-    async function handleRegister(user: User): Promise<ExeResult> {
-        const result = await userService.register(user);
+    async function handleRegister(user: UserSettingInput): Promise<ExeResult> {
+        const registerUser: User = new User(user.name, user.email, user.password);
+        const result = await userService.register(registerUser);
         return result;
     };
 

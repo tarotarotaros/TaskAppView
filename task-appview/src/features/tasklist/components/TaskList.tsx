@@ -126,8 +126,8 @@ export default function TaskList({ userService }: TaskListProps) {
     // タスクの一覧/担当者一覧を取得
     useEffect(() => {
         const loadTasks = async () => {
-            const userInfo = await userService.fetchAuthUserInfo();
-            const fetchedTasks = await fetchTasks(userInfo.project);
+            const fetchUserInfo = await userService.fetchAuthUserInfo();
+            const fetchedTasks = await fetchTasks(fetchUserInfo.User.projectId);
             setTasks(fetchedTasks);
 
             const fetchedAssignees: Assignee[] = await fetchAssignees();
@@ -163,8 +163,8 @@ export default function TaskList({ userService }: TaskListProps) {
         try {
             //エラーチェック
             console.log("handleCreateTask:" + task);
-            const userInfo = await userService.fetchAuthUserInfo();
-            const createdTask = await createTask(task, userInfo.id);
+            const fetchUserInfo = await userService.fetchAuthUserInfo();
+            const createdTask = await createTask(task, fetchUserInfo.User.id);
             setTasks([...tasks, createdTask]);
         } catch (error) {
             console.error('タスクの作成に失敗しました', error);

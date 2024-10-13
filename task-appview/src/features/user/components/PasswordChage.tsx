@@ -39,8 +39,8 @@ export default function PasswordChange({ userService }: PasswordChangeProps) {
         if (!isOk) return;
 
         try {
-            const userInfo = await userService.fetchAuthUserInfo();
-            await userService.updatePassword(userInfo.id, currentPassword, newPassword, newConfirmPassword);
+            const fetchUserInfo = await userService.fetchAuthUserInfo();
+            await userService.updatePassword(fetchUserInfo.User.id, currentPassword, newPassword, newConfirmPassword);
         } catch (error) {
             console.error('パスワードの変更に失敗しました', error);
             throw error;

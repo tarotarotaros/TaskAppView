@@ -3,7 +3,7 @@ import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
 import { IUserService } from "../../../infrastructures/IUserService";
 import PasswordChange from './PasswordChage';
 import UserDelete from './UserDelete';
-import UserSetting from "./UserSetting";
+import UserSettingChange from './UserSettingChange';
 
 type UserInfoProps = {
     userService: IUserService;
@@ -22,7 +22,7 @@ export default function UserInfo({ userService }: UserInfoProps) {
                 </AccordionSummary>
                 <AccordionDetails>
                     {"変更したいユーザー名・Email、設定済みのパスワードを入力して変更可能です。"}
-                    <UserSetting userService={userService} />
+                    <UserSettingChange userService={userService} />
                 </AccordionDetails>
             </Accordion>
             <Accordion>

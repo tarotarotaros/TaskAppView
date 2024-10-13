@@ -1,6 +1,6 @@
 import axios from "axios";
 import { ExeResult } from "../types/ExeResult";
-import { LoginUser, User } from "../types/User";
+import { fetchUserInfo, LoginUser, User } from "../types/User";
 import { BASE_URL, getAuthToken } from "./API";
 import { IUserService } from "./IUserService";
 
@@ -30,12 +30,58 @@ export class UserService implements IUserService {
         }
     }
 
-    public async fetchAuthUserInfo(): Promise<any> {
-        return this.request('get', USER_API_URL);
+    public async fetchAuthUserInfo(): Promise<fetchUserInfo> {
+        try {
+            const token = getAuthToken();
+            if (!token) return new fetchUserInfo(new ExeResult(false, "ユーザー情報の取得に失敗しました"), new User("", "", ""));
+
+            const response = await axios.get(
+                USER_API_URL, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+            );
+
+            const data = response.data;
+            return new fetchUserInfo(new ExeResult(true, "ユーザー情報の取得に成功しました"), new User(data.name, data.email, data.password, data.id, data.projectId));
+        } catch {
+            return new fetchUserInfo(new ExeResult(false, "ユーザー情報の取得に失敗しました"), new User("", "", ""));
+        }
     }
 
     public async updateUserProject(projectId: number, userId: number): Promise<any> {
         return this.request('put', USERS_API_URL + `/${userId}/project`, { project: projectId });
+    }
+
+    public async updateUser(userId: number, username: string, email: string, password: string): Promise<ExeResult> {
+        try {
+            const data = {
+                'name': username,
+                'email': email,
+                'current_password': password,
+                'updated_by': userId
+            }
+
+            const token = getAuthToken();
+            if (!token) return new ExeResult(false, "ユーザー情報の取得に失敗しました");
+
+            const response = await axios.put(
+                USERS_API_URL + `/${userId}`,
+                data,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+            if (response.status) return new ExeResult(false, response.data.error);
+
+            return new ExeResult(true, "ユーザー情報の更新に成功しました");
+        } catch (error: any) {
+            return new ExeResult(false, error.response.data);
+        }
+
     }
 
     public async fetchUserProject(userId: number): Promise<any> {
@@ -47,7 +93,7 @@ export class UserService implements IUserService {
     }
 
     // パスワード変更
-    public async updatePassword(userId: string,
+    public async updatePassword(userId: number,
         currentPassword: string, newPassword: string, newConfirmPassword: string): Promise<any> {
         try {
             const data = {
@@ -73,7 +119,7 @@ export class UserService implements IUserService {
     }
 
     // パスワード変更
-    public async deleteUser(userId: string): Promise<any> {
+    public async deleteUser(userId: number): Promise<any> {
         try {
             const token = getAuthToken();
             if (!token) return null;

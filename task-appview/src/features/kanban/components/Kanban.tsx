@@ -62,8 +62,8 @@ export default function Kanban({ userService }: KanbanProps) {
     // データロード処理
     useEffect(() => {
         const loadTasks = async () => {
-            const userInfo = await userService.fetchAuthUserInfo();
-            const fetchedTasks: Task[] = await fetchTasks(userInfo.project);
+            const fetchUserInfo = await userService.fetchAuthUserInfo();
+            const fetchedTasks: Task[] = await fetchTasks(fetchUserInfo.User.projectId);
             const fetchedStatuses: Status[] = await fetchStatuses();
             const createdBoard = createKanbanBoard(fetchedTasks, fetchedStatuses);
             SetBoard(createdBoard);
