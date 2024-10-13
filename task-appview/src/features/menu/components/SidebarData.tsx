@@ -7,7 +7,7 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import { UserService } from "../../../infrastructures/UserService";
 import DataEdit from "../../data/components/DataEdit";
 import Kanban from "../../kanban/components/Kanban";
-import UserSignin from "../../signin/components/UserSignin";
+import UserLogin from "../../login/components/UserLogin";
 import TaskList from "../../tasklist/components/TaskList";
 
 export const SidebarData = [
@@ -21,18 +21,18 @@ export const SidebarData = [
         component: <></>,
     },
     {
-        title: "サインイン（アカウント登録）",
-        key: "signin",
+        title: "ログイン（アカウント登録）",
+        key: "login",
         condition: "signout",
         isSelectProject: false,
         icon: <Person />,
-        link: "/signin",
-        component: <UserSignin userService={new UserService()} />,
+        link: "/login",
+        component: <UserLogin userService={new UserService()} />,
     },
     {
         title: "タスク",
         key: "task",
-        condition: "signin",
+        condition: "login",
         isSelectProject: true,
         icon: <BackupTable />,
         link: "/friends",
@@ -41,7 +41,7 @@ export const SidebarData = [
     {
         title: "カンバン",
         key: "kanban",
-        condition: "signin",
+        condition: "login",
         isSelectProject: true,
         icon: <CalendarMonth />,
         link: "/upload",
@@ -50,7 +50,7 @@ export const SidebarData = [
     {
         title: "データ編集",
         key: "data",
-        condition: "signin",
+        condition: "login",
         isSelectProject: false,
         icon: <Dataset />,
         component: <DataEdit />,
@@ -58,7 +58,7 @@ export const SidebarData = [
     {
         title: "サインアウト",
         key: "signout",
-        condition: "signin",
+        condition: "login",
         isSelectProject: false,
         icon: <SettingsIcon />,
         link: "/signout",

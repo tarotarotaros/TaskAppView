@@ -13,22 +13,22 @@ type SideMenuWithHeaderProps = {
   userService: IUserService;
 };
 
-export default function Signin({ userService }: SideMenuWithHeaderProps) {
+export default function Login({ userService }: SideMenuWithHeaderProps) {
   const [emailError, setEmailError] = React.useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [openSigninDialog, setOpenSigninDialog] = useState(false);
+  const [openLoginDialog, setOpenLoginDialog] = useState(false);
 
-  const signinKey: string = "signin";
-  const signinEmailKey: string = signinKey + "email";
-  const signinPasswordKey: string = signinKey + "password";
+  const loginKey: string = "login";
+  const loginEmailKey: string = loginKey + "email";
+  const loginPasswordKey: string = loginKey + "password";
 
   const validateInputs = () => {
-    const email = document.getElementById(signinEmailKey) as HTMLInputElement;
-    const password = document.getElementById(signinPasswordKey) as HTMLInputElement;
+    const email = document.getElementById(loginEmailKey) as HTMLInputElement;
+    const password = document.getElementById(loginPasswordKey) as HTMLInputElement;
 
     let isValid = true;
 
@@ -53,25 +53,25 @@ export default function Signin({ userService }: SideMenuWithHeaderProps) {
     return isValid;
   };
 
-  async function handleSiginin() {
+  async function handleLogin() {
     let isOk = validateInputs();
     if (!isOk) return;
 
-    const signinUserData = {
+    const loginUserData = {
       email: email,
       password: password,
     }
-    const result = await userService.signin(signinUserData);
+    const result = await userService.login(loginUserData);
     if (result.Result === true) {
-      setOpenSigninDialog(true);
+      setOpenLoginDialog(true);
     }
     else {
       alert(result.Message);
     }
   };
 
-  function closeSigninDialog() {
-    setOpenSigninDialog(false);
+  function closeLoginDialog() {
+    setOpenLoginDialog(false);
     window.location.reload();
   }
 
@@ -98,14 +98,14 @@ export default function Signin({ userService }: SideMenuWithHeaderProps) {
             }}
           >
             <EMailForm
-              keyText={signinEmailKey}
+              keyText={loginEmailKey}
               email={email}
               emailError={emailError}
               errorMessage={emailErrorMessage}
               onChange={(e) => setEmail(e.target.value)}
             />
             <PasswordForm
-              keyText={signinPasswordKey}
+              keyText={loginPasswordKey}
               password={password}
               passwordError={passwordError}
               errorMessage={passwordErrorMessage}
@@ -114,7 +114,7 @@ export default function Signin({ userService }: SideMenuWithHeaderProps) {
             <Button
               fullWidth
               variant="contained"
-              onClick={handleSiginin}
+              onClick={handleLogin}
             >
               ログイン
             </Button>
@@ -123,11 +123,11 @@ export default function Signin({ userService }: SideMenuWithHeaderProps) {
 
       </Stack>
       <Dialog
-        open={openSigninDialog}
+        open={openLoginDialog}
       >
         <DialogTitle>ログイン完了</DialogTitle>
         <DialogActions>
-          <Button onClick={closeSigninDialog} color="primary">
+          <Button onClick={closeLoginDialog} color="primary">
             OK
           </Button>
         </DialogActions>

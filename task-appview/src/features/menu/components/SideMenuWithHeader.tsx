@@ -9,7 +9,7 @@ import { fetchProject, fetchProjects } from '../../../infrastructures/projects';
 import { themeConst } from '../../../themeConst';
 import { SelectDataItem } from '../../../types/SelectDataItem';
 import Hello from '../../home/components/Hello';
-import SigninStatusButton from '../../signin/components/SigninStatusButton';
+import LoginStatusButton from '../../login/components/LoginStatusButton';
 import UserInfo from '../../user/components/UserInfo';
 import './../../../index.css';
 import { SidebarData } from "./SidebarData";
@@ -102,14 +102,14 @@ export default function SideMenuWithHeader({ userService }: SideMenuWithHeaderPr
     const toggleDrawer = () => {
         setOpen(!open);
     };
-    const isSignin = (): boolean => {
+    const isLogin = (): boolean => {
         let token = sessionStorage.getItem('authToken');
         return token !== null && token !== "";  // トークンが存在し、空でないかを確認
     };
 
     const signout = () => {
         sessionStorage.removeItem('authToken')
-        navigate('/'); // 更新
+        window.location.reload();
     }
 
     function updateContent(componentKey: string) {
@@ -136,7 +136,7 @@ export default function SideMenuWithHeader({ userService }: SideMenuWithHeaderPr
     }
 
     const SelectProjectButton = () => {
-        if (isSignin()) {
+        if (isLogin()) {
             if (displayProject === '') {
                 return (<Loading size="small" marginRight={10} color='secondary' />)
             }
@@ -174,7 +174,7 @@ export default function SideMenuWithHeader({ userService }: SideMenuWithHeaderPr
                         タスク管理
                     </Typography>
                     <SelectProjectButton />
-                    <SigninStatusButton onClickButton={handleClickUserSetting} />
+                    <LoginStatusButton onClickButton={handleClickUserSetting} />
                 </Toolbar>
             </AppBar>
             <Drawer
@@ -245,8 +245,8 @@ export default function SideMenuWithHeader({ userService }: SideMenuWithHeaderPr
 
     function isDisplayCondition(value: any) {
 
-        const isOk: boolean = (value.condition === "signin" && isSignin()) ||
-            (value.condition === "signout" && !isSignin()) ||
+        const isOk: boolean = (value.condition === "login" && isLogin()) ||
+            (value.condition === "signout" && !isLogin()) ||
             value.condition === "";
 
         let isOkProjectCondition: boolean = false;

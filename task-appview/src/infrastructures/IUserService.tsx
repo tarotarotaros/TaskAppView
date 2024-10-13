@@ -1,5 +1,5 @@
 import { ExeResult } from "../types/ExeResult";
-import { SigninUser, User } from "../types/User";
+import { LoginUser, User } from "../types/User";
 
 export interface IUserService {
     fetchAuthUserInfo(): Promise<any>;
@@ -8,6 +8,6 @@ export interface IUserService {
     fetchUserInfo(userId: number): Promise<any>;
     updatePassword(userId: string, currentPassword: string, newPassword: string, newConfirmPassword: string): Promise<any>;
     deleteUser(userId: string): Promise<any>;
-    signin(signinUser: SigninUser): Promise<ExeResult>;
+    login(loginUser: LoginUser): Promise<ExeResult>;
     signup(signupUser: User): Promise<ExeResult>;
 }

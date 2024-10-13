@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { IUserService } from "../../../infrastructures/IUserService";
 import { ExeResult } from "../../../types/ExeResult";
 import { User } from "../../../types/User";
-import UserInfoInput from "../../signin/components/UserInfoInput";
+import UserInfoInput from "../../login/components/UserInfoInput";
 
 type UserSettingProps = {
     userService: IUserService;

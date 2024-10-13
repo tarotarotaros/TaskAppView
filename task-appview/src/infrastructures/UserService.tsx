@@ -1,6 +1,6 @@
 import axios from "axios";
 import { ExeResult } from "../types/ExeResult";
-import { SigninUser, User } from "../types/User";
+import { LoginUser, User } from "../types/User";
 import { BASE_URL, getAuthToken } from "./API";
 import { IUserService } from "./IUserService";
 
@@ -94,9 +94,9 @@ export class UserService implements IUserService {
     }
 
     // ユーザーログイン
-    public async signin(signinUser: SigninUser): Promise<ExeResult> {
+    public async login(loginUser: LoginUser): Promise<ExeResult> {
         try {
-            const response = await axios.post(USER_API_URL + "/login", signinUser);
+            const response = await axios.post(USER_API_URL + "/login", loginUser);
             const token: string = response.data.token;
             sessionStorage.setItem('authToken', token);
             return new ExeResult(true, "ログイン成功");
@@ -111,11 +111,11 @@ export class UserService implements IUserService {
             await axios.post(USER_API_URL + "/register", signupUser);
 
             // 自動ログイン
-            const signinUserData: SigninUser = {
+            const loginUserData: LoginUser = {
                 email: signupUser.email,
                 password: signupUser.password,
             }
-            const result = await this.signin(signinUserData);
+            const result = await this.login(loginUserData);
             return result.merge(new ExeResult(true, "ユーザー登録 & 自動ログイン成功"));
         } catch (error) {
             return new ExeResult(false, "ユーザー登録に失敗しました");

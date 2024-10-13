@@ -1,6 +1,6 @@
 import { IUserService } from '../../../infrastructures/IUserService';
 import { ExeResult } from '../../../types/ExeResult';
-import { SigninUser, User } from '../../../types/User';
+import { LoginUser, User } from '../../../types/User';
 import UserInfoInput from './UserInfoInput';
 
 type SignUpProps = {
@@ -15,7 +15,7 @@ export default function SignUp({ userService }: SignUpProps) {
         //window.location.reload();
     };
 
-    function convertToSigninUser(user: User): SigninUser {
+    function convertToLoginUser(user: User): LoginUser {
         return {
             email: user.email,
             password: user.password

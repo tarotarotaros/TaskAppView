@@ -1,7 +1,7 @@
 
 export default function Hello() {
 
-  function isSignin(): boolean {
+  function isLogin(): boolean {
     let authToken = sessionStorage.getItem('authToken');
     if (authToken != null && authToken !== '') {
       return true
@@ -15,8 +15,8 @@ export default function Hello() {
     <div>
       Hello
       {
-        isSignin() ? (
-          <p>(サインイン中)</p>
+        isLogin() ? (
+          <p>(ログイン中)</p>
         ) : null
       }
     </div>

@@ -1,6 +1,6 @@
 // UserInfoInput.stories.tsx
 import type { Meta, StoryObj } from '@storybook/react';
-import UserInfoInput from '../../features/signin/components/UserInfoInput';
+import UserInfoInput from '../../features/login/components/UserInfoInput';
 import { ExeResult } from '../../types/ExeResult';
 import { User } from '../../types/User';
 
