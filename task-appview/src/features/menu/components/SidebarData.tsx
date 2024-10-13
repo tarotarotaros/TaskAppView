@@ -23,7 +23,7 @@ export const SidebarData = [
     {
         title: "ログイン（アカウント登録）",
         key: "login",
-        condition: "signout",
+        condition: "logout",
         isSelectProject: false,
         icon: <Person />,
         link: "/login",
@@ -57,11 +57,11 @@ export const SidebarData = [
     },
     {
         title: "サインアウト",
-        key: "signout",
+        key: "logout",
         condition: "login",
         isSelectProject: false,
         icon: <SettingsIcon />,
-        link: "/signout",
+        link: "/logout",
         component: <></>,
     },
 ];

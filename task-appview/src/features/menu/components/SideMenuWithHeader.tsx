@@ -206,7 +206,7 @@ export default function SideMenuWithHeader({ userService }: SideMenuWithHeaderPr
                                             backgroundColor: selectedBackColor
                                         }}
                                         onClick={() => {
-                                            if (value.title === "サインアウト") {
+                                            if (value.title === "ログアウト") {
                                                 logout();
                                             } else {
                                                 SetContent(value.component); // クリックされたアイテムのタイトルをコンテンツにセット
