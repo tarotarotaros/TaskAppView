@@ -1,8 +1,10 @@
 import { Card, Column, ControlledBoard, KanbanBoard, moveCard, OnDragEndNotification } from '@caldwell619/react-kanban';
 import '@caldwell619/react-kanban/dist/styles.css';
-import { Chip } from '@mui/material';
+import AssignmentLateIcon from "@mui/icons-material/AssignmentLate";
+import { Box, Button, CardContent, Chip, Grid2 as Grid, Modal, Card as MuiCard, useMediaQuery, useTheme } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import Loading from '../../../common/components/Loading';
+import SelectBoxWithText from '../../../common/components/SelectBoxWithText';
 import { IUserService } from '../../../infrastructures/IUserService';
 import { fetchStatuses } from '../../../infrastructures/statuses';
 import { fetchTasks, updateTask } from '../../../infrastructures/tasks';
@@ -18,6 +20,10 @@ export default function Kanban({ userService }: KanbanProps) {
 
     const [board, SetBoard] = useState<KanbanBoard<Card> | null>(null);
     const [statuses, SetStatuses] = useState<Status[]>([]);
+    const [currentSelectStatusId, SetCurrentSelectStatusId] = useState<number>(0);
+    const [openSelectStatusModal, SetOpenSelectStatusModal] = useState<boolean>(false);
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
     // タスクの期限フォーマット
     const formatDate = useCallback((date: Date): string => {
@@ -87,26 +93,112 @@ export default function Kanban({ userService }: KanbanProps) {
         // TODO:エラーチェック処理
     }
 
+    function kanbanComponent(board: KanbanBoard<Card>) {
+        return <ControlledBoard
+            renderColumnHeader={(column: Column<Card>) => {
+                const taskStatus = statuses.find(item => item.name === column.title);
+                return (<Chip label={column.title} sx={{ backgroundColor: taskStatus?.color, color: 'white', marginBottom: '10px' }} />);
+            }}
+            disableColumnDrag={true}
+            allowRemoveCard={false}
+            allowRemoveColumn={false}
+            allowRenameColumn={false}
+            allowAddColumn={false}
+            allowAddCard={false}
+            onCardDragEnd={handleCardMove}
+        >{board}</ControlledBoard>;
+    }
+
+    function handleOpenCardMoveModal(columnId: number, cardId: number) {
+        SetCurrentSelectStatusId(columnId);
+        SetOpenSelectStatusModal(true);
+    }
+
+    function handleCloseSelectModal() {
+        SetOpenSelectStatusModal(false);
+    }
+
+    function handleChangeStatus(): void {
+        // TODO:データ処理
+        SetOpenSelectStatusModal(false);
+    }
     if (!board) {
         return (<Loading />)
             ;
     } else {
 
-        return (
-            <ControlledBoard
-                renderColumnHeader={(column: Column<Card>) => {
-                    const taskStatus = statuses.find(item => item.name === column.title);
-                    return (<Chip label={column.title} sx={{ backgroundColor: taskStatus?.color, color: 'white', marginBottom: '10px' }} />);
-                }}
-                disableColumnDrag={true}
-                allowRemoveCard={false}
-                allowRemoveColumn={false}
-                allowRenameColumn={false}
-                allowAddColumn={false}
-                allowAddCard={false}
-                onCardDragEnd={handleCardMove}
-            >{board}</ControlledBoard>);
+        if (isMobile) {
+            const selectList: { value: string | number, label: string }[] = statuses.map((status) => {
+                return { value: status.id, label: status.name }
+            });
 
+            return (
+                <div>
+                    <Grid size={12}>
+                        {board.columns.map((column) => {
+                            const taskStatus = statuses.find(item => item.name === column.title);
+
+
+                            return (
+                                <Grid size={12}>
+                                    <MuiCard sx={{ margin: '5px' }}>
+                                        <CardContent>
+                                            <Chip label={column.title} sx={{ backgroundColor: taskStatus?.color, color: 'white', marginBottom: '10px' }} />
+                                            {column.cards.map((card) => (
+                                                <Grid size={12} key={card.id}>
+                                                    <Button
+                                                        onClick={() => handleOpenCardMoveModal(Number(column.id), Number(card.id))}
+                                                        variant="contained" color="primary"
+                                                        fullWidth>{card.title}</Button>
+                                                </Grid>
+                                            ))}
+                                        </CardContent>
+                                    </MuiCard>
+                                </Grid>
+
+                            )
+                        }
+                        )}
+                        <Grid size={12}>
+                            <Modal open={openSelectStatusModal}
+                                onClose={handleCloseSelectModal}>
+                                <Box
+                                    sx={{
+                                        position: 'absolute' as 'absolute',
+                                        top: '10%',
+                                        left: '10%',
+                                        transform: 'translate(0%, 0%)',
+                                        padding: "10px",
+                                        borderRadius: "10px",
+                                        margin: "auto",
+                                        width: '80%',
+                                        height: '100px',
+                                        bgcolor: "white",
+                                    }}
+                                >
+                                    <Grid container spacing={2} justifyContent="center" alignItems="center" direction="column">
+                                        <Grid container spacing={2} justifyContent="center">
+                                            <SelectBoxWithText
+                                                icon={<AssignmentLateIcon />}
+                                                label="ステータス"
+                                                defaultValue={currentSelectStatusId}
+                                                options={selectList}
+                                                onChange={handleChangeStatus}
+                                            />
+                                        </Grid>
+                                    </Grid>
+                                </Box >
+                            </Modal>
+                        </Grid>
+                    </Grid>
+                </div>
+            )
+        } else {
+            return (
+                kanbanComponent(board)
+            );
+        }
     }
+
 }
 
