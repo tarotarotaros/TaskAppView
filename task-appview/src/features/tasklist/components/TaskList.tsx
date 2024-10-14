@@ -126,13 +126,18 @@ export default function TaskList({ userService }: TaskListProps) {
                                 <IconButton onClick={() => handleOpenEditModal(task)} >
                                     <EditIcon />
                                 </IconButton>
-                                <Typography variant="h6">タイトル: {task.task_name}</Typography>
-                                <Typography variant="body2">優先度: {priprotyselectdatas.find(item => Number(item.value) === Number(task.priority))?.label}</Typography>
-                                <Typography variant="body2">ステータス: {statusselectdatas.find(item => Number(item.value) === Number(task.status))?.label}</Typography>
-                                <Typography variant="body2">担当者: {assigneeselectdatas.find(item => Number(item.value) === Number(task.assignee))?.label}</Typography>
-                                <Typography variant="body2">期限: {dayjs(task.deadline).format('YYYY/MM/DD')}</Typography>
-                                <Typography variant="body2">開始日: {dayjs(task.start).format('YYYY/MM/DD')}</Typography>
-                                <Typography variant="body2">終了日: {dayjs(task.end).format('YYYY/MM/DD')}</Typography>
+                                <Typography align="right" variant="body2">
+                                    {(() => {
+                                        const status = statusselectdatas.find(item => Number(item.value) === Number(task.status));
+                                        return status ? <Chip label={status.label} sx={{ backgroundColor: status.color, color: 'white', marginLeft: '8px' }} /> : null;
+                                    })()}
+                                </Typography>
+                                <Typography margin={'4px'} variant="h6">タイトル: {task.task_name}</Typography>
+                                <Typography margin={'4px'} variant="body2">優先度: {priprotyselectdatas.find(item => Number(item.value) === Number(task.priority))?.label}</Typography>
+                                <Typography margin={'4px'} variant="body2">担当者: {assigneeselectdatas.find(item => Number(item.value) === Number(task.assignee))?.label}</Typography>
+                                <Typography margin={'4px'} variant="body2">期限: {dayjs(task.deadline).format('YYYY/MM/DD')}</Typography>
+                                <Typography margin={'4px'} variant="body2">開始日: {dayjs(task.start).format('YYYY/MM/DD')}</Typography>
+                                <Typography margin={'4px'} variant="body2">終了日: {dayjs(task.end).format('YYYY/MM/DD')}</Typography>
                             </CardContent>
                         </Card>
                     </Grid>
