@@ -1,10 +1,11 @@
+import { UserService } from "../../../infrastructures/UserService";
 import SideMenuWithHeader from "../../menu/components/SideMenuWithHeader";
 
 const Home = () => {
 
   return (
     <div>
-      <SideMenuWithHeader />
+      <SideMenuWithHeader userService={new UserService()} />
     </div>
   );
 };

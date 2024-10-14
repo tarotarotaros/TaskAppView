@@ -6,23 +6,29 @@ import Typography from '@mui/material/Typography';
 import React, { useState } from 'react';
 import EMailForm from '../../../common/components/EMailForm';
 import PasswordForm from '../../../common/components/PasswordForm';
-import { signin } from '../../../infrastructures/signin';
-import '../styles/SignupStyle.css';
+import { IUserService } from '../../../infrastructures/IUserService';
+import '../styles/RegisterStyle.css';
 
-export default function Signin() {
+type SideMenuWithHeaderProps = {
+  userService: IUserService;
+};
+
+export default function Login({ userService }: SideMenuWithHeaderProps) {
   const [emailError, setEmailError] = React.useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [openSigninDialog, setOpenSigninDialog] = useState(false);
+  const [openLoginDialog, setOpenLoginDialog] = useState(false);
 
-  const signinKey: string = "signin";
+  const loginKey: string = "login";
+  const loginEmailKey: string = loginKey + "email";
+  const loginPasswordKey: string = loginKey + "password";
 
   const validateInputs = () => {
-    const email = document.getElementById(signinKey + "email") as HTMLInputElement;
-    const password = document.getElementById(signinKey + "password") as HTMLInputElement;
+    const email = document.getElementById(loginEmailKey) as HTMLInputElement;
+    const password = document.getElementById(loginPasswordKey) as HTMLInputElement;
 
     let isValid = true;
 
@@ -47,34 +53,33 @@ export default function Signin() {
     return isValid;
   };
 
-  const handleSiginin = async () => {
-    try {
-      let isOk = validateInputs();
-      if (!isOk) return;
+  async function handleLogin() {
+    let isOk = validateInputs();
+    if (!isOk) return;
 
-      const signinUserData = {
-        email: email,
-        password: password,
-      }
-      await signin(signinUserData);
-      console.log('ログイン完了');
-      setOpenSigninDialog(true);
-
-    } catch (error) {
-      console.error('エラーが発生しました:', error);
+    const loginUserData = {
+      email: email,
+      password: password,
+    }
+    const result = await userService.login(loginUserData);
+    if (result.Result === true) {
+      setOpenLoginDialog(true);
+    }
+    else {
+      alert(result.Message);
     }
   };
 
-  function closeSigninDialog() {
-    setOpenSigninDialog(false);
+  function closeLoginDialog() {
+    setOpenLoginDialog(false);
     window.location.reload();
   }
 
   return (
     <div>
       <CssBaseline enableColorScheme />
-      <Stack className="signup-container" direction="column" justifyContent="space-between">
-        <Card className="signup-card" variant="outlined">
+      <Stack className="register-container" direction="column" justifyContent="space-between">
+        <Card className="register-card" variant="outlined">
           <Typography
             component="h1"
             variant="h4"
@@ -93,14 +98,14 @@ export default function Signin() {
             }}
           >
             <EMailForm
-              keyText={signinKey}
+              keyText={loginEmailKey}
               email={email}
               emailError={emailError}
               errorMessage={emailErrorMessage}
               onChange={(e) => setEmail(e.target.value)}
             />
             <PasswordForm
-              keyText={signinKey}
+              keyText={loginPasswordKey}
               password={password}
               passwordError={passwordError}
               errorMessage={passwordErrorMessage}
@@ -109,7 +114,7 @@ export default function Signin() {
             <Button
               fullWidth
               variant="contained"
-              onClick={handleSiginin}
+              onClick={handleLogin}
             >
               ログイン
             </Button>
@@ -118,11 +123,11 @@ export default function Signin() {
 
       </Stack>
       <Dialog
-        open={openSigninDialog}
+        open={openLoginDialog}
       >
         <DialogTitle>ログイン完了</DialogTitle>
         <DialogActions>
-          <Button onClick={closeSigninDialog} color="primary">
+          <Button onClick={closeLoginDialog} color="primary">
             OK
           </Button>
         </DialogActions>

@@ -4,9 +4,10 @@ import Dataset from "@mui/icons-material/Dataset";
 import HomeIcon from "@mui/icons-material/Home";
 import Person from "@mui/icons-material/Person";
 import SettingsIcon from "@mui/icons-material/Settings";
+import { UserService } from "../../../infrastructures/UserService";
 import DataEdit from "../../data/components/DataEdit";
 import Kanban from "../../kanban/components/Kanban";
-import UserSignin from "../../signin/components/UserSignin";
+import UserLogin from "../../login/components/UserLogin";
 import TaskList from "../../tasklist/components/TaskList";
 
 export const SidebarData = [
@@ -20,47 +21,47 @@ export const SidebarData = [
         component: <></>,
     },
     {
-        title: "サインイン（アカウント登録）",
-        key: "signin",
-        condition: "signout",
+        title: "ログイン（アカウント登録）",
+        key: "login",
+        condition: "logout",
         isSelectProject: false,
         icon: <Person />,
-        link: "/signin",
-        component: <UserSignin />,
+        link: "/login",
+        component: <UserLogin userService={new UserService()} />,
     },
     {
         title: "タスク",
         key: "task",
-        condition: "signin",
+        condition: "login",
         isSelectProject: true,
         icon: <BackupTable />,
         link: "/friends",
-        component: <TaskList />,
+        component: <TaskList userService={new UserService()} />,
     },
     {
         title: "カンバン",
         key: "kanban",
-        condition: "signin",
+        condition: "login",
         isSelectProject: true,
         icon: <CalendarMonth />,
         link: "/upload",
-        component: <Kanban />,
+        component: <Kanban userService={new UserService()} />,
     },
     {
         title: "データ編集",
         key: "data",
-        condition: "signin",
+        condition: "login",
         isSelectProject: false,
         icon: <Dataset />,
         component: <DataEdit />,
     },
     {
-        title: "サインアウト",
-        key: "signout",
-        condition: "signin",
+        title: "ログアウト",
+        key: "logout",
+        condition: "login",
         isSelectProject: false,
         icon: <SettingsIcon />,
-        link: "/signout",
+        link: "/logout",
         component: <></>,
     },
 ];

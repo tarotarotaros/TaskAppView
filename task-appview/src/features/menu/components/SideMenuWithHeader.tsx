@@ -1,20 +1,26 @@
 import MenuIcon from '@mui/icons-material/Menu';
 import { AppBar, Button, CssBaseline, Drawer, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar, Typography, useTheme } from '@mui/material';
 import { cloneElement, useCallback, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import Loading from '../../../common/components/Loading';
 import SimpleDialog, { NO_SELECT_PROJECT__TEXT } from '../../../common/components/SelectDialog';
+import { IUserService } from '../../../infrastructures/IUserService';
 import { fetchProject, fetchProjects } from '../../../infrastructures/projects';
-import { fetchAuthUserInfo, UpdateUserProject } from '../../../infrastructures/user';
 import { themeConst } from '../../../themeConst';
 import { SelectDataItem } from '../../../types/SelectDataItem';
 import Hello from '../../home/components/Hello';
-import SigninStatus from '../../signin/components/SigninStatus';
+import LoginStatusButton from '../../login/components/LoginStatusButton';
+import UserInfo from '../../user/components/UserInfo';
 import './../../../index.css';
 import { SidebarData } from "./SidebarData";
 
 const sidebarwidth = 250;
-export default function SideMenuWithHeader() {
+
+type SideMenuWithHeaderProps = {
+    userService: IUserService;
+};
+
+
+export default function SideMenuWithHeader({ userService }: SideMenuWithHeaderProps) {
 
     const theme = useTheme(); // テーマを取得
 
@@ -27,13 +33,13 @@ export default function SideMenuWithHeader() {
     const [displayProject, SetDisplayProject] = useState<string>(INIT_DISPLAY_PROJECT_TEXT);
     const [content, SetContent] = useState(<Hello />); // 初期コンテンツ
     const [contentKey, SetContentKey] = useState("home"); // 初期コンテンツ
-    const navigate = useNavigate();
 
     // データ処理関係
     const setUserInfo = useCallback(async () => {
-        const userInfo = await fetchAuthUserInfo();
-        SetUserId(userInfo.id);
-    }, []);
+        const fetchUserInfo = await userService.fetchAuthUserInfo();
+        SetUserId(fetchUserInfo.User.id);
+        console.log(fetchUserInfo.User.id);
+    }, [userService]);
 
     const updateSelectProjectList = useCallback(async () => {
         const projects: any[] = await fetchProjects();
@@ -49,26 +55,33 @@ export default function SideMenuWithHeader() {
         await updateSelectProjectList();
         await setUserInfo();
         SetOpenSelectProjectDialog(true);
-    }, [updateSelectProjectList, setUserInfo]);
+    }, [updateSelectProjectList, setUserInfo])
+
+    const getSelectProject = useCallback(async () => {
+        const fetchUserInfo = await userService.fetchAuthUserInfo();
+        if (!fetchUserInfo.Result.Result) return null;
+        const project = await fetchProject(fetchUserInfo.User.projectId);
+        return project;
+    }, [userService]);
 
     // 初期表示
     useEffect(() => {
         const loadDisplayProject = async () => {
+            if (sessionStorage.getItem('authToken') === null) return;
             const project = await getSelectProject();
             if (project == null) {
                 await handleChangeProjectClick();
                 return;
             }
-            console.log("load_project:" + project.name)
             SetDisplayProject(project.name);
         };
         loadDisplayProject();
-    }, [handleChangeProjectClick]);
+    }, [handleChangeProjectClick, getSelectProject]);
 
     // イベント
     const handleCloseSelectProjectDialog = async (selectedId: string | null) => {
         if (isSelectedProject(selectedId)) {
-            UpdateUserProject(Number(selectedId), userId);
+            userService.updateUserProject(Number(selectedId), userId);
             const project = await fetchProject(Number(selectedId));
             SetDisplayProject(project.name);
 
@@ -88,14 +101,14 @@ export default function SideMenuWithHeader() {
     const toggleDrawer = () => {
         setOpen(!open);
     };
-    const isSignin = (): boolean => {
+    const isLogin = (): boolean => {
         let token = sessionStorage.getItem('authToken');
         return token !== null && token !== "";  // トークンが存在し、空でないかを確認
     };
 
-    const signout = () => {
+    function logout() {
         sessionStorage.removeItem('authToken')
-        navigate('/'); // 更新
+        window.location.reload();
     }
 
     function updateContent(componentKey: string) {
@@ -121,16 +134,8 @@ export default function SideMenuWithHeader() {
         return !isNaN(Number(value));
     }
 
-
-    async function getSelectProject() {
-        const userInfo = await fetchAuthUserInfo();
-        if (userInfo.project == null) return null;
-        const project = await fetchProject(userInfo.project);
-        return project;
-    }
-
     const SelectProjectButton = () => {
-        if (isSignin()) {
+        if (isLogin()) {
             if (displayProject === '') {
                 return (<Loading size="small" marginRight={10} color='secondary' />)
             }
@@ -151,6 +156,11 @@ export default function SideMenuWithHeader() {
         }
     };
 
+    function handleClickUserSetting(): void {
+        SetContent(<UserInfo userService={userService} />); // クリックされたアイテムのタイトルをコンテンツにセット
+        SetContentKey("UserSeting");
+    }
+
     return (
         <div style={{ display: 'flex' }}>
             <CssBaseline />
@@ -163,7 +173,7 @@ export default function SideMenuWithHeader() {
                         タスク管理
                     </Typography>
                     <SelectProjectButton />
-                    <SigninStatus />
+                    <LoginStatusButton onClickButton={handleClickUserSetting} />
                 </Toolbar>
             </AppBar>
             <Drawer
@@ -195,8 +205,8 @@ export default function SideMenuWithHeader() {
                                             backgroundColor: selectedBackColor
                                         }}
                                         onClick={() => {
-                                            if (value.title === "サインアウト") {
-                                                signout();
+                                            if (value.title === "ログアウト") {
+                                                logout();
                                             } else {
                                                 SetContent(value.component); // クリックされたアイテムのタイトルをコンテンツにセット
                                                 SetContentKey(value.key);
@@ -234,8 +244,8 @@ export default function SideMenuWithHeader() {
 
     function isDisplayCondition(value: any) {
 
-        const isOk: boolean = (value.condition === "signin" && isSignin()) ||
-            (value.condition === "signout" && !isSignin()) ||
+        const isOk: boolean = (value.condition === "login" && isLogin()) ||
+            (value.condition === "logout" && !isLogin()) ||
             value.condition === "";
 
         let isOkProjectCondition: boolean = false;

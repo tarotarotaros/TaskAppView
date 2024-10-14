@@ -9,7 +9,6 @@ type EMailFormProps = {
 };
 
 export default function EMailForm({ email, emailError, errorMessage, keyText, onChange }: EMailFormProps) {
-    const fullKeyText: string = keyText + "email";
 
     return (
         <FormControl>
@@ -17,12 +16,12 @@ export default function EMailForm({ email, emailError, errorMessage, keyText, on
             <TextField
                 required
                 fullWidth
-                id={fullKeyText}
+                id={keyText}
                 value={email}
                 onChange={onChange}
                 placeholder="your@email.com"
-                name={fullKeyText}
-                autoComplete={fullKeyText}
+                name={keyText}
+                autoComplete={keyText}
                 variant="outlined"
                 error={emailError}
                 helperText={errorMessage}

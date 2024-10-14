@@ -1,40 +1,61 @@
-import { Card, Dialog, DialogActions, DialogTitle } from '@mui/material';
-import Box from '@mui/material/Box';
+import { Box, Card, CssBaseline, Dialog, DialogActions, DialogTitle, FormControl, FormLabel, Stack, TextField, Typography } from '@mui/material';
 import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
-import FormControl from '@mui/material/FormControl';
-import FormLabel from '@mui/material/FormLabel';
-import Stack from '@mui/material/Stack';
-import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import EMailForm from '../../../common/components/EMailForm';
 import PasswordForm from '../../../common/components/PasswordForm';
-import { signup } from '../../../infrastructures/signin';
-import '../styles/SignupStyle.css';
+import { ExeResult } from '../../../types/ExeResult';
+import '../styles/RegisterStyle.css';
 
-export default function SignUp() {
+type UserInfoInputProps = {
+    functionKey: string;
+    functionDisplayTitleText: string;//アカウント登録
+    functionSusccessDialogTitleText: string;//ユーザー登録完了（自動ログイン）
+    functionExeButtonText: string;//登録
+    onClickExeButton: (user: UserSettingInput) => Promise<ExeResult>;
+    settingName?: string;
+    settingEmail?: string;
+    settingPassword?: string;
+};
 
-    const [name, setName] = useState('');
+
+export type UserSettingInput =
+    {
+        name: string;
+        email: string;
+        password: string;
+    }
+
+
+export default function UserInfoInput({ functionKey, functionDisplayTitleText, functionSusccessDialogTitleText, functionExeButtonText, onClickExeButton,
+    settingName = "", settingEmail = "", settingPassword = "" }: UserInfoInputProps) {
+
+    const emailKey = functionKey + "email";
+    const passwordKey = functionKey + "password";
+
+    const [name, setName] = useState(settingName);
     const [nameError, setNameError] = React.useState(false);
     const [nameErrorMessage, setNameErrorMessage] = React.useState('');
 
-    const [email, setEmail] = useState('');
+    const [email, setEmail] = useState(settingEmail);
     const [emailError, setEmailError] = React.useState(false);
     const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
 
-    const [password, setPassword] = useState('');
+    const [password, setPassword] = useState(settingPassword);
     const [passwordError, setPasswordError] = React.useState(false);
     const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
 
     const [openSuccessDialog, setOpenSuccessDialog] = useState(false);
 
-    const signupKey: string = "signup";
+    useEffect(() => {
+        setName(settingName);
+        setEmail(settingEmail);
+        setPassword(settingPassword);
+    }, [settingName, settingEmail, settingPassword]);
 
     const validateInputs = () => {
         const name = document.getElementById('name') as HTMLInputElement;
-        const email = document.getElementById(signupKey + "email") as HTMLInputElement;
-        const password = document.getElementById(signupKey + "password") as HTMLInputElement;
+        const email = document.getElementById(emailKey) as HTMLInputElement;
+        const password = document.getElementById(passwordKey) as HTMLInputElement;
 
         let isValid = true;
 
@@ -69,19 +90,24 @@ export default function SignUp() {
     };
 
     // ユーザー登録＋ログイン処理
-    const handleRegister = async () => {
+    async function handleClickExeButton() {
 
         let isOk = validateInputs();
         if (!isOk) return;
 
         try {
-            const signupUserData = {
+            const inputUserData: UserSettingInput = {
                 name: name,
                 email: email,
                 password: password,
             }
-            await signup(signupUserData);
-            setOpenSuccessDialog(true);
+            const result: ExeResult = await onClickExeButton(inputUserData);
+            if (result.Result) {
+                setOpenSuccessDialog(true);
+            }
+            else {
+                alert(result.Message);
+            }
         } catch (error) {
             console.error('ユーザー登録処理でエラーが発生しました:', error);
         }
@@ -93,17 +119,18 @@ export default function SignUp() {
         window.location.reload();
     };
 
+
     return (
         <div>
             <CssBaseline enableColorScheme />
-            <Stack className="signup-container" direction="column" justifyContent="space-between">
-                <Card className="signup-card" variant="outlined">
+            <Stack className="register-container" direction="column" justifyContent="space-between">
+                <Card className="register-card" variant="outlined">
                     <Typography
                         component="h1"
                         variant="h4"
                         sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
                     >
-                        アカウント登録
+                        {functionDisplayTitleText}
                     </Typography>
                     <Box
                         component="form"
@@ -117,6 +144,7 @@ export default function SignUp() {
                                 required
                                 fullWidth
                                 onChange={(e) => setName(e.target.value)}
+                                defaultValue={name}
                                 value={name}
                                 id="name"
                                 placeholder="username123"
@@ -126,14 +154,14 @@ export default function SignUp() {
                             />
                         </FormControl>
                         <EMailForm
-                            keyText={signupKey}
+                            keyText={emailKey}
                             email={email}
                             emailError={emailError}
                             errorMessage={emailErrorMessage}
                             onChange={(e) => setEmail(e.target.value)}
                         />
                         <PasswordForm
-                            keyText={signupKey}
+                            keyText={passwordKey}
                             password={password}
                             passwordError={passwordError}
                             errorMessage={passwordErrorMessage}
@@ -142,9 +170,9 @@ export default function SignUp() {
                         <Button
                             fullWidth
                             variant="contained"
-                            onClick={handleRegister}
+                            onClick={handleClickExeButton}
                         >
-                            登録
+                            {functionExeButtonText}
                         </Button>
                     </Box>
                 </Card>
@@ -154,7 +182,7 @@ export default function SignUp() {
                 open={openSuccessDialog}
                 onClose={handleSuccessDialogClose}
             >
-                <DialogTitle>ユーザー登録完了（自動ログイン）</DialogTitle>
+                <DialogTitle>{functionSusccessDialogTitleText}</DialogTitle>
                 <DialogActions>
                     <Button onClick={handleSuccessDialogClose} color="primary">
                         OK

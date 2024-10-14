@@ -1,11 +1,15 @@
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
-import Signin from './Signin';
-import Signup from './Signup';
+import { IUserService } from '../../../infrastructures/IUserService';
+import Login from './Login';
+import Register from './Register';
 
+type UserLoginProps = {
+    userService: IUserService;
+};
 
-export default function UserSignin() {
+export default function UserLogin({ userService }: UserLoginProps) {
     return (
         <div>
             <Accordion>
@@ -14,10 +18,10 @@ export default function UserSignin() {
                     aria-controls="panel1-content"
                     id="panel1-header"
                 >
-                    サインイン
+                    ログイン
                 </AccordionSummary>
                 <AccordionDetails>
-                    <Signin />
+                    <Login userService={userService} />
                 </AccordionDetails>
             </Accordion>
             <Accordion>
@@ -29,7 +33,7 @@ export default function UserSignin() {
                     アカウント登録
                 </AccordionSummary>
                 <AccordionDetails>
-                    <Signup />
+                    <Register userService={userService} />
                 </AccordionDetails>
             </Accordion>
         </div>
