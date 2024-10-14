@@ -6,6 +6,7 @@ import SaveIcon from "@mui/icons-material/Save";
 import { Box, Button, Chip, Dialog, DialogActions, DialogTitle } from "@mui/material";
 import Grid from '@mui/material/Grid2';
 import { DataGrid, GridActionsCellItem, GridAlignment, GridColDef, GridEventListener, GridRenderCellParams, GridRowEditStopReasons, GridRowId, GridRowModel, GridRowModes, GridRowModesModel, GridRowsProp } from "@mui/x-data-grid";
+import { jaJP } from '@mui/x-data-grid/locales';
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import { ColorResult, GithubPicker } from "react-color";
 import Loading from "../../../common/components/Loading";
@@ -301,6 +302,8 @@ export default function DataEditGrid({ dataEditService, dataLabel, hasColor }: D
                         margin: '0 auto'
                     }}>
                         <DataGrid
+
+                            localeText={jaJP.components.MuiDataGrid.defaultProps.localeText}
                             hideFooter
                             rows={rows}
                             columns={columns}
@@ -312,7 +315,7 @@ export default function DataEditGrid({ dataEditService, dataLabel, hasColor }: D
                             onProcessRowUpdateError={handleProcessRowUpdateError}
                             sx={{
                                 width: '100%',
-                                maxWidth: '100%', 
+                                maxWidth: '100%',
                             }}
                         />
                     </Box>
