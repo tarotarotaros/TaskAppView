@@ -286,38 +286,45 @@ export default function DataEditGrid({ dataEditService, dataLabel, hasColor }: D
     } else {
         return (
             <div>
-                <Grid my={2} size={12} justifyContent="end" spacing={1} container>
-                    <Button color="primary" startIcon={<AddIcon />} onClick={handleClick}>
-                        Add
-                    </Button>
-                </Grid>
-                <Box sx={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    width: '500px',
-                    margin: '0 auto'
-                }}>
-                    <DataGrid
-                        hideFooter
-                        rows={rows}
-                        columns={columns}
-                        editMode="row"
-                        rowModesModel={rowModesModel}
-                        onRowModesModelChange={setRowModesModel}
-                        onRowEditStop={handleRowEditStop}
-                        processRowUpdate={handleProcessRowUpdate}
-                        onProcessRowUpdateError={handleProcessRowUpdateError}
-                    />
-                </Box>
-                <Dialog open={openValidateErrorDialog}>
-                    <DialogTitle>エラー({errorMessage})</DialogTitle>
-                    <DialogActions>
-                        <Button onClick={closeValiteErrorDialog} color="primary">
-                            OK
+                <Grid size={12} sx={{ width: '100%' }}>
+                    <Grid my={2} size={12} justifyContent="end" spacing={1} container>
+                        <Button color="secondary" variant="contained" startIcon={<AddIcon />} onClick={handleClick}>
+                            Add
                         </Button>
-                    </DialogActions>
-                </Dialog>
+                    </Grid>
+                    <Box sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        width: '100%',
+                        maxWidth: '100%',
+                        margin: '0 auto'
+                    }}>
+                        <DataGrid
+                            hideFooter
+                            rows={rows}
+                            columns={columns}
+                            editMode="row"
+                            rowModesModel={rowModesModel}
+                            onRowModesModelChange={setRowModesModel}
+                            onRowEditStop={handleRowEditStop}
+                            processRowUpdate={handleProcessRowUpdate}
+                            onProcessRowUpdateError={handleProcessRowUpdateError}
+                            sx={{
+                                width: '100%',
+                                maxWidth: '100%', 
+                            }}
+                        />
+                    </Box>
+                    <Dialog open={openValidateErrorDialog}>
+                        <DialogTitle>エラー({errorMessage})</DialogTitle>
+                        <DialogActions>
+                            <Button onClick={closeValiteErrorDialog} color="primary">
+                                OK
+                            </Button>
+                        </DialogActions>
+                    </Dialog>
+                </Grid>
                 {showColorPicker &&
                     <div style={{
                         position: 'absolute',
@@ -330,6 +337,7 @@ export default function DataEditGrid({ dataEditService, dataLabel, hasColor }: D
                             onChange={handleGithubPickerChange} />
                     </div>
                 }
+
             </div>
         );
     }
