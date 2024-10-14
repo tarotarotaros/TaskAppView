@@ -93,6 +93,7 @@ export default function TaskEditModal({ handleCloseModal, onSave, taskData, assi
     let editModalWidthPer: string = isMobile ? '90%' : '70%';
     let editModalHeightPer: string = isMobile ? '90%' : '80%';
     let editModalTransformPer: string = isMobile ? 'translate(0%, 0%)' : 'translate(-50%, -50%)';
+    let editModalMenuSpace: number = isMobile ? 12 : 4;
 
     return (
 
@@ -112,267 +113,135 @@ export default function TaskEditModal({ handleCloseModal, onSave, taskData, assi
             }}
         >
 
-            {isMobile ? (
-                <div>
-                    <Grid container spacing={2} >
-                        <Grid size={12} justifyContent="end" container>
-                            <Button sx={{ width: '15px', height: '30px', backgroundColor: '#000', color: '#fff' }} variant="contained" onClick={handleCloseModal}>
-                                <CloseIcon />
+            <div>
+                <Grid container spacing={2} >
+                    <Grid size={12} justifyContent="end" container>
+                        <Button sx={{ width: '15px', height: '30px', backgroundColor: '#000', color: '#fff' }} variant="contained" onClick={handleCloseModal}>
+                            <CloseIcon />
+                        </Button>
+                    </Grid>
+                    <Grid size={12}>
+                        <TextField
+                            id="outlined-basic"
+                            label="タイトル"
+                            fullWidth
+                            value={task_name}
+                            onChange={(e) => setTitle(e.target.value)} />
+                    </Grid>
+                    <Grid size={12} >
+                        <ToggleButtonGroup
+                            value={displyaPattern}
+                            exclusive
+                            onChange={handleChangedisplyaPattern}
+                        >
+                            <ToggleButton value={PLAIN_TEXT} >
+                                <div>Plain</div>
+                            </ToggleButton>
+                            <ToggleButton value={MARK_DOWN_TEXT}>
+                                <div>MarkDown</div>
+                            </ToggleButton>
+                        </ToggleButtonGroup>
+                    </Grid>
+                    <Grid size={12}>
+                        {displyaPattern === PLAIN_TEXT ? (
+                            <TextField
+                                multiline
+                                id="contents"
+                                label="内容"
+                                minRows={11}
+                                maxRows={11}
+                                fullWidth
+                                value={content}
+                                onChange={(e) => setContent(e.target.value)}
+                            />
+                        ) : displyaPattern === MARK_DOWN_TEXT ? (
+                            <Box
+                                sx={{
+                                    borderRadius: '3px',
+                                    width: '100%',
+                                    height: '300px',
+                                    padding: '10px',
+                                    border: '0.5px solid #CCCCCC',
+                                    overflowY: 'auto',
+                                    wordWrap: 'break-word',
+                                    whiteSpace: 'pre-wrap',
+                                }}
+                            >
+                                <MarkdownHtml content={content} />
+                            </Box>
+
+                        ) : null}
+                    </Grid>
+
+                    <Grid size={editModalMenuSpace}>
+                        <SelectBoxWithText
+                            icon={<ThermostatIcon />}
+                            label="優先度"
+                            defaultValue={priority}
+                            options={priorirySelectDataItem}
+                            onChange={setPriority}
+                        />
+                    </Grid>
+                    <Grid size={editModalMenuSpace}>
+                        <Grid>
+                            <DatePickerWithText
+                                icon={<AlarmIcon />}
+                                label="期限"
+                                defaultValue={deadlineDate}
+                                onChange={setDeadline}
+                            />
+                        </Grid>
+                    </Grid>
+                    <Grid size={editModalMenuSpace}>
+                        <SelectBoxWithText
+                            icon={<AssignmentLateIcon />}
+                            label="ステータス"
+                            defaultValue={status}
+                            options={statusSelectDataItem}
+                            onChange={setStatus}
+                        />
+                    </Grid>
+                    <Grid size={editModalMenuSpace}>
+                        <Grid>
+                            <DatePickerWithText
+                                icon={<CalendarMonthIcon />}
+                                label="開始"
+                                defaultValue={startDate}
+                                onChange={setStartDate}
+                            />
+                        </Grid>
+                    </Grid>
+                    <Grid size={editModalMenuSpace}>
+                        <Grid>
+                            <DatePickerWithText
+                                icon={<CalendarMonthIcon />}
+                                label="終了"
+                                defaultValue={endDate}
+                                onChange={setEndDate}
+                            />
+                        </Grid>
+                    </Grid>
+                    <Grid size={editModalMenuSpace}>
+                        <SelectBoxWithText
+                            icon={<PersonIcon />}
+                            label="担当者"
+                            defaultValue={assignee}
+                            options={assigneeSelectDataItem}
+                            onChange={setAssignee}
+                        />
+                    </Grid>
+                    <Grid my={2} size={12} justifyContent="end" spacing={1} container>
+                        <Grid >
+                            <Button startIcon={<SaveIcon />} sx={{ width: '100px' }} size="medium" variant="contained"
+                                onClick={handleSave} color="success">
+                                保存
                             </Button>
                         </Grid>
-                        <Grid size={12}>
-                            <TextField
-                                id="outlined-basic"
-                                label="タイトル"
-                                fullWidth
-                                value={task_name}
-                                onChange={(e) => setTitle(e.target.value)} />
-                        </Grid>
-                        <Grid size={12} >
-                            <ToggleButtonGroup
-                                value={displyaPattern}
-                                exclusive
-                                onChange={handleChangedisplyaPattern}
-                            >
-                                <ToggleButton value={PLAIN_TEXT} >
-                                    <div>Plain</div>
-                                </ToggleButton>
-                                <ToggleButton value={MARK_DOWN_TEXT}>
-                                    <div>MarkDown</div>
-                                </ToggleButton>
-                            </ToggleButtonGroup>
-                        </Grid>
-                        <Grid size={12}>
-                            {displyaPattern === PLAIN_TEXT ? (
-                                <TextField
-                                    multiline
-                                    id="contents"
-                                    label="内容"
-                                    minRows={11}
-                                    maxRows={11}
-                                    fullWidth
-                                    value={content}
-                                    onChange={(e) => setContent(e.target.value)}
-                                />
-                            ) : displyaPattern === MARK_DOWN_TEXT ? (
-                                <Box
-                                    sx={{
-                                        borderRadius: '3px',
-                                        width: '100%',
-                                        height: '300px',
-                                        padding: '10px',
-                                        border: '0.5px solid #CCCCCC',
-                                        overflowY: 'auto',
-                                        wordWrap: 'break-word',
-                                        whiteSpace: 'pre-wrap',
-                                    }}
-                                >
-                                    <MarkdownHtml content={content} />
-                                </Box>
-
-                            ) : null}
-                        </Grid>
-
-                        <Grid size={12}>
-                            <SelectBoxWithText
-                                icon={<ThermostatIcon />}
-                                label="優先度"
-                                defaultValue={priority}
-                                options={priorirySelectDataItem}
-                                onChange={setPriority}
-                            />
-                        </Grid>
-                        <Grid size={12}>
-                            <Grid>
-                                <DatePickerWithText
-                                    icon={<AlarmIcon />}
-                                    label="期限"
-                                    defaultValue={deadlineDate}
-                                    onChange={setDeadline}
-                                />
-                            </Grid>
-                        </Grid>
-                        <Grid size={12}>
-                            <SelectBoxWithText
-                                icon={<AssignmentLateIcon />}
-                                label="ステータス"
-                                defaultValue={status}
-                                options={statusSelectDataItem}
-                                onChange={setStatus}
-                            />
-                        </Grid>
-                        <Grid size={12}>
-                            <Grid>
-                                <DatePickerWithText
-                                    icon={<CalendarMonthIcon />}
-                                    label="開始"
-                                    defaultValue={startDate}
-                                    onChange={setStartDate}
-                                />
-                            </Grid>
-                        </Grid>
-                        <Grid size={12}>
-                            <Grid>
-                                <DatePickerWithText
-                                    icon={<CalendarMonthIcon />}
-                                    label="終了"
-                                    defaultValue={endDate}
-                                    onChange={setEndDate}
-                                />
-                            </Grid>
-                        </Grid>
-                        <Grid size={12}>
-                            <SelectBoxWithText
-                                icon={<PersonIcon />}
-                                label="担当者"
-                                defaultValue={assignee}
-                                options={assigneeSelectDataItem}
-                                onChange={setAssignee}
-                            />
-                        </Grid>
-                        <Grid my={2} size={12} justifyContent="end" spacing={1} container>
-                            <Grid >
-                                <Button startIcon={<SaveIcon />} sx={{ width: '100px' }} size="medium" variant="contained"
-                                    onClick={handleSave} color="success">
-                                    保存
-                                </Button>
-                            </Grid>
-                        </Grid>
-
                     </Grid>
-                </div>
-            ) : (
-                <div>
-                    <Grid container spacing={2} >
-                        <Grid size={12} justifyContent="end" container>
-                            <Button sx={{ width: '15px', height: '30px', backgroundColor: '#000', color: '#fff' }} variant="contained" onClick={handleCloseModal}>
-                                <CloseIcon />
-                            </Button>
-                        </Grid>
-                        <Grid size={12}>
-                            <TextField
-                                id="outlined-basic"
-                                label="タイトル"
-                                fullWidth
-                                value={task_name}
-                                onChange={(e) => setTitle(e.target.value)} />
-                        </Grid>
-                        <Grid container size={12} justifyContent="end" alignItems="center">
-                            <ToggleButtonGroup
-                                value={displyaPattern}
-                                exclusive
-                                onChange={handleChangedisplyaPattern}
-                            >
-                                <ToggleButton value={PLAIN_TEXT}>
-                                    <div>Plain</div>
-                                </ToggleButton>
-                                <ToggleButton value={MARK_DOWN_TEXT}>
-                                    <div>MarkDown</div>
-                                </ToggleButton>
-                            </ToggleButtonGroup>
-                        </Grid>
-                        <Grid size={12}>
-                            {displyaPattern === PLAIN_TEXT ? (
-                                <TextField
-                                    multiline
-                                    id="contents"
-                                    label="内容"
-                                    minRows={11}
-                                    maxRows={11}
-                                    fullWidth
-                                    value={content}
-                                    onChange={(e) => setContent(e.target.value)}
-                                />
-                            ) : displyaPattern === MARK_DOWN_TEXT ? (
-                                <Box
-                                    sx={{
-                                        borderRadius: '3px',
-                                        width: '100%',
-                                        height: '300px',
-                                        padding: '10px',
-                                        border: '0.5px solid #CCCCCC',
-                                        overflowY: 'auto',
-                                        wordWrap: 'break-word',
-                                        whiteSpace: 'pre-wrap',
-                                    }}
-                                >
-                                    <MarkdownHtml content={content} />
-                                </Box>
 
-                            ) : null}
-                        </Grid>
-                        <Grid size={4}>
-                            <SelectBoxWithText
-                                icon={<ThermostatIcon />}
-                                label="優先度"
-                                defaultValue={priority}
-                                options={priorirySelectDataItem}
-                                onChange={setPriority}
-                            />
-                        </Grid>
-                        <Grid size={4}>
-                            <Grid>
-                                <DatePickerWithText
-                                    icon={<AlarmIcon />}
-                                    label="期限"
-                                    defaultValue={deadlineDate}
-                                    onChange={setDeadline}
-                                />
-                            </Grid>
-                        </Grid>
-                        <Grid size={4}>
-                            <SelectBoxWithText
-                                icon={<AssignmentLateIcon />}
-                                label="ステータス"
-                                defaultValue={status}
-                                options={statusSelectDataItem}
-                                onChange={setStatus}
-                            />
-                        </Grid>
+                </Grid>
+            </div>
 
-
-                        <Grid size={4}>
-                            <Grid>
-                                <DatePickerWithText
-                                    icon={<CalendarMonthIcon />}
-                                    label="開始"
-                                    defaultValue={startDate}
-                                    onChange={setStartDate}
-                                />
-                            </Grid>
-                        </Grid>
-                        <Grid size={4}>
-                            <Grid>
-                                <DatePickerWithText
-                                    icon={<CalendarMonthIcon />}
-                                    label="終了"
-                                    defaultValue={endDate}
-                                    onChange={setEndDate}
-                                />
-                            </Grid>
-                        </Grid>
-                        <Grid size={4}>
-                            <SelectBoxWithText
-                                icon={<PersonIcon />}
-                                label="担当者"
-                                defaultValue={assignee}
-                                options={assigneeSelectDataItem}
-                                onChange={setAssignee}
-                            />
-                        </Grid>
-                        <Grid my={2} size={12} justifyContent="end" spacing={1} container>
-                            <Grid >
-                                <Button startIcon={<SaveIcon />} sx={{ width: '100px' }} size="medium" variant="contained"
-                                    onClick={handleSave} color="success">
-                                    保存
-                                </Button>
-                            </Grid>
-                        </Grid>
-
-                    </Grid>
-                </div>
-            )
-            }
 
         </Box >
 
