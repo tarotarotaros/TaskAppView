@@ -77,6 +77,6 @@
     "jest-environment-jsdom": "^29.7.0",
     "storybook": "^8.3.0",
     "ts-jest": "^29.2.5",
-    "typescript": "5.1.x"
+    "typescript": "^4.9.5"
   }
 }
