@@ -12,5 +12,6 @@ export default defineConfig({
     build: {
         outDir: "build",
     },
+    base: '/',
     plugins: [react()],
 });
