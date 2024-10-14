@@ -1,0 +1,31 @@
+/* カードの基本スタイル */
+.register-card {
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+    width: 100%;
+    padding: 32px;
+    /* theme.spacing(4) に相当 */
+    gap: 16px;
+    /* theme.spacing(2) に相当 */
+    margin: auto;
+    box-shadow: hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px,
+        hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px;
+}
+
+/* スクリーンサイズがsm以上の場合のスタイル */
+@media (min-width: 600px) {
+
+    /* 600pxはsmのブレークポイントの例 */
+    .register-card {
+        width: 450px;
+    }
+}
+
+/* ログインコンテナの基本スタイル */
+.register-container {
+    height: 100%;
+    padding: 20px;
+    background-image: radial-gradient(ellipse at 50% 50%, hsl(210, 100%, 97%), hsl(0, 0%, 100%));
+    background-repeat: no-repeat;
+}

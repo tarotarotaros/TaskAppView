@@ -1,0 +1,68 @@
+.react-kanban-board {
+    padding: 5px;
+}
+
+.react-kanban-card {
+    @extend .react-kanban-card-skeleton;
+    border-radius: 10px;
+    background-color: #f8c5c5;
+    padding: 10px;
+    margin-bottom: 7px;
+}
+
+// カンバンカード
+.react-kanban-card-skeleton {
+    box-sizing: border-box;
+    max-width: 250px;
+    min-width: 250px;
+    background-color: #E3F4F4;
+    //border: 1px solid #000000;
+    color: #000000;
+}
+
+.react-kanban-card--dragging {
+    box-shadow: 1px 1px grey;
+}
+
+.react-kanban-card__description {
+    padding-top: 10px;
+}
+
+.react-kanban-card__title {
+    border-bottom: 1px solid #000000;
+    font-size: medium;
+    display: flex;
+    justify-content: space-between;
+}
+
+// カンバン列
+.react-kanban-column {
+    padding: 15px;
+    border-radius: 10px;
+    margin: 5px;
+    border: 1px solid #000000;
+    border-radius: 10px;
+    background-color: #C4DFDF;
+
+    input {
+        &:focus {
+            outline: none;
+        }
+    }
+}
+
+.react-kanban-column-header {
+    padding-bottom: 10px;
+    font-weight: bold;
+
+    input {
+        &:focus {
+            outline: none;
+        }
+    }
+}
+
+.react-kanban-column-header__spacer {
+    display: flex;
+    justify-content: space-between;
+}
