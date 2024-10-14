@@ -28,8 +28,9 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "dev": "vite",
+    "start": "vite",
+    "build": "vite build",
     "test": "jest",
     "eject": "react-scripts eject",
     "storybook": "storybook dev -p 6006",
@@ -69,6 +70,7 @@
     "@storybook/test": "^8.3.0",
     "@tailwindcss/typography": "^0.5.15",
     "@types/react-color": "^3.0.12",
+    "@vitejs/plugin-react": "^4.3.2",
     "babel-jest": "^29.7.0",
     "eslint": "^8.57.0",
     "eslint-config-react-app": "^7.0.1",
