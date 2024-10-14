@@ -1,4 +1,4 @@
-export const API_URL: string = process.env.NEXT_PUBLIC_API_URL!;
+export const API_URL = import.meta.env.VITE_API_URL;
 export const BASE_URL = API_URL + '/api/';
 export const getAuthToken = () => sessionStorage.getItem('authToken');
 
