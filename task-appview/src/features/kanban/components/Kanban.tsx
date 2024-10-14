@@ -1,8 +1,10 @@
 import { Card, Column, ControlledBoard, KanbanBoard, moveCard, OnDragEndNotification } from '@caldwell619/react-kanban';
 import '@caldwell619/react-kanban/dist/styles.css';
-import { Chip } from '@mui/material';
+import AssignmentLateIcon from "@mui/icons-material/AssignmentLate";
+import { Box, Button, CardContent, Chip, Grid2 as Grid, Modal, Card as MuiCard, useMediaQuery, useTheme } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import Loading from '../../../common/components/Loading';
+import SelectBoxWithText from '../../../common/components/SelectBoxWithText';
 import { IUserService } from '../../../infrastructures/IUserService';
 import { fetchStatuses } from '../../../infrastructures/statuses';
 import { fetchTasks, updateTask } from '../../../infrastructures/tasks';
@@ -18,6 +20,10 @@ export default function Kanban({ userService }: KanbanProps) {
 
     const [board, SetBoard] = useState<KanbanBoard<Card> | null>(null);
     const [statuses, SetStatuses] = useState<Status[]>([]);
+    const [currentSelectStatusIdAndTaskId, SetCurrentSelectStatusIdAndTaskId] = useState<[number, number]>([0, 0]);
+    const [openSelectStatusModal, SetOpenSelectStatusModal] = useState<boolean>(false);
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
     // タスクの期限フォーマット
     const formatDate = useCallback((date: Date): string => {
@@ -60,17 +66,22 @@ export default function Kanban({ userService }: KanbanProps) {
     }, [createDescriptionText]);
 
     // データロード処理
+    const loadData = useCallback(async () => {
+        const fetchUserInfo = await userService.fetchAuthUserInfo();
+        const fetchedTasks: Task[] = await fetchTasks(fetchUserInfo.User.projectId);
+        const fetchedStatuses: Status[] = await fetchStatuses();
+        const createdBoard = createKanbanBoard(fetchedTasks, fetchedStatuses);
+        SetBoard(createdBoard);
+        SetStatuses(fetchedStatuses);
+    }, [userService, createKanbanBoard]);
+
+    // データロード処理
     useEffect(() => {
-        const loadTasks = async () => {
-            const fetchUserInfo = await userService.fetchAuthUserInfo();
-            const fetchedTasks: Task[] = await fetchTasks(fetchUserInfo.User.projectId);
-            const fetchedStatuses: Status[] = await fetchStatuses();
-            const createdBoard = createKanbanBoard(fetchedTasks, fetchedStatuses);
-            SetBoard(createdBoard);
-            SetStatuses(fetchedStatuses);
+        const load = async () => {
+            loadData();
         };
-        loadTasks();
-    }, [createKanbanBoard, userService]); // createKanbanBoardを依存配列に追加
+        load();
+    }, [loadData]);
 
     // カード移動時にデータ更新
     const handleCardMove: OnDragEndNotification<Card> = async (_card, source, destination) => {
@@ -78,13 +89,55 @@ export default function Kanban({ userService }: KanbanProps) {
             return moveCard(currentBoard, source, destination)
         })
 
-        const taskId: number = _card.id as number;
-        const status: number = destination?.toColumnId as number;
+        await updateTaskStatus(Number(_card.id), Number(destination?.toColumnId));
+
+        // TODO:エラーチェック処理
+    }
+
+    // タスクステータス更新処理
+    async function updateTaskStatus(taskId: number, updateStatusId: number) {
+        const status: number = updateStatusId;
         const updated_by = "システム";
         const updateTaskData = { status, updated_by };
         await updateTask(taskId, updateTaskData);
+    }
 
-        // TODO:エラーチェック処理
+    // ステータス変更処理
+    async function handleChangeStatus(selectStatusId: number) {
+
+        // データ変更処理
+        const taskId: number = currentSelectStatusIdAndTaskId[1];
+        updateTaskStatus(taskId, selectStatusId);
+
+        // リロード処理
+        await loadData();
+
+        SetOpenSelectStatusModal(false);
+    }
+
+    function handleOpenCardMoveModal(columnId: number, cardId: number) {
+        SetCurrentSelectStatusIdAndTaskId([columnId, cardId]);
+        SetOpenSelectStatusModal(true);
+    }
+
+    function handleCloseSelectModal() {
+        SetOpenSelectStatusModal(false);
+    }
+
+    function kanbanComponent(board: KanbanBoard<Card>) {
+        return <ControlledBoard
+            renderColumnHeader={(column: Column<Card>) => {
+                const taskStatus = statuses.find(item => item.name === column.title);
+                return (<Chip label={column.title} sx={{ backgroundColor: taskStatus?.color, color: 'white', marginBottom: '10px' }} />);
+            }}
+            disableColumnDrag={true}
+            allowRemoveCard={false}
+            allowRemoveColumn={false}
+            allowRenameColumn={false}
+            allowAddColumn={false}
+            allowAddCard={false}
+            onCardDragEnd={handleCardMove}
+        >{board}</ControlledBoard>;
     }
 
     if (!board) {
@@ -92,21 +145,77 @@ export default function Kanban({ userService }: KanbanProps) {
             ;
     } else {
 
-        return (
-            <ControlledBoard
-                renderColumnHeader={(column: Column<Card>) => {
-                    const taskStatus = statuses.find(item => item.name === column.title);
-                    return (<Chip label={column.title} sx={{ backgroundColor: taskStatus?.color, color: 'white', marginBottom: '10px' }} />);
-                }}
-                disableColumnDrag={true}
-                allowRemoveCard={false}
-                allowRemoveColumn={false}
-                allowRenameColumn={false}
-                allowAddColumn={false}
-                allowAddCard={false}
-                onCardDragEnd={handleCardMove}
-            >{board}</ControlledBoard>);
+        if (isMobile) {
+            const selectList: { value: string | number, label: string }[] = statuses.map((status) => {
+                return { value: status.id, label: status.name }
+            });
 
+            return (
+                <div>
+                    <Grid size={12}>
+                        {board.columns.map((column) => {
+                            const taskStatus = statuses.find(item => item.name === column.title);
+                            return (
+                                <Grid size={12}>
+                                    <MuiCard sx={{ margin: '5px' }}>
+                                        <CardContent>
+                                            <Chip label={column.title} sx={{ backgroundColor: taskStatus?.color, color: 'white', marginBottom: '10px' }} />
+                                            {column.cards.map((card) => (
+                                                <Grid size={12} key={card.id}>
+                                                    <Button
+                                                        sx={{ marginTop: '10px' }}
+                                                        onClick={() => handleOpenCardMoveModal(Number(column.id), Number(card.id))}
+                                                        variant="contained" color="primary"
+                                                        fullWidth>{card.title}</Button>
+                                                </Grid>
+                                            ))}
+                                        </CardContent>
+                                    </MuiCard>
+                                </Grid>
+
+                            )
+                        }
+                        )}
+                        <Grid size={12}>
+                            <Modal open={openSelectStatusModal}
+                                onClose={handleCloseSelectModal}>
+                                <Box
+                                    sx={{
+                                        position: 'absolute' as 'absolute',
+                                        top: '10%',
+                                        left: '10%',
+                                        transform: 'translate(0%, 0%)',
+                                        padding: "10px",
+                                        borderRadius: "10px",
+                                        margin: "auto",
+                                        width: '80%',
+                                        height: 'auto',
+                                        bgcolor: "white",
+                                    }}
+                                >
+                                    <Grid container spacing={2} justifyContent="center" alignItems="center" direction="column">
+                                        <Grid container spacing={2} justifyContent="center">
+                                            <SelectBoxWithText
+                                                icon={<AssignmentLateIcon />}
+                                                label="ステータス"
+                                                defaultValue={currentSelectStatusIdAndTaskId[0]}
+                                                options={selectList}
+                                                onChange={handleChangeStatus}
+                                            />
+                                        </Grid>
+                                    </Grid>
+                                </Box >
+                            </Modal>
+                        </Grid>
+                    </Grid>
+                </div>
+            )
+        } else {
+            return (
+                kanbanComponent(board)
+            );
+        }
     }
+
 }
 

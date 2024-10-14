@@ -1,6 +1,6 @@
 
 import DeleteIcon from "@mui/icons-material/Delete";
-import { Box, Button } from '@mui/material';
+import { Box, Button, useMediaQuery, useTheme } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 
 type RemoveConfirmModalProps = {
@@ -10,18 +10,27 @@ type RemoveConfirmModalProps = {
 
 export default function RemoveConfirmModal({ handleCancelModal, handleDeleteModal }: RemoveConfirmModalProps) {
 
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
+    const editModalTopPer: string = isMobile ? '10%' : '50%';
+    const editModalLeftPer: string = isMobile ? '10%' : '50%';
+    const editModalWidthPer: string = isMobile ? '80%' : '40%';
+    const editModalHeightPer: string = isMobile ? '20%' : '15%';
+    const editModalTransformPer: string = isMobile ? 'translate(0%, 0%)' : 'translate(-50%, -50%)';
+
     return (
         <Box
             sx={{
                 position: 'absolute' as 'absolute',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
+                top: editModalTopPer,
+                left: editModalLeftPer,
+                transform: editModalTransformPer,
                 padding: "10px",
                 borderRadius: "10px",
                 margin: "auto",
-                width: "20%",
-                height: "15%",
+                width: editModalWidthPer,
+                height: editModalHeightPer,
                 bgcolor: "white",
             }}
         >
