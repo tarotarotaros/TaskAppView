@@ -40,7 +40,7 @@ export default function TaskEditModal({ handleCloseModal, onSave, taskData, assi
     const [endDate, setEndDate] = useState<Date | null>(taskData?.end ? new Date(taskData.end) : new Date());
     const [displyaPattern, setDisplyaPattern] = useState<string>(PLAIN_TEXT);
     const theme = useTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.down('md')); // 600px以下のときにtrue
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
     const handleSave = () => {
 
@@ -88,12 +88,12 @@ export default function TaskEditModal({ handleCloseModal, onSave, taskData, assi
     }
 
 
-    let editModalTopPer: string = isMobile ? '5%' : '50%';
-    let editModalLeftPer: string = isMobile ? '5%' : '50%';
-    let editModalWidthPer: string = isMobile ? '90%' : '70%';
-    let editModalHeightPer: string = isMobile ? '90%' : '80%';
-    let editModalTransformPer: string = isMobile ? 'translate(0%, 0%)' : 'translate(-50%, -50%)';
-    let editModalMenuSpace: number = isMobile ? 12 : 4;
+    const editModalTopPer: string = isMobile ? '5%' : '50%';
+    const editModalLeftPer: string = isMobile ? '5%' : '50%';
+    const editModalWidthPer: string = isMobile ? '90%' : '70%';
+    const editModalHeightPer: string = isMobile ? '90%' : '80%';
+    const editModalTransformPer: string = isMobile ? 'translate(0%, 0%)' : 'translate(-50%, -50%)';
+    const editModalMenuSpace: number = isMobile ? 12 : 4;
 
     return (
 
