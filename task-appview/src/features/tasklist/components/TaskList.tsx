@@ -151,7 +151,7 @@ export default function TaskList({ userService }: TaskListProps) {
     const [checkedRowTaskIds, SetCheckedRowTaskIds] = useState<number[]>([]);
     const [lastModalStatus, SetLastEditModalStatus] = useState<TaskEditModalStatus>(TaskEditModalStatus.Add);
     const theme = useTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.down('sm')); // 600px以下のときにtrue
+    const isMobile = useMediaQuery(theme.breakpoints.down('md')); // 600px以下のときにtrue
 
 
     // タスクの一覧/担当者一覧を取得
