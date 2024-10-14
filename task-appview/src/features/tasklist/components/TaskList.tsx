@@ -1,7 +1,8 @@
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import { Chip, IconButton, Modal } from '@mui/material';
+import { Card, CardContent, Chip, IconButton, Modal, Typography, useMediaQuery, useTheme } from '@mui/material';
+import Checkbox from '@mui/material/Checkbox';
 import Grid from '@mui/material/Grid2';
 import Paper from '@mui/material/Paper';
 import { DataGrid, GridActionsCellItem, GridColDef } from '@mui/x-data-grid';
@@ -113,6 +114,33 @@ export default function TaskList({ userService }: TaskListProps) {
         },
     ];
 
+    // カード形式でタスクを表示
+    const renderCards = () => {
+        return (
+            <Grid container spacing={2}>
+                {tasks.map((task) => (
+                    <Grid size={12} key={task.task_id}>
+                        <Card>
+                            <CardContent>
+                                <Checkbox onChange={() => handleSelectionChangeForCard(task.task_id)} />
+                                <IconButton onClick={() => handleOpenEditModal(task)} >
+                                    <EditIcon />
+                                </IconButton>
+                                <Typography variant="h6">タイトル: {task.task_name}</Typography>
+                                <Typography variant="body2">優先度: {priprotyselectdatas.find(item => Number(item.value) === Number(task.priority))?.label}</Typography>
+                                <Typography variant="body2">ステータス: {statusselectdatas.find(item => Number(item.value) === Number(task.status))?.label}</Typography>
+                                <Typography variant="body2">担当者: {assigneeselectdatas.find(item => Number(item.value) === Number(task.assignee))?.label}</Typography>
+                                <Typography variant="body2">期限: {dayjs(task.deadline).format('YYYY/MM/DD')}</Typography>
+                                <Typography variant="body2">開始日: {dayjs(task.start).format('YYYY/MM/DD')}</Typography>
+                                <Typography variant="body2">終了日: {dayjs(task.end).format('YYYY/MM/DD')}</Typography>
+                            </CardContent>
+                        </Card>
+                    </Grid>
+                ))}
+            </Grid>
+        );
+    };
+
     const [tasks, setTasks] = useState<Task[]>([]);
     const [assigneeselectdatas, setAssigneeSelectDatas] = useState<SelectDataItem[]>([]);
     const [statusselectdatas, setStatusSelectDatas] = useState<SelectDataItem[]>([]);
@@ -122,6 +150,9 @@ export default function TaskList({ userService }: TaskListProps) {
     const [selectedTask, setSelectedTask] = useState<any | null>(null);
     const [checkedRowTaskIds, SetCheckedRowTaskIds] = useState<number[]>([]);
     const [lastModalStatus, SetLastEditModalStatus] = useState<TaskEditModalStatus>(TaskEditModalStatus.Add);
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('sm')); // 600px以下のときにtrue
+
 
     // タスクの一覧/担当者一覧を取得
     useEffect(() => {
@@ -226,6 +257,13 @@ export default function TaskList({ userService }: TaskListProps) {
         SetCheckedRowTaskIds(selectionModel); // 選択された行のIDを保存
     };
 
+    // 行のチェック変更(カード表示)
+    const handleSelectionChangeForCard = (taskId: number) => {
+        const newIds: number[] = checkedRowTaskIds.slice(0, checkedRowTaskIds.length);
+        newIds.push(taskId);
+        SetCheckedRowTaskIds(newIds);
+    };
+
     // モーダルよりデータ保存イベント
     const handleSaveTask = (data: any) => {
         if (lastModalStatus === TaskEditModalStatus.Add) {
@@ -286,25 +324,32 @@ export default function TaskList({ userService }: TaskListProps) {
                     </Grid>
 
                     <Grid size={12}>
-                        <Paper sx={{ height: '90%', width: 'auto' }}>
-                            <DataGrid
-                                sx={{
-                                    '& .MuiDataGrid-columnHeaderCheckbox': {
-                                        backgroundColor: '#fff',
-                                    },
-                                    '& .custom-header': {
-                                        backgroundColor: '#fff',
-                                    },
-                                }}
-                                onRowSelectionModelChange={handleSelectionChange} // 選択モデルが変わったら呼ばれる
-                                rows={tasks}
-                                getRowId={(row) => row.task_id}
-                                checkboxSelection
-                                columns={columns}
-                                initialState={{ pagination: { paginationModel } }}
-                                pageSizeOptions={[5, 10]}
-                            />
-                        </Paper>
+                        {isMobile ? (
+                            <Paper sx={{ width: '100%', padding: 2 }}>
+                                {renderCards()} {/* カード表示 */}
+                            </Paper>
+                        ) : (
+                            <Paper sx={{ height: '90%', width: '100%', overflow: 'hidden' }}>
+                                <DataGrid
+                                    sx={{
+                                        '& .MuiDataGrid-columnHeaderCheckbox': {
+                                            backgroundColor: '#fff',
+                                        },
+                                        '& .custom-header': {
+                                            backgroundColor: '#fff',
+                                        },
+                                    }}
+                                    onRowSelectionModelChange={handleSelectionChange} // 選択モデルが変わったら呼ばれる
+                                    rows={tasks}
+                                    getRowId={(row) => row.task_id}
+                                    checkboxSelection
+
+                                    autoHeight
+                                    columns={columns.map(col => ({ ...col, flex: col.flex ?? 1 }))}
+                                    initialState={{ pagination: { paginationModel } }}
+                                    pageSizeOptions={[5, 10]}
+                                />
+                            </Paper>)}
                     </Grid></Grid>
             </div >
         );
