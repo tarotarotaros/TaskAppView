@@ -6,6 +6,7 @@ import Checkbox from '@mui/material/Checkbox';
 import Grid from '@mui/material/Grid2';
 import Paper from '@mui/material/Paper';
 import { DataGrid, GridActionsCellItem, GridColDef } from '@mui/x-data-grid';
+import { jaJP } from '@mui/x-data-grid/locales';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import Loading from "../../../common/components/Loading";
@@ -348,7 +349,7 @@ export default function TaskList({ userService }: TaskListProps) {
                                     rows={tasks}
                                     getRowId={(row) => row.task_id}
                                     checkboxSelection
-
+                                    localeText={jaJP.components.MuiDataGrid.defaultProps.localeText}
                                     autoHeight
                                     columns={columns.map(col => ({ ...col, flex: col.flex ?? 1 }))}
                                     initialState={{ pagination: { paginationModel } }}
