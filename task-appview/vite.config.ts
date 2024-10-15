@@ -10,7 +10,9 @@ export default defineConfig({
         alias: [{ find: "@", replacement: "/src" }],
     },
     build: {
-        outDir: "build",
+        outDir: 'dist',
+        manifest: "assets/manifest.json",
     },
+    base: '/',
     plugins: [react()],
 });
