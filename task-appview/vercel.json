@@ -11,6 +11,10 @@
     ],
     "routes": [
         {
+            "src": "/assets/manifest.json",
+            "dest": "/assets/manifest.json"
+        },
+        {
             "src": "/assets/(.*)",
             "dest": "/assets/$1"
         },

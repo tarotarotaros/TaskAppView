@@ -11,6 +11,7 @@ export default defineConfig({
     },
     build: {
         outDir: 'dist',
+        manifest: "assets/manifest.json",
     },
     base: '/',
     plugins: [react()],
