@@ -56,7 +56,7 @@ export class UserService implements IUserService {
             );
 
             const data = response.data;
-            return new fetchUserInfo(new ExeResult(true, this.SUCCESS_GET_USER_MESSAGE), new User(data.name, data.email, data.password, data.id, data.projectId));
+            return new fetchUserInfo(new ExeResult(true, this.SUCCESS_GET_USER_MESSAGE), new User(data.name, data.email, data.password, data.id, data.project));
         } catch (error: any) {
             return new fetchUserInfo(new ExeResult(false, error.response.data), new User("", "", ""));
         }
