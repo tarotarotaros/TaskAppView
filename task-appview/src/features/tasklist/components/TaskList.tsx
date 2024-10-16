@@ -132,7 +132,7 @@ export default function TaskList({ userService }: TaskListProps) {
                                         return status ? <Chip label={status.label} sx={{ backgroundColor: status.color, color: 'white', marginLeft: '8px' }} /> : null;
                                     })()}
                                 </Typography>
-                                <Typography margin={'4px'} variant="h6">タイトル: {task.task_name}</Typography>
+                                <Typography margin={'4px'} variant="h6"> {task.task_name}</Typography>
                                 <Typography margin={'4px'} variant="body2">優先度: {priprotyselectdatas.find(item => Number(item.value) === Number(task.priority))?.label}</Typography>
                                 <Typography margin={'4px'} variant="body2">担当者: {userSelectdatas.find(item => Number(item.value) === Number(task.assignee))?.label}</Typography>
                                 <Typography margin={'4px'} variant="body2">期限: {dayjs(task.deadline).format('YYYY/MM/DD')}</Typography>

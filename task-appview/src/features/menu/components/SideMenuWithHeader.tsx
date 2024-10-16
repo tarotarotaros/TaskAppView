@@ -1,5 +1,5 @@
 import MenuIcon from '@mui/icons-material/Menu';
-import { AppBar, Button, CssBaseline, Drawer, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar, Typography, useTheme } from '@mui/material';
+import { AppBar, Button, CssBaseline, Drawer, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { cloneElement, useCallback, useEffect, useState } from 'react';
 import Loading from '../../../common/components/Loading';
 import SimpleDialog, { NO_SELECT_PROJECT__TEXT } from '../../../common/components/SelectDialog';
@@ -33,6 +33,7 @@ export default function SideMenuWithHeader({ userService }: SideMenuWithHeaderPr
     const [displayProject, SetDisplayProject] = useState<string>(INIT_DISPLAY_PROJECT_TEXT);
     const [content, SetContent] = useState(<Mypage userService={userService} />); // 初期コンテンツ
     const [contentKey, SetContentKey] = useState("home"); // 初期コンテンツ
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
     // データ処理関係
     const setUserInfo = useCallback(async () => {
@@ -226,7 +227,7 @@ export default function SideMenuWithHeader({ userService }: SideMenuWithHeaderPr
                     })}
                 </List>
             </Drawer>
-            <main style={{ background: themeConst.THEME_COLOR_BACK, flexGrow: 1, padding: '16px', marginLeft: open ? sidebarwidth : 0 }}>
+            <main style={{ background: themeConst.THEME_COLOR_BACK, flexGrow: 1, padding: '16px', marginLeft: 0 }}>
                 <Toolbar />
                 <Typography>
                     {content} {/* 動的に変更されるコンテンツ */}
