@@ -7,7 +7,7 @@ import { IUserService } from '../../../infrastructures/IUserService';
 import { fetchProject, fetchProjects } from '../../../infrastructures/projects';
 import { themeConst } from '../../../themeConst';
 import { SelectDataItem } from '../../../types/SelectDataItem';
-import Hello from '../../home/components/Hello';
+import Mypage from '../../home/components/Mypage';
 import LoginStatusButton from '../../login/components/LoginStatusButton';
 import UserInfo from '../../user/components/UserInfo';
 import './../../../index.css';
@@ -31,7 +31,7 @@ export default function SideMenuWithHeader({ userService }: SideMenuWithHeaderPr
     const [openSelectProjectDialog, SetOpenSelectProjectDialog] = useState(false);
     const [selectProjectList, SetSelectProjectList] = useState<SelectDataItem[]>([]);
     const [displayProject, SetDisplayProject] = useState<string>(INIT_DISPLAY_PROJECT_TEXT);
-    const [content, SetContent] = useState(<Hello />); // 初期コンテンツ
+    const [content, SetContent] = useState(<Mypage userService={userService} />); // 初期コンテンツ
     const [contentKey, SetContentKey] = useState("home"); // 初期コンテンツ
 
     // データ処理関係
