@@ -5,7 +5,15 @@ export interface LoginUser {
     password: string
 }
 
+export class fetchData<T> {
+    Result: ExeResult;
+    Data: T;
 
+    constructor(Result: ExeResult, Data: T) {
+        this.Result = Result;
+        this.Data = Data;
+    }
+};
 
 
 export class fetchUserInfo {

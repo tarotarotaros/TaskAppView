@@ -6,6 +6,7 @@ import Person from "@mui/icons-material/Person";
 import SettingsIcon from "@mui/icons-material/Settings";
 import { UserService } from "../../../infrastructures/UserService";
 import DataEdit from "../../data/components/DataEdit";
+import Mypage from "../../home/components/Mypage";
 import Kanban from "../../kanban/components/Kanban";
 import UserLogin from "../../login/components/UserLogin";
 import TaskList from "../../tasklist/components/TaskList";
@@ -18,7 +19,7 @@ export const SidebarData = [
         isSelectProject: false,
         icon: <HomeIcon />,
         link: "/",
-        component: <></>,
+        component: <Mypage userService={new UserService()} />,
     },
     {
         title: "ログイン（アカウント登録）",

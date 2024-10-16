@@ -20,12 +20,12 @@ type TaskEditModalProps = {
     handleCloseModal: React.MouseEventHandler<HTMLButtonElement>;
     onSave: (data: any) => void; // 保存時にデータを親に渡す関数
     taskData?: Task; // 編集する既存のタスクデータ
-    assigneeSelectDataItem: SelectDataItem[];
+    userSelectDataItem: SelectDataItem[];
     priorirySelectDataItem: SelectDataItem[];
     statusSelectDataItem: SelectDataItem[];
 };
 
-export default function TaskEditModal({ handleCloseModal, onSave, taskData, assigneeSelectDataItem, priorirySelectDataItem, statusSelectDataItem }: TaskEditModalProps) {
+export default function TaskEditModal({ handleCloseModal, onSave, taskData, userSelectDataItem, priorirySelectDataItem, statusSelectDataItem }: TaskEditModalProps) {
 
     const PLAIN_TEXT: string = 'Plain';
     const MARK_DOWN_TEXT: string = 'MarkDown';
@@ -226,7 +226,7 @@ export default function TaskEditModal({ handleCloseModal, onSave, taskData, assi
                             icon={<PersonIcon />}
                             label="担当者"
                             defaultValue={assignee}
-                            options={assigneeSelectDataItem}
+                            options={userSelectDataItem}
                             onChange={setAssignee}
                         />
                     </Grid>

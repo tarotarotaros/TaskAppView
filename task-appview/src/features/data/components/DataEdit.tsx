@@ -16,7 +16,7 @@ export default function DataEdit() {
     const displayDatas = [
         { label: "優先度", content: <DataEditGrid hasColor={false} dataLabel="優先度" dataEditService={priorityDataEditService} /> },
         { label: "ステータス", content: <DataEditGrid hasColor={true} dataLabel="ステータス" dataEditService={statusDataEditService} /> },
-        { label: "担当者", content: <DataEditGrid hasColor={false} dataLabel="担当者" dataEditService={assigneeDataEditService} /> },
+        { label: "担当者", content: <DataEditGrid hasColor={false} dataLabel="担当者" dataEditService={assigneeDataEditService} isReadOnly={true} /> },
         { label: "プロジェクト", content: <DataEditGrid hasColor={false} dataLabel="プロジェクト" dataEditService={projectDataEditService} /> }
     ];
 
