@@ -11,16 +11,15 @@ import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import Loading from "../../../common/components/Loading";
 import RemoveConfirmModal from "../../../common/components/RemoveConfirmModal";
-import { fetchAssignees } from "../../../infrastructures/assignees";
 import { IUserService } from "../../../infrastructures/IUserService";
 import { fetchPriorities } from "../../../infrastructures/priorities";
 import { fetchStatuses } from "../../../infrastructures/statuses";
 import { createTask, deleteTask, fetchTasks, updateTask } from "../../../infrastructures/tasks";
-import { Assignee } from "../../../types/Assignee";
 import { Priority } from "../../../types/Priority";
 import { SelectDataItem } from "../../../types/SelectDataItem";
 import { Status } from "../../../types/Status";
 import { Task } from "../../../types/Task";
+import { fetchData, User } from "../../../types/User";
 import TaskEditModal from "./TaskEditModal";
 import TaskEditModalStatus from "./TaskEditModalStatus";
 
@@ -90,7 +89,7 @@ export default function TaskList({ userService }: TaskListProps) {
         {
             field: 'assignee', headerName: '担当者', width: 130, headerAlign: 'center', align: 'center',
             valueFormatter: (params) => {
-                const result = assigneeselectdatas.find(item => Number(item.value) === Number(params));
+                const result = userSelectdatas.find(item => Number(item.value) === Number(params));
                 return result ? result.label : "";
             },
             headerClassName: 'custom-header'
@@ -135,7 +134,7 @@ export default function TaskList({ userService }: TaskListProps) {
                                 </Typography>
                                 <Typography margin={'4px'} variant="h6">タイトル: {task.task_name}</Typography>
                                 <Typography margin={'4px'} variant="body2">優先度: {priprotyselectdatas.find(item => Number(item.value) === Number(task.priority))?.label}</Typography>
-                                <Typography margin={'4px'} variant="body2">担当者: {assigneeselectdatas.find(item => Number(item.value) === Number(task.assignee))?.label}</Typography>
+                                <Typography margin={'4px'} variant="body2">担当者: {userSelectdatas.find(item => Number(item.value) === Number(task.assignee))?.label}</Typography>
                                 <Typography margin={'4px'} variant="body2">期限: {dayjs(task.deadline).format('YYYY/MM/DD')}</Typography>
                                 <Typography margin={'4px'} variant="body2">開始日: {dayjs(task.start).format('YYYY/MM/DD')}</Typography>
                                 <Typography margin={'4px'} variant="body2">終了日: {dayjs(task.end).format('YYYY/MM/DD')}</Typography>
@@ -148,7 +147,7 @@ export default function TaskList({ userService }: TaskListProps) {
     };
 
     const [tasks, setTasks] = useState<Task[]>([]);
-    const [assigneeselectdatas, setAssigneeSelectDatas] = useState<SelectDataItem[]>([]);
+    const [userSelectdatas, setUserSelectDatas] = useState<SelectDataItem[]>([]);
     const [statusselectdatas, setStatusSelectDatas] = useState<SelectDataItem[]>([]);
     const [priprotyselectdatas, setPriprotySelectDatas] = useState<SelectDataItem[]>([]);
     const [isEditModalOpen, setEditModalIsOpen] = useState(false);
@@ -167,13 +166,14 @@ export default function TaskList({ userService }: TaskListProps) {
             const fetchedTasks = await fetchTasks(fetchUserInfo.User.projectId);
             setTasks(fetchedTasks);
 
-            const fetchedAssignees: Assignee[] = await fetchAssignees();
-            let assigneedata = fetchedAssignees.map(assignee => ({
-                value: assignee.id.toString(), // 数値を文字列に変換
-                label: assignee.name,
+            const fetchedUserListResult: fetchData<User[]> = await userService.fetchUserList();
+            const fetchedUsers: User[] = fetchedUserListResult.Data;
+            let userData = fetchedUsers.map(user => ({
+                value: user.id.toString(), // 数値を文字列に変換
+                label: user.name,
                 color: ""
             }));
-            setAssigneeSelectDatas(assigneedata);
+            setUserSelectDatas(userData);
 
             const fetchedStatuses: Status[] = await fetchStatuses();
             let statusdata = fetchedStatuses.map(status => ({
@@ -292,7 +292,7 @@ export default function TaskList({ userService }: TaskListProps) {
     };
 
 
-    if (assigneeselectdatas.length === 0 ||
+    if (userSelectdatas.length === 0 ||
         statusselectdatas.length === 0 ||
         priprotyselectdatas.length === 0) {
         return (<Loading />);
@@ -307,7 +307,7 @@ export default function TaskList({ userService }: TaskListProps) {
                                     handleCloseModal={handleCloseEditModal}
                                     onSave={handleSaveTask}
                                     taskData={selectedTask}
-                                    assigneeSelectDataItem={assigneeselectdatas}
+                                    userSelectDataItem={userSelectdatas}
                                     statusSelectDataItem={statusselectdatas}
                                     priorirySelectDataItem={priprotyselectdatas} />
                             </Modal>

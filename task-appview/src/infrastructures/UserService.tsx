@@ -1,6 +1,6 @@
 import axios from "axios";
 import { ExeResult } from "../types/ExeResult";
-import { fetchUserInfo, LoginUser, User } from "../types/User";
+import { fetchData, fetchUserInfo, LoginUser, User } from "../types/User";
 import { BASE_URL, getAuthToken } from "./API";
 import { IUserService } from "./IUserService";
 
@@ -59,6 +59,32 @@ export class UserService implements IUserService {
             return new fetchUserInfo(new ExeResult(true, this.SUCCESS_GET_USER_MESSAGE), new User(data.name, data.email, data.password, data.id, data.project));
         } catch (error: any) {
             return new fetchUserInfo(new ExeResult(false, error.response.data), new User("", "", ""));
+        }
+    }
+
+
+    /**
+     * ユーザー情報を取得
+     * @returns 実行結果とユーザー情報
+     */
+    public async fetchUserList(): Promise<fetchData<User[]>> {
+        try {
+            const token = getAuthToken();
+            if (!token) return new fetchData<User[]>(new ExeResult(false, this.FAULSE_GET_TOKEN_MESSAGE), []);
+
+            const response = await axios.get(
+                USERS_API_URL, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+            );
+
+            const data = response.data;
+            const userList: User[] = data.map((user: any) => new User(user.name, user.email, user.password, user.id, user.project));
+            return new fetchData<User[]>(new ExeResult(true, this.SUCCESS_GET_USER_MESSAGE), userList);
+        } catch (error: any) {
+            return new fetchData<User[]>(new ExeResult(error.data.responce, this.FAULSE_GET_TOKEN_MESSAGE), [])
         }
     }
 
