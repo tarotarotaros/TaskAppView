@@ -16,9 +16,10 @@ interface DataEditGridProps {
     dataEditService: DataEditService;
     dataLabel: string;
     hasColor: boolean;
+    isReadOnly?: boolean;
 }
 
-export default function DataEditGrid({ dataEditService, dataLabel, hasColor }: DataEditGridProps) {
+export default function DataEditGrid({ dataEditService, dataLabel, hasColor, isReadOnly = false }: DataEditGridProps) {
     const nameNullErrorMessage: string = "名前が未入力です。";
 
     // 列定義
@@ -62,35 +63,38 @@ export default function DataEditGrid({ dataEditService, dataLabel, hasColor }: D
                 },
             ]
             : []),
-        {
-            field: 'actions',
-            type: 'actions',
-            headerName: 'Actions',
-            width: 100,
-            getActions: ({ id }) => {
-                const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
-                if (isInEditMode) {
-                    return [
-                        <GridActionsCellItem icon={<SaveIcon />} label="Save" onClick={handleSaveClick(id)} />,
-                        <GridActionsCellItem
-                            icon={<CancelIcon />}
-                            label="Cancel"
-                            onClick={handleCancelClick(id)}
-                        />,
-                    ];
+        ...(!isReadOnly
+            ? [
+                {
+                    field: 'actions',
+                    headerName: 'Actions', // type を削除
+                    width: 100,
+                    getActions: ({ id }: { id: GridRowId }) => {
+                        const idNumber: GridRowId = id as GridRowId;
+                        const isInEditMode = rowModesModel[idNumber]?.mode === GridRowModes.Edit;
+                        if (isInEditMode) {
+                            return [
+                                <GridActionsCellItem icon={<SaveIcon />} label="Save" onClick={handleSaveClick(id)} />,
+                                <GridActionsCellItem
+                                    icon={<CancelIcon />}
+                                    label="Cancel"
+                                    onClick={handleCancelClick(id)}
+                                />,
+                            ];
+                        }
+                        return [
+                            <GridActionsCellItem icon={<EditIcon />} label="Edit" onClick={handleEditClick(id)} />,
+                            <GridActionsCellItem
+                                icon={<DeleteIcon />}
+                                label="Delete"
+                                onClick={handleDeleteClick(id)}
+                            />,
+                        ];
+                    },
                 }
-                return [
-                    <GridActionsCellItem icon={<EditIcon />} label="Edit" onClick={handleEditClick(id)} />,
-                    <GridActionsCellItem
-                        icon={<DeleteIcon />}
-                        label="Delete"
-                        onClick={handleDeleteClick(id)}
-                    />,
-                ];
-            },
-        },
+            ]
+            : []),
     ];
-
     const [rows, setRows] = useState<GridRowsProp>([]);
     const [isLoadComplete, SetLoadComplete] = useState<boolean>(false);
     const [rowModesModel, setRowModesModel] = useState<GridRowModesModel>({});
@@ -281,6 +285,20 @@ export default function DataEditGrid({ dataEditService, dataLabel, hasColor }: D
         return { x, y };
     }
 
+    function GetAddButton() {
+        if (isReadOnly) return (
+            <Grid my={2} size={12} justifyContent="end" spacing={1} container>
+                {"※閲覧のみ"}
+            </Grid>);
+        return (
+            <Grid my={2} size={12} justifyContent="end" spacing={1} container>
+                <Button color="secondary" variant="contained" startIcon={<AddIcon />} onClick={handleClick}>
+                    Add
+                </Button>
+            </Grid>
+        )
+    }
+
 
     if (!isLoadComplete) {
         return (<Loading />);
@@ -288,11 +306,7 @@ export default function DataEditGrid({ dataEditService, dataLabel, hasColor }: D
         return (
             <div>
                 <Grid size={12} sx={{ width: '100%' }}>
-                    <Grid my={2} size={12} justifyContent="end" spacing={1} container>
-                        <Button color="secondary" variant="contained" startIcon={<AddIcon />} onClick={handleClick}>
-                            Add
-                        </Button>
-                    </Grid>
+                    {GetAddButton()}
                     <Box sx={{
                         display: 'flex',
                         justifyContent: 'center',
