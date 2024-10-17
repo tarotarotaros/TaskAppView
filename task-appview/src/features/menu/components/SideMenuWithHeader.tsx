@@ -9,6 +9,7 @@ import { themeConst } from '../../../themeConst';
 import { SelectDataItem } from '../../../types/SelectDataItem';
 import Mypage from '../../home/components/Mypage';
 import LoginStatusButton from '../../login/components/LoginStatusButton';
+import UserLogin from '../../login/components/UserLogin';
 import UserInfo from '../../user/components/UserInfo';
 import './../../../index.css';
 import { SidebarData } from "./SidebarData";
@@ -31,8 +32,8 @@ export default function SideMenuWithHeader({ userService }: SideMenuWithHeaderPr
     const [openSelectProjectDialog, SetOpenSelectProjectDialog] = useState(false);
     const [selectProjectList, SetSelectProjectList] = useState<SelectDataItem[]>([]);
     const [displayProject, SetDisplayProject] = useState<string>(INIT_DISPLAY_PROJECT_TEXT);
-    const [content, SetContent] = useState(<Mypage userService={userService} />); // 初期コンテンツ
-    const [contentKey, SetContentKey] = useState("home"); // 初期コンテンツ
+    const [content, SetContent] = useState(isLogin() ? <Mypage userService={userService} /> : <UserLogin userService={userService} />); // 初期コンテンツ
+    const [contentKey, SetContentKey] = useState(isLogin() ? "home" : "login"); // 初期コンテンツ
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
     // データ処理関係
@@ -102,7 +103,7 @@ export default function SideMenuWithHeader({ userService }: SideMenuWithHeaderPr
     const toggleDrawer = () => {
         setOpen(!open);
     };
-    const isLogin = (): boolean => {
+    function isLogin(): boolean {
         let token = sessionStorage.getItem('authToken');
         return token !== null && token !== "";  // トークンが存在し、空でないかを確認
     };
@@ -167,9 +168,13 @@ export default function SideMenuWithHeader({ userService }: SideMenuWithHeaderPr
             <CssBaseline />
             <AppBar position="fixed" style={{ zIndex: 1201 }}>
                 <Toolbar>
-                    <IconButton edge="start" color="inherit" aria-label="menu" onClick={toggleDrawer}>
-                        <MenuIcon />
-                    </IconButton>
+                    {isLogin() ? (
+                        <IconButton edge="start" color="inherit" aria-label="menu" onClick={toggleDrawer}>
+                            <MenuIcon />
+                        </IconButton>
+                    ) :
+                        (null)
+                    }
                     <Typography variant="h6" noWrap sx={{ flexGrow: 1 }}>
                         タスク管理
                     </Typography>

@@ -87,6 +87,7 @@ export default function Mypage({ userService }: MypageProps) {
   const [tasks, setTasks] = useState<TaskClass[]>([]);
   const [statusselectdatas, setStatusSelectDatas] = useState<SelectDataItem[]>([]);
   const [priprotyselectdatas, setPriprotySelectDatas] = useState<SelectDataItem[]>([]);
+  const [dataLoaded, SetDataLoaded] = useState<boolean>(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -116,13 +117,14 @@ export default function Mypage({ userService }: MypageProps) {
     };
 
     loadTasks();
+    SetDataLoaded(true);
   }, [userService]);
-  if (tasks.length === null) {
+  if (!dataLoaded) {
     return (<Loading />);
   } else {
     return (
       <div>
-        <Accordion>
+        <Accordion defaultExpanded>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
             aria-controls="panel1-content"
