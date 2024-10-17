@@ -20,7 +20,6 @@ type SideMenuWithHeaderProps = {
     userService: IUserService;
 };
 
-
 export default function SideMenuWithHeader({ userService }: SideMenuWithHeaderProps) {
 
     const theme = useTheme(); // テーマを取得
