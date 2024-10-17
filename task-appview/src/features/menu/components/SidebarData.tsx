@@ -13,15 +13,6 @@ import TaskList from "../../tasklist/components/TaskList";
 
 export const SidebarData = [
     {
-        title: "ホーム",
-        key: "home",
-        condition: "",
-        isSelectProject: false,
-        icon: <HomeIcon />,
-        link: "/",
-        component: <Mypage userService={new UserService()} />,
-    },
-    {
         title: "ログイン（アカウント登録）",
         key: "login",
         condition: "logout",
@@ -29,6 +20,15 @@ export const SidebarData = [
         icon: <Person />,
         link: "/login",
         component: <UserLogin userService={new UserService()} />,
+    },
+    {
+        title: "ホーム",
+        key: "home",
+        condition: "login",
+        isSelectProject: false,
+        icon: <HomeIcon />,
+        link: "/",
+        component: <Mypage userService={new UserService()} />,
     },
     {
         title: "タスク",
